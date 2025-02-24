@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+ <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="post" action="{% url 'update_staff' %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="col-12">
+                                        <h5 class="form-title"><span>Edit Staff</span></h5>
+                                    </div>
+                                        {% include 'partials/messages.html' %}
+                                    <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Profile Picture</label>
+                                            <input type="file" class="form-control" name="profile_pic">
+                                            <input type="text" class="form-control" name="staff_id" value="{% for i in staff %} {{ i.admin.id }} {% endfor %}" hidden>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">First Name</label>
+                                            <input type="text" class="form-control" name="first_name" value="{% for i in staff %} {{ i.admin.first_name }} {% endfor %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" value="{% for i in staff %} {{ i.admin.last_name }} {% endfor %}">
+                                        </div>
+                                    </div>
+                                <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm" >Email Address</label>
+                                            <input type="text" readonly class="form-control"  name="email" value="{% for i in staff %} {{ i.admin.email }} {% endfor %}">
+                                        </div>
+                                    </div>
+                                <div class="col-12 col-sm-11">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 col-form-label col-form-label-sm">Username</label>
+                                        <label class="sr-only" for="inlineFormInputGroup">Username</label>
+                                      <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                          <div class="input-group-text">@</div>
+                                        </div>
+                                        <input type="text" readonly class="form-control" id="inlineFormInputGroup" placeholder="Username" name="username" value="{% for i in staff %} {{ i.admin.username }} {% endfor %}">
+                                      </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-11">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 col-form-label col-form-label-sm">Gender</label>
+                                    <select class="form-control" name="gender">
+                                        <option>Select Gender</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Prefer Not To Say</option>
+                                    </select>
+                                </div>
+
+                                </div>
+                                <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Password</label>
+                                            <input type="password" class="form-control" placeholder="Change Password?" name="password">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-11">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Address</label>
+                                            <textarea class="form-control" name="address">{% for i in staff %} {{ i.address }} {% endfor %}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-11">
+                                        <button type="submit" class="btn btn-primary">Update Staff</button>
+                                    </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+{% endblock %}

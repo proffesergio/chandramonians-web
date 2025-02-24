@@ -1,0 +1,100 @@
+<script>
+
+    $(document).ready(function () {
+        // Bar chart
+
+        if ($('#alumni_bar').length > 0) {
+            var optionsBar = {
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    width: '100%',
+                    stacked: true,
+                    toolbar: {
+                        show: false
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '45%',
+                    }
+                },
+                series: [{
+                    name: "Male",
+                    color: '#fdbb38',
+                    data: [{{ alumni_gender_male }}],
+                }, {
+                    name: "Female",
+                    color: '#19affb',
+                    data: [{{ alumni_gender_female }}],
+                }],
+                labels: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+                xaxis: {
+                    labels: {
+                        show: false
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                },
+                yaxis: {
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    labels: {
+                        style: {
+                            colors: '#777'
+                        }
+                    }
+                },
+                title: {
+                    text: '',
+                    align: 'left',
+                    style: {
+                        fontSize: '18px'
+                    }
+                }
+
+            }
+
+            var chartBar = new ApexCharts(document.querySelector('#alumni_bar'), optionsBar);
+            chartBar.render();
+        }
+        // Pie Chart
+        var optionsPie = {
+            chart: {
+                type: 'pie',
+                height: 350,
+                width: '100%',
+            },
+            series: [
+                {{ user_count }}, {{ staff_count }}, {{ alumni_count }}
+            ],
+            labels: ['Users', 'Staffs', 'Alumnis'],
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        };
+
+        var chart = new ApexCharts(document.querySelector("#pie_chart"), optionsPie);
+        chart.render();
+    })
+
+</script>

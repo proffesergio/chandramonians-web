@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Join the Alumni Association Today</h3>
+                    <ul class="breadcrumb">
+                        {#                            <li class="breadcrumb-item"><a href="{% url 'alumni_home' %}"><i class="fas fa-home"> Home</i></a></li>#}
+                        <li class="breadcrumb-item active">Establish your lifelong connection to Dulalpur C.M High
+                            School Alumni Association.
+                            As an Alumni Association member, you're keeping alumnus connected virtually, locally &
+                            globally through our programs, as well as furthering the future of a place
+                            we all cherish— Our 'Old School'.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        {% include 'partials/messages.html' %}
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'save_membership' %}">
+
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Being an Alumni is forever!</span></h5>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Note to admin(if any)</label>
+                                        <textarea name="note" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Choose Payment Options</label>
+                                        <select class="form-control">
+                                            <option>Select Type</option>
+                                            <option>bKash</option>
+                                            <option>Rocket</option>
+                                            <option>Bank Deposit</option>
+                                            <option>Mastercard/VISA</option>
+                                            <option>Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Date</label>
+                                        <input type="date" name="date" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Membership Type</label>
+                                        <select class="form-control">
+                                            <option>Select Class</option>
+                                            <option>Board Member</option>
+                                            <option>Staff Member</option>
+                                            <option>Alumni Member</option>
+                                            <option>Elite Alumni</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Apply</button>
+                                </div>
+                                <div class="col-12">
+                                    <div class="col-auto text-right float-right ml-auto">
+                                        <a href="#" class="btn btn-dark mr-2" data-toggle="modal"
+                                           data-target="#viewAppModal"><i
+                                                class="fas fa-check-double"></i> View Application Status</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- View Notifications Modal -->
+    <div class="modal fade" id="viewAppModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle1">All Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card card-table">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="table_id" class="table table-hover table-center mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>Message</th>
+                                                <th>Date</th>
+                                                <th class="text-right">Status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for j in logged_application %}
+                                                <tr>
+                                                    <td>{{ j.note }}</td>
+                                                    <td>{{ j.date }}</td>
+                                                    {% if j.status == 0 %}
+                                                        <td><span class="badge badge-info">Pending</span></td>
+                                                    {% elif j.status == 1 %}
+                                                        <td><span class="badge badge-danger">Denied</span></td>
+                                                    {% else %}
+                                                        <td><span class="badge badge-success">Approved</span></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

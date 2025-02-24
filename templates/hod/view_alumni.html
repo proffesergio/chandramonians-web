@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Alumnis</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><span class="fas fa-home"> Home</span></li>
+                        <li class="breadcrumb-item active small">View All Alumnis</li>
+                    </ul>
+                </div>
+
+                <div class="col-auto text-right float-right ml-auto">
+{#                    <a href="#" class="btn btn-outline-primary mr-2"><i class="fas fa-download"></i> Download</a>#}
+                    <a href="{% url 'add_alumni' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+        {% include 'partials/messages.html' %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="table_id" class="table table-hover table-center mb-0">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Gender</th>
+                                    <th>User Type</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Passing Year</th>
+
+                                    <th class="text-right">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in alumni %}
+                                    <tr>
+                                        <td>{{ i.id }}</td>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                {% if user.profile_pic != None and user.profile_pic == "" %}
+                                                <a href="{% url 'profile' %}" class="avatar avatar-sm mr-2"><img
+                                                        class="avatar-img rounded-circle"
+                                                        src=" {{ user.profile_pic }}" alt=""></a>
+                                                        {% else %}
+                                                        <img
+                                                        class="avatar-sm avatar-img rounded-circle"
+                                                        src="{% static 'assets/img/profiles/avatar-02.jpg' %}" alt="">&nbsp; &nbsp;</a>
+
+                                                        {% endif %}
+                                                <a href="{% url 'profile' %}">{{ i.admin.first_name }} {{ i.admin.last_name }}</a>
+                                            </h2>
+                                        </td>
+                                        <td>{{ i.admin.email }}</td>
+                                        <td>{{ i.gender }}</td>
+                                        <td>
+                                            {% if i.admin.user_type == '3' %} Alumni
+                                                {% elif i.admin.user_type == '2' %} Staff
+                                                {% elif i.admin.user_type == '1' %} HOD
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ i.address }}</td>
+                                        <td>{{ i.phone }}</td>
+                                        <td>{{ i.passing_year }}</td>
+{#                                        <td>{{ i.updated_at }}</td>#}
+{#                                        <td>{{ i.updated_at }}</td>#}
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a href="{% url 'edit_alumni' i.id %}"
+                                                   class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="{% url 'delete_alumni' i.admin.id %}" class="btn btn-sm bg-danger-light">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

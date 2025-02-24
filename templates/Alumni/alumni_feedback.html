@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Provide Feedback</h3>
+                    <ul class="breadcrumb">
+                        {#                            <li class="breadcrumb-item"><a href="{% url 'alumni_home' %}"><i class="fas fa-home"> Home</i></a></li>#}
+                        <li class="breadcrumb-item active">Establish your lifelong connection to Dulalpur C.M High
+                            School Alumni Association.
+                            As an Alumni Association member, you're keeping alumnus connected virtually, locally &
+                            globally through our programs, as well as furthering the future of a place
+                            we all cherish— Our 'Old School'.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        {% include 'partials/messages.html' %}
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'save_feedback' %}">
+
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Being an Alumni is forever!</span></h5>
+                                </div>
+
+                                <div class="col-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Feedback</label>
+                                        <textarea name="feedback" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Choose Feedback Options</label>
+                                        <select class="form-control">
+                                            <option>Select Type</option>
+                                            <option>Advise</option>
+                                            <option>Complaint</option>
+                                            <option>User Experience</option>
+                                            <option>Question/Answer</option>
+                                            <option>Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-next">Send Feedback</button>
+                                </div>
+                                <div class="col-12">
+                                    <div class="col-auto text-right float-right ml-auto">
+                                        <a href="#" class="btn btn-dark mr-2" data-toggle="modal"
+                                           data-target="#feedbackHistory"><i
+                                                class="fas fa-check-double"></i> Feedback History</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- View Notifications Modal -->
+    <div class="modal fade" id="feedbackHistory" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle1">All Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card card-table">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="table_id" class="table table-hover table-center mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Feedback Message</th>
+                                                <th class="text-right">Reply</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for j in feedback_history %}
+                                                <tr>
+                                                    <td>{{ j.id }}</td>
+                                                    <td>{{ j.feedback }}</td>
+                                                    {% if j.feedback_reply == "" %}
+                                                        <td><span class="badge badge-info">No Reply</span></td>
+                                                    {% else %}
+                                                        <td><span class="badge badge-success">{{ j.feedback_reply }}</span></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
