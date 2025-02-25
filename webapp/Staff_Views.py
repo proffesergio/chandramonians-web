@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification
 from django.contrib import messages
 
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def homeView(request):
     alumni_count = Alumni.objects.all().count()
     staff_count = Staff.objects.all().count()

@@ -38,6 +38,10 @@ def doLogin(request):
 def homeView(request):
     return render(request, 'hod/home.html')
 
+class DefaultView(View):
+    def get(self, request):
+        return render(request, 'landing.html')
+
 class IndexView(View):
     def get(self, request):
         return render(request, 'index.html')
@@ -50,7 +54,7 @@ def doLogout(request):
     logout(request)
     return redirect('login')
 
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def profileView(request):
     user = CustomUser.objects.get(id = request.user.id)
     print(user)
@@ -66,7 +70,7 @@ def profileView(request):
 
 # def add_alumni(request):
 #     return render('templates/index.html')
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def profileUpdate(request):
     if request.method == "POST":
         profile_pic = request.FILES.get('profile_pic')

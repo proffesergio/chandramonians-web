@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback
 from django.contrib import messages
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def applyForMembership(request):
     # get logged in user
     alumni = Alumni.objects.filter(admin = request.user.id)
@@ -18,7 +18,7 @@ def applyForMembership(request):
 
         return render(request, 'Alumni/membership_apply.html', context)
 
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def homeView(request):
     alumni_count = Alumni.objects.all().count()
     staff_count = Staff.objects.all().count()
@@ -37,7 +37,7 @@ def homeView(request):
     }
     return render(request, 'Alumni/alumni_home.html', context)
 
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def saveApplication(request):
     if request.method == "POST":
         date = request.POST.get('date')
@@ -56,7 +56,7 @@ def saveApplication(request):
         return redirect('save_membership')
 
     return render(request, 'Alumni/save_membership.html')
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def saveFeedback(request):
     if request.method == "POST":
         feedback = request.POST.get('feedback')
