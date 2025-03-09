@@ -3,20 +3,41 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class CustomUser(AbstractUser):
-    USER = (
-        (1, 'HOD'),
-        (2, 'STAFF'),
-        (3, 'ALUMNI'),
+
+    # USERNAME_FIELD = 'email'  # Use email for authentication
+    # REQUIRED_FIELDS = ['username']  # Keep username as required
+
+    USER_TYPE_CHOICES = (
+        ('1', 'HOD'),
+        ('2', 'STAFF'),
+        ('3', 'ALUMNI'),
+        ('4', 'STUDENT'),
     )
 
-    user_type = models.CharField(
-        choices=USER,
-        max_length=50,
-        default=1
-    )
-    profile_pic = models.ImageField(
-        upload_to='media/profile_pic'
-    )
+    email = models.EmailField(unique=True)  # Ensure email is unique
+    user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=10, default='4')
+    profile_pic = models.ImageField(upload_to='media/profile_pic', blank=True, null=True)
+
+    USERNAME_FIELD = 'email'  # Use email instead of username
+    REQUIRED_FIELDS = ['username']  # Keep username required
+
+    def __str__(self):
+        return self.email
+
+class Student(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student_profile', default=None)
+    address = models.TextField(default=None, blank=True)
+    gender = models.CharField(max_length=100)
+    passing_year = models.CharField(max_length=20, null=True, blank=True)
+    phone = models.CharField(max_length=30, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.user.username
 
 class SessionYear(models.Model):
     session_start = models.CharField(max_length=100)

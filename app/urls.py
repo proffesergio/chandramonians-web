@@ -1,10 +1,14 @@
 from django.urls import path
 from . import views
-from .views import IndexView, LoginView, DefaultView
+from .views import IndexView, LoginView, DefaultView, RegisterView
 
 urlpatterns = [
     path('', DefaultView.as_view(), name = "landing"),
     path('index', IndexView.as_view(), name = "index"),
+
+    #Register Path
+    path('register/', RegisterView.as_view(), name = "register"),
+    path('signup/', views.doRegister, name = "doRegister"),
     #Login Path
     path('login', LoginView.as_view(), name = "login"),
     path('doLogin', views.doLogin, name = "doLogin"),

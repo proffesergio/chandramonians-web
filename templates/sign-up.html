@@ -1,0 +1,63 @@
+{% extends 'student-views/baseui.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- Register -->
+
+<main class="login-body" data-vide-bg="{% static 'assets/img/login-bg.mp4' %}">
+    <!-- Register -->
+    <form class="form-default" action="{% url 'doRegister' %}" method="POST">
+        {% csrf_token %}
+        <div class="login-form">
+
+            <div class="logo-login">
+                <a href="{% url 'landing' %}">
+                    <img src="{% static 'assets/img/logo/preloader.png' %}" alt="">
+                </a>
+            </div>
+            <h2>Registration Here</h2>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password"
+                    placeholder="Confirm your password">
+            </div>
+
+            <div class="form-group dropdown-container">
+                <label for="user_type">Select Role</label>
+                <select name="user_type" id="user_type">
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="1">HOD</option>
+                    <option value="2">Staff</option>
+                    <option value="3">Alumni</option>
+                    <option value="4">Student</option>
+                </select>
+            </div>
+
+            <button class="register-btn">Register</button>
+
+
+            <a href="{% url 'login' %}" class="registration">Already have an account? Login Here</a>
+        </div>
+    </form>
+    <!-- end registration form -->
+</main>
+
+{% endblock %}
