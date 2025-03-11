@@ -1,7 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Mulish:wght@400;500;600;700&display=swap");
 
 /* Global styles */
+html p {
+    text-align: justify;
+}
 
+.courses-area .properties__caption P {
+    color: #6E7697;
+    text-align: justify;
+}
+
+.aims-texts-list ul {
+    text-align: justify;
+}
 
 /* Input fields */
 input,
@@ -3416,7 +3427,10 @@ hr {
 .about-area1 .support-wrapper .right-content1 {
     width: 40%;
     margin-right: 100px;
-    position: relative
+    position: relative;
+    background: rgb(219, 251, 255);
+    background: linear-gradient(90deg, rgba(219, 251, 255, 1) 0%, rgba(0, 195, 255, 0.288) 50%, rgba(213, 248, 255, 1) 100%);
+    border-radius: 10px;
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1600px) {
