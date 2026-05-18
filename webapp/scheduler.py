@@ -35,19 +35,20 @@ def start():
     if _scheduler is not None:
         return
 
-    _scheduler = BackgroundScheduler(timezone='Asia/Dhaka')
-    _scheduler.add_jobstore(DjangoJobStore(), 'default')
-
-    _scheduler.add_job(
-        sync_membership_payments,
-        trigger=IntervalTrigger(hours=1),
-        id='sync_membership_payments',
-        name='Sync Google Sheets → MembershipPayment',
-        replace_existing=True,
-    )
-
     try:
+        _scheduler = BackgroundScheduler(timezone='Asia/Dhaka')
+        _scheduler.add_jobstore(DjangoJobStore(), 'default')
+
+        _scheduler.add_job(
+            sync_membership_payments,
+            trigger=IntervalTrigger(hours=1),
+            id='sync_membership_payments',
+            name='Sync Google Sheets → MembershipPayment',
+            replace_existing=True,
+        )
+
         _scheduler.start()
         logger.info("Background scheduler started. Sheets sync runs every hour.")
     except Exception as e:
         logger.error(f"Scheduler failed to start: {e}")
+        _scheduler = None
