@@ -4,14 +4,14 @@
   <div class="container">
 
     <a class="navbar-brand" href="{% url 'landing' %}">
-      <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="width:36px;height:36px;border-radius:9px;object-fit:cover;margin-right:.1rem;">
+      <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="height:36px;width:auto;object-fit:contain;margin-right:.1rem;">
       <div>
-        <div style="line-height:1.1;">Chandramonians</div>
-        <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">দুলালপুর চন্দ্রমণি হাই স্কুল</div>
+        <div class="brand-shimmer" style="line-height:1.1;font-weight:800;">দি চন্দ্রমণিয়ান্স</div>
+        <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়</div>
       </div>
     </a>
 
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#pubNav" style="color:rgba(255,255,255,.8);">
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#pubNav" style="color:var(--text-muted);">
       <i class="fas fa-bars"></i>
     </button>
 
@@ -47,7 +47,7 @@
             </a>
           {% endif %}
         {% else %}
-          <a href="{% url 'login' %}" class="nav-link" style="color:rgba(255,255,255,.8);">{% trans "Sign In" %}</a>
+          <a href="{% url 'login' %}" class="nav-link">{% trans "Sign In" %}</a>
           <a href="{% url 'register' %}" class="nav-link btn-login">
             <i class="fas fa-user-plus me-1"></i> {% trans "Join Now" %}
           </a>
@@ -59,14 +59,12 @@
           <input name="next" type="hidden" value="{{ request.path }}">
           {% if current_lang == 'bn' %}
             <button type="submit" name="language" value="en"
-              style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;"
-              onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+              style="background:var(--primary-pale);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;">
               🇬🇧 EN
             </button>
           {% else %}
             <button type="submit" name="language" value="bn"
-              style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;"
-              onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+              style="background:var(--primary-pale);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;">
               🇧🇩 বাংলা
             </button>
           {% endif %}

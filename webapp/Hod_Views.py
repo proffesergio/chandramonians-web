@@ -26,7 +26,7 @@ def homeView(request):
     # Membership applications
     pending_apps = ApplyForMembership.objects.filter(status=0).count()
     approved_apps = ApplyForMembership.objects.filter(status=1).count()
-    recent_apps = ApplyForMembership.objects.select_related('alumni').order_by('-id')[:5]
+    recent_apps = ApplyForMembership.objects.select_related('alum_id__admin').order_by('-id')[:5]
 
     # Payment records (Google Sheets synced)
     life_members = MembershipPayment.objects.filter(member_type='LIFE').count()
@@ -56,7 +56,7 @@ def homeView(request):
     alumni_gender_female = Alumni.objects.filter(gender='Female').count()
 
     # Recent feedback
-    recent_feedback = AlumniFeedback.objects.order_by('-id')[:4]
+    recent_feedback = AlumniFeedback.objects.select_related('alum_id__admin').order_by('-id')[:4]
 
     context = {
         'alumni_count': alumni_count,

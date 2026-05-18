@@ -40,11 +40,11 @@
       <div class="col-md-4 col-lg-3">
         <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(26,58,110,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
           <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;font-weight:800;margin:0 auto .75rem;">
-            {{ alumni.alumni_name|first|upper }}
+            {{ alumni.admin.first_name|first|upper }}
           </div>
-          <div class="fw-700" style="font-size:.88rem;color:var(--text);">{{ alumni.alumni_name }}</div>
-          {% if alumni.batch %}
-          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem;">Batch of {{ alumni.batch }}</div>
+          <div class="fw-700" style="font-size:.88rem;color:var(--text);">{{ alumni.admin.first_name }} {{ alumni.admin.last_name }}</div>
+          {% if alumni.passing_year %}
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem;">Batch of {{ alumni.passing_year }}</div>
           {% endif %}
         </div>
       </div>

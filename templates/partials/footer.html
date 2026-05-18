@@ -5,7 +5,9 @@
 
       <!-- Brand -->
       <div class="col-lg-4 col-md-6">
-        <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="width:48px;height:48px;border-radius:12px;object-fit:cover;margin-bottom:.75rem;display:block;">
+        <div style="display:inline-block;background:#fff;border-radius:8px;padding:4px 10px;margin-bottom:.75rem;">
+          <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="height:36px;width:auto;object-fit:contain;max-width:130px;display:block;">
+        </div>
         <h5 style="color:#fff;font-weight:700;margin-bottom:.5rem;">Chandramonians</h5>
         <p style="font-size:.88rem;line-height:1.7;">
           Official alumni portal of Dulalpur Chandramoni High School. Connecting generations of students, alumni, and the school community.
@@ -63,8 +65,13 @@
       <p style="font-size:.82rem;margin:0;">
         &copy; {% now "Y" %} Chandramonians — Dulalpur Chandramoni High School Alumni Association. All rights reserved.
       </p>
-      <p style="font-size:.78rem;margin:0;opacity:.5;">
-        Built with ❤️ for DCMHS
+      <p style="font-size:.78rem;margin:0;opacity:.6;">
+        Built with <span style="color:#e9507e;">&#10084;</span> by
+        <a href="https://next-portfolio-ruby-nine.vercel.app/" target="_blank" rel="noopener"
+           style="color:var(--accent);font-weight:600;text-decoration:none;border-bottom:1px dotted rgba(233,168,0,.4);transition:.2s;"
+           onmouseover="this.style.borderBottomColor='var(--accent)'"
+           onmouseout="this.style.borderBottomColor='rgba(233,168,0,.4)'">Hossain Billal</a>
+        for Chandramonians
       </p>
     </div>
 

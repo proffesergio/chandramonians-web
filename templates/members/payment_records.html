@@ -61,7 +61,7 @@
           <i class="fas fa-sync-alt me-1" id="syncIcon"></i>Sync from Google Sheets
         </button>
       </form>
-      <a href="{% url 'export_payments_csv' %}" class="btn btn-sm" style="background:var(--success);color:#fff;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;padding:.45rem 1rem;">
+      <a href="{% url 'export_payments' %}" class="btn btn-sm" style="background:var(--success);color:#fff;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;padding:.45rem 1rem;">
         <i class="fas fa-download me-1"></i>Export CSV
       </a>
     </div>
@@ -85,7 +85,7 @@
     <li class="nav-item" role="presentation">
       <button class="nav-link fw-600" id="general-tab" data-bs-toggle="tab" data-bs-target="#generalTab" type="button" role="tab" style="font-size:.88rem;">
         <i class="fas fa-user-check me-2" style="color:var(--accent);"></i>General Members
-        <span class="badge ms-2" style="background:var(--accent);color:#1a3a6e;font-size:.7rem;">{{ general_count }}</span>
+        <span class="badge ms-2" style="background:var(--accent);color:var(--primary-dark);font-size:.7rem;">{{ general_count }}</span>
       </button>
     </li>
   </ul>
@@ -122,8 +122,6 @@
                 <span class="status-badge {{ p.status|lower }}">{{ p.get_status_display }}</span>
               </td>
             </tr>
-            {% empty %}
-            <tr><td colspan="8" class="text-center py-4 text-muted">No life members synced yet.</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -160,8 +158,6 @@
                 <span class="status-badge {{ p.status|lower }}">{{ p.get_status_display }}</span>
               </td>
             </tr>
-            {% empty %}
-            <tr><td colspan="8" class="text-center py-4 text-muted">No general members synced yet.</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -180,10 +176,22 @@ $(document).ready(function() {
   var dtConfig = {
     pageLength: 25,
     order: [[0, 'asc']],
-    language: { search: '', searchPlaceholder: 'Search members…' }
+    language: {
+      search: '',
+      searchPlaceholder: 'Search members…',
+      emptyTable: 'No members synced yet. Click "Sync from Google Sheets" above.'
+    }
   };
   $('#lifeTable').DataTable(dtConfig);
-  $('#generalTable').DataTable(dtConfig);
+
+  // Initialize generalTable only when its tab is shown (avoids hidden-tab column mismatch)
+  var generalTableInit = false;
+  $('#general-tab').on('shown.bs.tab', function() {
+    if (!generalTableInit) {
+      $('#generalTable').DataTable(dtConfig);
+      generalTableInit = true;
+    }
+  });
 });
 document.getElementById('syncIcon')?.closest('form').addEventListener('submit', function() {
   document.getElementById('syncIcon').classList.add('fa-spin');

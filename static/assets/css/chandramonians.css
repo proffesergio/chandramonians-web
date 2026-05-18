@@ -5,26 +5,26 @@
 
 /* ─── CSS Variables ─────────────────────────────────────── */
 :root {
-  --primary:          #1a3a6e;
-  --primary-dark:     #122a54;
-  --primary-light:    #2952a3;
-  --primary-pale:     #eef2fb;
-  --accent:           #e9a800;
-  --accent-dark:      #c78f00;
-  --accent-pale:      #fff8e1;
+  --primary:          #1e40af;
+  --primary-dark:     #1e3a8a;
+  --primary-light:    #3b82f6;
+  --primary-pale:     #eff6ff;
+  --accent:           #f59e0b;
+  --accent-dark:      #d97706;
+  --accent-pale:      #fffbeb;
   --success:          #16a34a;
   --danger:           #dc2626;
   --warning:          #d97706;
-  --bg:               #f4f6fb;
+  --bg:               #f8fafc;
   --card-bg:          #ffffff;
   --border:           #e2e8f0;
   --text:             #1e293b;
   --text-muted:       #64748b;
   --radius:           14px;
   --radius-sm:        8px;
-  --shadow:           0 2px 12px rgba(30,58,110,.08);
-  --shadow-md:        0 8px 30px rgba(30,58,110,.12);
-  --shadow-lg:        0 20px 60px rgba(30,58,110,.18);
+  --shadow:           0 2px 12px rgba(0,0,0,.06);
+  --shadow-md:        0 8px 30px rgba(0,0,0,.10);
+  --shadow-lg:        0 20px 60px rgba(0,0,0,.15);
   --transition:       all .22s ease;
 }
 
@@ -56,18 +56,19 @@ img { max-width: 100%; }
 
 /* ─── Public Navigation ──────────────────────────────────── */
 .pub-nav {
-  background: rgba(26,58,110,.97);
+  background: rgba(255,255,255,.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: .6rem 0;
   position: sticky;
   top: 0;
   z-index: 1030;
-  box-shadow: 0 2px 20px rgba(0,0,0,.15);
+  border-bottom: 1.5px solid var(--border);
+  box-shadow: 0 1px 16px rgba(0,0,0,.06);
 }
 .pub-nav .navbar-brand {
   display: flex; align-items: center; gap: .75rem;
-  font-weight: 700; font-size: 1.15rem; color: #fff !important;
+  font-weight: 700; font-size: 1.15rem; color: var(--text) !important;
 }
 .pub-nav .navbar-brand .brand-icon {
   width: 42px; height: 42px; border-radius: 50%;
@@ -76,23 +77,47 @@ img { max-width: 100%; }
   font-size: 1.1rem; color: var(--primary-dark); font-weight: 900;
 }
 .pub-nav .nav-link {
-  color: rgba(255,255,255,.85) !important;
+  color: var(--text-muted) !important;
   font-weight: 500; font-size: .9rem;
   padding: .45rem .85rem !important;
   border-radius: var(--radius-sm);
   transition: var(--transition);
 }
 .pub-nav .nav-link:hover,
-.pub-nav .nav-link.active { color: #fff !important; background: rgba(255,255,255,.12); }
+.pub-nav .nav-link.active { color: var(--primary) !important; background: var(--primary-pale); }
 .pub-nav .btn-login {
-  background: var(--accent); color: var(--primary-dark) !important;
+  background: var(--primary); color: #fff !important;
   font-weight: 700; border-radius: 50px; padding: .45rem 1.2rem !important;
 }
-.pub-nav .btn-login:hover { background: var(--accent-dark); }
+.pub-nav .btn-login:hover { background: var(--primary-light); transform: translateY(-1px); }
+
+/* ─── Brand name shimmer sweep ───────────────────────────── */
+.brand-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--text)   0%,
+    var(--text)   15%,
+    var(--accent) 38%,
+    #fffbeb       50%,
+    var(--accent) 62%,
+    var(--text)   85%,
+    var(--text)   100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandShimmer 4s ease-in-out infinite;
+}
+@keyframes brandShimmer {
+  0%   { background-position: -100% center; }
+  45%  { background-position: 260% center; }
+  100% { background-position: 260% center; }
+}
 
 /* ─── Hero Section ───────────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
   color: #fff; min-height: 92vh;
   display: flex; align-items: center;
   position: relative; overflow: hidden;

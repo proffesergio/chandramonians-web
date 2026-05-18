@@ -30,6 +30,9 @@ def _get_credentials():
     creds_b64 = settings.GOOGLE_CREDS_JSON
     if not creds_b64:
         raise ValueError("GOOGLE_CREDS_JSON environment variable is not set.")
+    # Strip whitespace/newlines and fix missing base64 padding
+    creds_b64 = ''.join(creds_b64.split())
+    creds_b64 += '=' * (-len(creds_b64) % 4)
     creds_json = base64.b64decode(creds_b64).decode('utf-8')
     return json.loads(creds_json)
 

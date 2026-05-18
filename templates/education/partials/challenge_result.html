@@ -7,7 +7,7 @@
       {% if xp_earned > 10 %}
       <div class="d-flex gap-2 flex-wrap mt-2">
         <span class="xp-award"><i class="fas fa-star me-1"></i>+10 XP</span>
-        <span class="xp-award" style="background:var(--accent);color:#1a3a6e;"><i class="fas fa-fire me-1"></i>+{{ xp_earned|add:"-10" }} Streak Bonus!</span>
+        <span class="xp-award" style="background:var(--accent);color:var(--primary-dark);"><i class="fas fa-fire me-1"></i>+{{ xp_earned|add:"-10" }} Streak Bonus!</span>
       </div>
       {% else %}
       <span class="xp-award mt-2 d-inline-block"><i class="fas fa-star me-1"></i>+{{ xp_earned }} XP earned</span>

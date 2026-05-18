@@ -49,11 +49,11 @@
     <div class="card-custom p-4 h-100">
       <div class="d-flex gap-3 align-items-start">
         <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;font-weight:800;flex-shrink:0;">
-          {{ alumni.alumni_name|first|upper }}
+          {{ alumni.admin.first_name|first|upper }}
         </div>
         <div class="flex-grow-1 overflow-hidden">
           <div class="fw-700" style="font-size:.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-            {{ alumni.alumni_name }}
+            {{ alumni.admin.first_name }} {{ alumni.admin.last_name }}
           </div>
           {% if alumni.profession %}
           <div style="font-size:.78rem;color:var(--text-muted);margin-top:.1rem;">

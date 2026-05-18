@@ -26,21 +26,18 @@
         <div class="d-flex flex-wrap gap-3">
           {% if not user.is_authenticated %}
           <a href="{% url 'register' %}" class="btn-hero-primary">
-            <i class="fas fa-user-plus me-2"></i>{% trans "Join the Community"
-            %}
+            <i class="fas fa-user-plus me-2"></i>{% trans "Join the Community" %}
           </a>
           <a href="{% url 'about' %}" class="btn-hero-outline">
             {% trans "Our Story" %} <i class="fas fa-arrow-right ms-2"></i>
           </a>
           {% else %}{% if user.user_type == '4' %}
           <a href="{% url 'edu_home' %}" class="btn-hero-primary">
-            <i class="fas fa-graduation-cap me-2"></i>{% trans "Go to Study Hub"
-            %}
+            <i class="fas fa-graduation-cap me-2"></i>{% trans "Go to Study Hub" %}
           </a>
           {% elif user.user_type == '3' %}
           <a href="{% url 'alumni_home' %}" class="btn-hero-primary">
-            <i class="fas fa-user-graduate me-2"></i>{% trans "My Alumni Portal"
-            %}
+            <i class="fas fa-user-graduate me-2"></i>{% trans "My Alumni Portal" %}
           </a>
           {% else %}
           <a href="{% url 'hod_home' %}" class="btn-hero-primary">
@@ -294,8 +291,6 @@
       </div>
       <div class="col-lg-6">
         <div class="row g-3">
-          {% for item in "education,community,legacy,transparency"|split:","
-          %}{% endfor %}
           <div class="col-6">
             <div
               class="p-3 rounded-3"
@@ -462,7 +457,7 @@
         <div
           class="text-center p-4 rounded-4 h-100"
           style="
-            background: linear-gradient(135deg, #1a3a6e, #2952a3);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: #fff;
             box-shadow: var(--shadow-md);
           "
@@ -503,7 +498,7 @@
         <div
           class="text-center p-4 rounded-4 h-100"
           style="
-            background: linear-gradient(135deg, #e9a800, #c78f00);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             color: var(--primary-dark);
             box-shadow: var(--shadow-md);
           "
