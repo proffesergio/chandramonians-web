@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from django.db.models import Sum, Q
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
-from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember
+from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember, MembershipPayment
 
 
 def health_check_view(request):
@@ -17,12 +18,30 @@ def home_view(request):
     alumni_count = Alumni.objects.count()
     committee = CommitteeMember.objects.all()[:6]
 
+    life_count = MembershipPayment.objects.filter(member_type='LIFE').count()
+    general_count = MembershipPayment.objects.filter(member_type='GENERAL').count()
+    total_raised = MembershipPayment.objects.filter(status='PAID').aggregate(
+        total=Sum('amount')
+    )['total'] or 0
+    last_sync = MembershipPayment.objects.order_by('-last_synced_at').values_list(
+        'last_synced_at', flat=True
+    ).first()
+    featured_members = MembershipPayment.objects.filter(
+        status='PAID'
+    ).order_by('member_name')[:18]
+
     context = {
         'news': news,
         'events': events,
         'gallery': gallery,
         'alumni_count': alumni_count,
         'committee': committee,
+        'life_count': life_count,
+        'general_count': general_count,
+        'total_members': life_count + general_count,
+        'total_raised': total_raised,
+        'last_sync': last_sync,
+        'featured_members': featured_members,
     }
     return render(request, 'public/home.html', context)
 
@@ -111,4 +130,44 @@ def alumni_public_directory_view(request):
         'alumni': alumni,
         'batch_years': batch_years,
         'active_batch': batch,
+    })
+
+
+def public_members_view(request):
+    """Public: full membership list from Google Sheets — name, batch, type, status."""
+    member_type = request.GET.get('type', '')
+    batch = request.GET.get('batch', '')
+    status = request.GET.get('status', '')
+    search = request.GET.get('q', '')
+
+    qs = MembershipPayment.objects.all()
+    if member_type:
+        qs = qs.filter(member_type=member_type)
+    if batch:
+        qs = qs.filter(batch_year=batch)
+    if status:
+        qs = qs.filter(status=status)
+    if search:
+        qs = qs.filter(member_name__icontains=search)
+
+    batch_years = MembershipPayment.objects.values_list(
+        'batch_year', flat=True
+    ).distinct().exclude(batch_year='').order_by('batch_year')
+    life_count = MembershipPayment.objects.filter(member_type='LIFE').count()
+    general_count = MembershipPayment.objects.filter(member_type='GENERAL').count()
+    last_sync = MembershipPayment.objects.order_by('-last_synced_at').values_list(
+        'last_synced_at', flat=True
+    ).first()
+
+    return render(request, 'public/members.html', {
+        'members': qs,
+        'batch_years': batch_years,
+        'life_count': life_count,
+        'general_count': general_count,
+        'total': life_count + general_count,
+        'last_sync': last_sync,
+        'filter_type': member_type,
+        'filter_batch': batch,
+        'filter_status': status,
+        'search': search,
     })

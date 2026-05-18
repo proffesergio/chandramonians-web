@@ -21,6 +21,7 @@ urlpatterns = [
     path('gallery/', Public_Views.gallery_view, name='gallery'),
     path('contact/', Public_Views.contact_view, name='contact'),
     path('directory/', Public_Views.alumni_public_directory_view, name='public_directory'),
+    path('members/', Public_Views.public_members_view, name='public_members'),
 
     # ── HOD Panel ─────────────────────────────────────────────────────────────
     path('hod/home', Hod_Views.homeView, name='hod_home'),

@@ -4,7 +4,7 @@
   <div class="container">
 
     <a class="navbar-brand" href="{% url 'landing' %}">
-      <img src="{% static 'assets/img/chandramonians.png' %}" alt="Chandramonians" style="width:36px;height:36px;border-radius:9px;object-fit:cover;margin-right:.1rem;">
+      <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="width:36px;height:36px;border-radius:9px;object-fit:cover;margin-right:.1rem;">
       <div>
         <div style="line-height:1.1;">Chandramonians</div>
         <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">দুলালপুর চন্দ্রমণি হাই স্কুল</div>
@@ -23,6 +23,7 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">{% trans "Events" %}</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">{% trans "Gallery" %}</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'public_directory' %}">{% trans "Alumni" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'public_members' %}">{% trans "Members" %}</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
       </ul>
 

@@ -1,0 +1,173 @@
+{% extends 'public_base.html' %}
+{% load static i18n %}
+
+{% block title %}Member Directory — Chandramonians{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div style="background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary-light) 100%);color:#fff;padding:3rem 0 2.5rem;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="hero-badge mb-3" style="font-size:.72rem;">Association Members</div>
+        <h1 class="fw-800 mb-2" style="font-size:clamp(1.8rem,4vw,2.6rem);">Member Directory</h1>
+        <p style="opacity:.8;max-width:520px;line-height:1.7;">
+          Our complete membership list — synced automatically from the Chandramonians Association Google Sheet.
+          {% if last_sync %}<br><small style="opacity:.65;font-size:.78rem;"><i class="fas fa-sync-alt me-1"></i>Last synced {{ last_sync|timesince }} ago</small>{% endif %}
+        </p>
+      </div>
+      <div class="col-lg-4 d-none d-lg-block text-end">
+        <div class="d-flex gap-3 justify-content-end">
+          <div class="text-center p-3 rounded-3" style="background:rgba(255,255,255,.1);">
+            <div style="font-size:1.8rem;font-weight:900;">{{ life_count }}</div>
+            <div style="font-size:.75rem;opacity:.7;"><i class="fas fa-star me-1"></i>Life Members</div>
+          </div>
+          <div class="text-center p-3 rounded-3" style="background:rgba(255,255,255,.1);">
+            <div style="font-size:1.8rem;font-weight:900;">{{ general_count }}</div>
+            <div style="font-size:.75rem;opacity:.7;"><i class="fas fa-users me-1"></i>General Members</div>
+          </div>
+          <div class="text-center p-3 rounded-3" style="background:rgba(255,255,255,.1);">
+            <div style="font-size:1.8rem;font-weight:900;">{{ total }}</div>
+            <div style="font-size:.75rem;opacity:.7;"><i class="fas fa-id-card me-1"></i>Total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Filters -->
+    <form method="get" class="row g-3 mb-4 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label fw-600" style="font-size:.82rem;">Search by name</label>
+        <div class="input-group">
+          <span class="input-group-text" style="border-right:0;background:#fff;"><i class="fas fa-search text-muted" style="font-size:.8rem;"></i></span>
+          <input type="text" name="q" class="form-control" value="{{ search }}" placeholder="Enter member name..." style="border-left:0;">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-600" style="font-size:.82rem;">Member Type</label>
+        <select name="type" class="form-select">
+          <option value="">All Types</option>
+          <option value="LIFE" {% if filter_type == 'LIFE' %}selected{% endif %}>⭐ Life Members</option>
+          <option value="GENERAL" {% if filter_type == 'GENERAL' %}selected{% endif %}>General Members</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-600" style="font-size:.82rem;">Batch Year</label>
+        <select name="batch" class="form-select">
+          <option value="">All Batches</option>
+          {% for yr in batch_years %}<option value="{{ yr }}" {% if filter_batch == yr %}selected{% endif %}>{{ yr }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-600" style="font-size:.82rem;">Status</label>
+        <select name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="PAID" {% if filter_status == 'PAID' %}selected{% endif %}>✅ Paid</option>
+          <option value="PENDING" {% if filter_status == 'PENDING' %}selected{% endif %}>⏳ Pending</option>
+          <option value="PARTIAL" {% if filter_status == 'PARTIAL' %}selected{% endif %}>🔸 Partial</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn fw-600 flex-grow-1" style="background:var(--primary);color:#fff;border-radius:var(--radius-sm);">Filter</button>
+        <a href="{% url 'public_members' %}" class="btn btn-outline-secondary" style="border-radius:var(--radius-sm);" title="Clear filters"><i class="fas fa-times"></i></a>
+      </div>
+    </form>
+
+    <!-- Results count -->
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+      <div style="font-size:.85rem;color:var(--text-muted);">
+        Showing <strong style="color:var(--text);">{{ members|length }}</strong> member{{ members|length|pluralize }}
+        {% if search or filter_type or filter_batch or filter_status %} matching your filters{% endif %}
+      </div>
+      {% if search or filter_type or filter_batch or filter_status %}
+      <a href="{% url 'public_members' %}" style="font-size:.82rem;color:var(--primary-light);"><i class="fas fa-times me-1"></i>Clear all filters</a>
+      {% endif %}
+    </div>
+
+    {% if members %}
+    <!-- Members Table -->
+    <div class="rounded-4 overflow-hidden" style="box-shadow:var(--shadow);border:1px solid var(--border);">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0" style="font-size:.88rem;">
+          <thead style="background:var(--primary);color:#fff;">
+            <tr>
+              <th class="px-4 py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">#</th>
+              <th class="py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">Name</th>
+              <th class="py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">Batch</th>
+              <th class="py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">Type</th>
+              <th class="py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">Payment</th>
+              <th class="py-3" style="font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in members %}
+            <tr style="border-bottom:1px solid var(--border);">
+              <td class="px-4 py-3" style="color:var(--text-muted);">{{ forloop.counter }}</td>
+              <td class="py-3 fw-600">
+                {{ m.member_name }}
+                {% if m.member_type == 'LIFE' %}<i class="fas fa-star ms-1" style="color:var(--accent);font-size:.7rem;" title="Life Member"></i>{% endif %}
+              </td>
+              <td class="py-3" style="color:var(--text-muted);">
+                {% if m.batch_year %}{{ m.batch_year }}{% else %}<span style="opacity:.4;">—</span>{% endif %}
+              </td>
+              <td class="py-3">
+                {% if m.member_type == 'LIFE' %}
+                <span class="badge rounded-pill py-1 px-2" style="background:var(--accent-pale);color:var(--accent-dark);font-size:.72rem;font-weight:700;">⭐ Life</span>
+                {% else %}
+                <span class="badge rounded-pill py-1 px-2" style="background:var(--primary-pale);color:var(--primary);font-size:.72rem;font-weight:700;">General</span>
+                {% endif %}
+              </td>
+              <td class="py-3" style="color:var(--text-muted);">
+                {% if m.payment_date %}{{ m.payment_date|date:"M Y" }}{% else %}<span style="opacity:.4;">—</span>{% endif %}
+                {% if m.amount %}<br><small style="color:var(--text-muted);">৳{{ m.amount|floatformat:0 }}</small>{% endif %}
+              </td>
+              <td class="py-3">
+                {% if m.status == 'PAID' %}
+                <span class="badge rounded-pill py-1 px-2" style="background:#dcfce7;color:#15803d;font-size:.72rem;font-weight:700;">✅ Paid</span>
+                {% elif m.status == 'PARTIAL' %}
+                <span class="badge rounded-pill py-1 px-2" style="background:#fef3c7;color:#d97706;font-size:.72rem;font-weight:700;">🔸 Partial</span>
+                {% else %}
+                <span class="badge rounded-pill py-1 px-2" style="background:#fee2e2;color:#dc2626;font-size:.72rem;font-weight:700;">⏳ Pending</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- Empty state -->
+    <div class="text-center py-5">
+      <i class="fas fa-search fa-3x mb-3" style="color:var(--text-muted);opacity:.3;"></i>
+      <h5 style="color:var(--text-muted);">No members found</h5>
+      <p style="color:var(--text-muted);font-size:.88rem;">
+        {% if search or filter_type or filter_batch or filter_status %}
+          Try adjusting your filters or <a href="{% url 'public_members' %}">clear all filters</a>.
+        {% else %}
+          Member data will appear here once the Google Sheet sync is configured.
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- Sync note -->
+    <div class="mt-4 p-3 rounded-3 d-flex align-items-center gap-3" style="background:var(--primary-pale);border:1px solid var(--border);">
+      <i class="fas fa-info-circle" style="color:var(--primary-light);font-size:1.2rem;flex-shrink:0;"></i>
+      <p style="margin:0;font-size:.82rem;color:var(--text-muted);">
+        This data is synced hourly from the Chandramonians Association Google Sheet. If you believe your membership information is incorrect, please <a href="{% url 'contact' %}">contact us</a>.
+        {% if last_sync %} Data was last updated {{ last_sync|timesince }} ago.{% endif %}
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
