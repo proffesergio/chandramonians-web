@@ -1,63 +1,266 @@
-{% extends 'student-views/baseui.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Chandramonians</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'assets/css/chandramonians.css' %}">
+  <style>
+    body { background: var(--bg); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    .auth-split { min-height: 100vh; display: flex; }
+    .auth-brand { background: linear-gradient(135deg, var(--primary) 0%, #1e4a8a 60%, var(--primary-light) 100%); color: #fff; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+    .auth-brand::before { content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px; background: rgba(255,255,255,.06); border-radius: 50%; }
+    .auth-brand::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 200px; height: 200px; background: rgba(255,255,255,.05); border-radius: 50%; }
+    .auth-form-side { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 2rem; }
+    .auth-card { width: 100%; max-width: 480px; }
+    .auth-input { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: .75rem 1rem .75rem 2.75rem; font-size: .9rem; width: 100%; background: var(--bg); transition: var(--transition); outline: none; }
+    .auth-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(26,58,110,.08); }
+    .auth-input.no-icon { padding-left: 1rem; }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: .85rem; }
+    .auth-btn { width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; border: none; border-radius: var(--radius-sm); padding: .85rem; font-size: .95rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
+    .auth-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,110,.3); }
+    .role-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: .85rem 1rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: .75rem; }
+    .role-card:hover { border-color: var(--primary-light); background: var(--primary-pale); }
+    .role-card input[type=radio] { display: none; }
+    .role-card.selected { border-color: var(--primary); background: var(--primary-pale); }
+    .role-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .strength-bar { height: 4px; border-radius: 2px; background: var(--border); margin-top: .4rem; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; transition: width .3s, background .3s; width: 0; }
+  </style>
+</head>
+<body>
 
-{% load static %}
+<div class="auth-split w-100">
 
-{% block content %}
-
-<!-- Register -->
-
-<main class="login-body" data-vide-bg="{% static 'assets/img/login-bg.mp4' %}">
-    <!-- Register -->
-    <form class="form-default" action="{% url 'doRegister' %}" method="POST">
-        {% csrf_token %}
-        <div class="login-form">
-
-            <div class="logo-login">
-                <a href="{% url 'landing' %}">
-                    <img src="{% static 'assets/img/logo/preloader.png' %}" alt="">
-                </a>
-            </div>
-            <h2>Registration Here</h2>
-
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username">
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password">
-            </div>
-
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password"
-                    placeholder="Confirm your password">
-            </div>
-
-            <div class="form-group dropdown-container">
-                <label for="user_type">Select Role</label>
-                <select name="user_type" id="user_type">
-                    <option value="" disabled selected>Select Role</option>
-                    <option value="1">HOD</option>
-                    <option value="2">Staff</option>
-                    <option value="3">Alumni</option>
-                    <option value="4">Student</option>
-                </select>
-            </div>
-
-            <button class="register-btn">Register</button>
-
-
-            <a href="{% url 'login' %}" class="registration">Already have an account? Login Here</a>
+  <!-- Brand Side (hidden on mobile) -->
+  <div class="col-lg-5 d-none d-lg-flex auth-brand" style="flex-direction:column;justify-content:center;">
+    <div style="position:relative;z-index:1;">
+      <a href="/" style="text-decoration:none;color:#fff;">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:2.5rem;">
+          <div style="width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🎓</div>
+          <span style="font-size:1rem;font-weight:800;">Chandramonians</span>
         </div>
-    </form>
-    <!-- end registration form -->
-</main>
+      </a>
+      <div style="display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:.35rem 1rem;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem;">Join the Community</div>
+      <h2 style="font-size:2rem;font-weight:900;line-height:1.2;margin-bottom:1rem;">One account.<br>All of DCMHS.</h2>
+      <p style="opacity:.8;font-size:.9rem;line-height:1.7;max-width:300px;">Students access AI tutoring, challenges, and study resources. Alumni connect, network, and give back.</p>
 
-{% endblock %}
+      <div style="margin-top:2rem;display:flex;flex-direction:column;gap:.75rem;">
+        {% load static %}
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.85rem;opacity:.9;">
+          <div style="width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">👨‍🎓</div>
+          <div><strong>Students</strong> — Study hub, AI tutor, daily XP</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.85rem;opacity:.9;">
+          <div style="width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">🏛️</div>
+          <div><strong>Alumni</strong> — Network, payments, mentorship</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.85rem;opacity:.9;">
+          <div style="width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">👨‍🏫</div>
+          <div><strong>Staff</strong> — Content management, notifications</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Side -->
+  <div class="col-lg-7 col-12 auth-form-side" style="background:#fff;overflow-y:auto;">
+    <div class="auth-card py-4">
+
+      <!-- Mobile logo -->
+      <div class="d-lg-none text-center mb-4">
+        <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.4rem;">🎓</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--primary);">Chandramonians</div>
+      </div>
+
+      <h3 style="font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:.4rem;">Create your account</h3>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.75rem;">Join the DCMHS community today</p>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div style="background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.85rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;">
+        <i class="fas fa-exclamation-circle"></i> {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <form action="{% url 'doRegister' %}" method="POST" id="registerForm">
+        {% csrf_token %}
+
+        <!-- Role Selection -->
+        <div class="mb-4">
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.75rem;display:block;">I am a…</label>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="role-card" for="role_student" id="label_4">
+                <input type="radio" name="user_type" id="role_student" value="4" required>
+                <div class="role-icon" style="background:#eff6ff;">📚</div>
+                <div>
+                  <div style="font-size:.85rem;font-weight:700;">Student</div>
+                  <div style="font-size:.72rem;color:var(--text-muted);">DCMHS current</div>
+                </div>
+              </label>
+            </div>
+            <div class="col-6">
+              <label class="role-card" for="role_alumni" id="label_3">
+                <input type="radio" name="user_type" id="role_alumni" value="3">
+                <div class="role-icon" style="background:#f0fdf4;">🏛️</div>
+                <div>
+                  <div style="font-size:.85rem;font-weight:700;">Alumni</div>
+                  <div style="font-size:.72rem;color:var(--text-muted);">Graduate</div>
+                </div>
+              </label>
+            </div>
+            <div class="col-6">
+              <label class="role-card" for="role_staff" id="label_2">
+                <input type="radio" name="user_type" id="role_staff" value="2">
+                <div class="role-icon" style="background:#fff7ed;">👨‍🏫</div>
+                <div>
+                  <div style="font-size:.85rem;font-weight:700;">Staff</div>
+                  <div style="font-size:.72rem;color:var(--text-muted);">Teacher/Staff</div>
+                </div>
+              </label>
+            </div>
+            <div class="col-6">
+              <label class="role-card" for="role_hod" id="label_1">
+                <input type="radio" name="user_type" id="role_hod" value="1">
+                <div class="role-icon" style="background:#fdf4ff;">👔</div>
+                <div>
+                  <div style="font-size:.85rem;font-weight:700;">HOD</div>
+                  <div style="font-size:.72rem;color:var(--text-muted);">Head of Dept.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Name Row -->
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">First Name</label>
+            <div class="input-wrap">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" name="first_name" class="auth-input" placeholder="First name" required>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Last Name</label>
+            <input type="text" name="last_name" class="auth-input no-icon" placeholder="Last name" style="padding-left:1rem;" required>
+          </div>
+        </div>
+
+        <!-- Username & Email -->
+        <div class="mb-3">
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Username</label>
+          <div class="input-wrap">
+            <i class="fas fa-at input-icon"></i>
+            <input type="text" name="username" class="auth-input" placeholder="Choose a username" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Email Address</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" name="email" class="auth-input" placeholder="your@email.com" required>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-1">
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" name="password" id="pwdInput" class="auth-input" placeholder="Create a strong password" required oninput="checkStrength(this.value)">
+            <button type="button" onclick="togglePwd('pwdInput','eye1')" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;">
+              <i class="fas fa-eye" id="eye1"></i>
+            </button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <div style="font-size:.72rem;color:var(--text-muted);margin-top:.3rem;" id="strengthText"></div>
+        </div>
+        <div class="mb-4 mt-3">
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Confirm Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" name="confirm_password" id="cpwdInput" class="auth-input" placeholder="Repeat your password" required>
+            <button type="button" onclick="togglePwd('cpwdInput','eye2')" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;">
+              <i class="fas fa-eye" id="eye2"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-btn">
+          <i class="fas fa-user-plus me-2"></i>Create Account
+        </button>
+      </form>
+
+      <div style="display:flex;align-items:center;gap:.75rem;color:var(--text-muted);font-size:.78rem;margin:1.25rem 0;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>or<div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <div class="text-center" style="font-size:.88rem;color:var(--text-muted);">
+        Already have an account?
+        <a href="{% url 'login' %}" style="color:var(--primary);font-weight:700;text-decoration:none;"> Sign in</a>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="/" style="font-size:.78rem;color:var(--text-muted);text-decoration:none;">
+          <i class="fas fa-arrow-left me-1"></i>Back to main site
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Role card selection
+document.querySelectorAll('.role-card input[type=radio]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    this.closest('.role-card').classList.add('selected');
+  });
+});
+
+function togglePwd(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+
+function checkStrength(val) {
+  const fill = document.getElementById('strengthFill');
+  const text = document.getElementById('strengthText');
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { w: '0%', bg: '', label: '' },
+    { w: '25%', bg: '#ef4444', label: 'Weak' },
+    { w: '50%', bg: '#f59e0b', label: 'Fair' },
+    { w: '75%', bg: '#3b82f6', label: 'Good' },
+    { w: '100%', bg: '#22c55e', label: 'Strong' },
+  ];
+  const l = levels[score];
+  fill.style.width = l.w;
+  fill.style.background = l.bg;
+  text.textContent = l.label ? 'Password strength: ' + l.label : '';
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

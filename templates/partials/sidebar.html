@@ -1,432 +1,158 @@
 {% load static %}
-{% load  active_link_tags %}
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-inner slimscroll">
-        <div id="sidebar-menu" class="sidebar-menu">
-            {#        Admin Sidebar View#}
-            {% if user.user_type == '1' %}
-                <ul>
-                    <li class="menu-title">
-                        <span>Main Menu</span>
-                    </li>
-                    <li class="submenu active">
-                    <li class="{% active_link 'hod_home' 'active' %}">
-                        <a href="{% url 'hod_home' %}"><i class="fas fa-hotel"></i> <span>Dashboard</span></a>
-                    </li>
-                    <li class="submenu active">
-                    <li class="{% active_link 'membership_applications' 'active' %}">
-                        <a href="{% url 'membership_applications' %}"><i class="fas fa-flag-checkered"></i> <span>Membership Applications</span></a>
-                    </li>
-                    </li>
+<div class="dash-sidebar" id="dashSidebar">
 
-                    <li>
-                        <a href="{% url 'alum_feedback' %}"><i class="fas fa-clipboard-list"></i> <span>Alumni Feedbacks</span></a>
-                    </li>
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">C</div>
+    <span>Chandramonians<br><small style="font-weight:400;opacity:.6;font-size:.7rem;">DCMHS Portal</small></span>
+  </div>
 
-                    <li class="submenu {% active_link 'add_staff' 'active' %} {% active_link 'view_staff' 'active' %}">
-                        <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Staff</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li class="{% active_link 'view_staff' 'active' %}"><a href="{% url 'view_staff' %}"><i
-                                    class="fas fa-list-ol"></i> <span> View Staff</span></a></li>
-                            <li class="{% active_link 'add_staff' 'active' %}"><a href="{% url 'add_staff' %}"><i
-                                    class="fas fa-user-plus"></i> <span> Add Staff</span></a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu
-                                    {% active_link 'notifications' 'active' %} {% active_link 'notify_staff' 'active' %}
-                                    {% active_link 'notify_staff' 'active' %}
-                                    ">
-                        <a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> <span> Notifications</span>
-                            <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'notifications' %}">View All Notifications</a></li>
-                            <li><a href="{% url 'notify_staff' %}">Notify Staff</a></li>
-                            <li><a href="{% url 'notify_staff' %}">Update Notification</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-calendar-check"></i> <span> Events</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="subjects.html">Notice Board</a></li>
-                            <li><a href="add-subject.html">Current Event</a></li>
-                            <li><a href="edit-subject.html">Upcoming Event</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-title">
-                        <span>Profile Management</span>
-                    </li>
-                    <li class="submenu
-                            {% active_link 'add_alumni' 'active' %}{% active_link 'view_alumni' 'active' %} ">
-                        <a href="#"><i class="fas fa-user-graduate"></i> <span> Alumni Panel</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li class="{% active_link 'view_alumni' 'active' %}"><a href="{% url 'view_alumni' %}"><i
-                                    class="fas fa-list-ul"></i> <span> View Alumni List</span></a></li>
-                            <li class="{% active_link 'add_alumni' 'active' %}"><a href="{% url 'add_alumni' %}"><i
-                                    class="fas fa-plus-square"></i> <span> Add Alumni</span></a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="fees-collections.html">Fees Collection</a></li>
-                            <li><a href="expenses.html">Expenses</a></li>
-                            <li><a href="salary.html">Collections</a></li>
-                            <li><a href="add-fees-collection.html">Add Fees</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="holiday.html"><i class="fas fa-holly-berry"></i> <span>Daily Notice</span></a>
-                    </li>
-                    <li>
-                        <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
-                    </li>
-                    {% comment %}<li class="menu-title">
-                        <span>Management</span>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="fees-collections.html">Fees Collection</a></li>
-                           <li><a href="expenses.html">Expenses</a></li>
-                           <li><a href="salary.html">Salary</a></li>
-                           <li><a href="add-fees-collection.html">Add Fees</a></li>
-                           <li><a href="add-expenses.html">Add Expenses</a></li>
-                           <li><a href="add-salary.html">Add Salary</a></li>
-                        </ul>
-                     </li>
-                     <li>
-                        <a href="holiday.html"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
-                     </li>
-                     <li>
-                        <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
-                     </li>
-                     <li>
-                        <a href="exam.html"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
-                     </li>
-                     <li>
-                        <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
-                     </li>
-                     <li>
-                        <a href="time-table.html"><i class="fas fa-table"></i> <span>Time Table</span></a>
-                     </li>
-                     <li>
-                        <a href="library.html"><i class="fas fa-book"></i> <span>Library</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>Pages</span>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-shield-alt"></i> <span> Authentication </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="login.html">Login</a></li>
-                           <li><a href="register.html">Register</a></li>
-                           <li><a href="forgot-password.html">Forgot Password</a></li>
-                           <li><a href="error-404.html">Error Page</a></li>
-                        </ul>
-                     </li>
-                     <li>
-                        <a href="blank-page.html"><i class="fas fa-file"></i> <span>Blank Page</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>Others</span>
-                     </li>
-                     <li>
-                        <a href="sports.html"><i class="fas fa-baseball-ball"></i> <span>Sports</span></a>
-                     </li>
-                     <li>
-                        <a href="hostel.html"><i class="fas fa-hotel"></i> <span>Hostel</span></a>
-                     </li>
-                     <li>
-                        <a href="transport.html"><i class="fas fa-bus"></i> <span>Transport</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>UI Interface</span>
-                     </li>
-                     <li>
-                        <a href="components.html"><i class="fas fa-vector-square"></i> <span>Components</span></a>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-columns"></i> <span> Forms </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="form-basic-inputs.html">Basic Inputs </a></li>
-                           <li><a href="form-input-groups.html">Input Groups </a></li>
-                           <li><a href="form-horizontal.html">Horizontal Form </a></li>
-                           <li><a href="form-vertical.html"> Vertical Form </a></li>
-                           <li><a href="form-mask.html"> Form Mask </a></li>
-                           <li><a href="form-validation.html"> Form Validation </a></li>
-                        </ul>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-table"></i> <span> Tables </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="tables-basic.html">Basic Tables </a></li>
-                           <li><a href="data-tables.html">Data Table </a></li>
-                        </ul>
-                     </li>
-                     <li class="submenu">
-                        <a href="javascript:void(0);"><i class="fas fa-code"></i> <span>Multi Level</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li class="submenu">
-                              <a href="javascript:void(0);"> <span>Level 1</span> <span class="menu-arrow"></span></a>
-                              <ul>
-                                 <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                 <li class="submenu">
-                                    <a href="javascript:void(0);"> <span> Level 2</span> <span class="menu-arrow"></span></a>
-                                    <ul>
-                                       <li><a href="javascript:void(0);">Level 3</a></li>
-                                       <li><a href="javascript:void(0);">Level 3</a></li>
-                                    </ul>
-                                 </li>
-                                 <li><a href="javascript:void(0);"> <span>Level 2</span></a></li>
-                              </ul>
-                           </li>
-                           <li>
-                              <a href="javascript:void(0);"> <span>Level 1</span></a>
-                           </li>
-                        </ul>
-                     </li>{% endcomment %}
-                </ul>
+  <!-- Navigation -->
+  <nav>
 
-                {#                Staff Sidebar View#}
-            {% elif user.user_type == '2' %}
-                <ul>
-                    <li class="menu-title">
-                        <span>Main Menu</span>
-                    </li>
-                    <li class="submenu active">
-                    <li class="{% active_link 'hod_home' 'active' %}">
-                        <a href="{% url 'staff_home' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
-                    </li>
-                    </li>
-                    <li class="submenu {% active_link 'add_alumni' 'active' %} {% active_link 'view_alumni' 'active' %}">
-                        <a href="#"><i class="fas fa-user-graduate"></i> <span> Alumni</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'add_alumni' %}">Add Alumni</a></li>
-                            <li><a href="{% url 'view_alumni' %}">View Alumni List</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu {% active_link 'add_staff' 'active' %} {% active_link 'view_staff' 'active' %}">
-                        <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Staff</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'view_staff' %}">View Staff</a></li>
-                            <li><a href="{% url 'add_staff' %}">Add Staff</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu
-                                    {% active_link 'notifications' 'active' %} {% active_link 'notify_staff' 'active' %}
-                                    {% active_link 'notify_staff' 'active' %}
-                                    ">
-                        <a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> <span> Notifications</span>
-                            <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'notifications' %}">View All Notifications</a></li>
-                            <li><a href="{% url 'notify_staff' %}">Notify Staff</a></li>
-                            <li><a href="{% url 'notify_staff' %}">Update Notification</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-book-reader"></i> <span> Events</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="subjects.html">Notice Board</a></li>
-                            <li><a href="add-subject.html">Current Event</a></li>
-                            <li><a href="edit-subject.html">Upcoming Event</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-title">
-                        <span>Alumni Management</span>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="fees-collections.html">Fees Collection</a></li>
-                            <li><a href="expenses.html">Expenses</a></li>
-                            <li><a href="salary.html">Collections</a></li>
-                            <li><a href="add-fees-collection.html">Add Fees</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                {#                Alumni Sidebar View#}
-            {% else %}
-                <ul>
-                    <li class="menu-title">
-                        <span>Main Menu</span>
-                    </li>
-                    <li class="submenu active">
-                    <li class="{% active_link 'alumni_home' 'active' %}">
-                        <a href="{% url 'alumni_home' %}"><i class="fas fa-home"></i> <span>Home</span></a>
-                    </li>
-                    </li><li class="{% active_link 'membership_apply' 'active' %}">
-                        <a href="{% url 'membership_apply' %}"><i class="fas fa-user-plus"></i> <span>Apply For Membership</span></a>
-                    </li>
-                    </li>
-                    <li class="submenu {% active_link 'add_alumni' 'active' %} {% active_link 'view_alumni' 'active' %}">
-                        <a href="#"><i class="fas fa-user-graduate"></i> <span> Alumni Panel</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'add_alumni' %}">Add Alumni</a></li>
-                            <li><a href="{% url 'view_alumni' %}">View Alumni List</a></li>
-                        </ul>
-                    </li>
+    {% if user.user_type == '1' %}
+    <!-- ══ HOD MENU ════════════════════════════════ -->
+    <div class="nav-section-label">Overview</div>
+    <a href="{% url 'hod_home' %}" class="nav-link {% if request.resolver_match.url_name == 'hod_home' %}active{% endif %}">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
 
-                    <li>
-                        <a href="{% url 'alumni_feedback' %}"><i class="fas fa-clipboard-list"></i> <span>Feedback</span></a>
-                    </li>
-                    <li>
-                        <a href="{% url 'alumni_home' %}"><i class="fas fa-sitemap"></i> <span>Gallery</span></a>
-                    </li>
-                    <li>
-                        <a href="{% url 'alumni_home' %}"><i class="fas fa-school"></i> <span>Schollarships</span></a>
-                    </li>
-{#                    <li class="submenu#}
-{#                                    {% active_link 'notifications' 'active' %} {% active_link 'notify_staff' 'active' %}#}
-{#                                    {% active_link 'notify_staff' 'active' %}#}
-{#                                    ">#}
-{#                        <a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> <span> Notifications</span>#}
-{#                            <span class="menu-arrow"></span></a>#}
-{#                        <ul>#}
-{#                            <li><a href="{% url 'notifications' %}">View All Notifications</a></li>#}
-{#                            <li><a href="{% url 'notify_staff' %}">Notify Staff</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-book-reader"></i> <span> Events</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'alumni_home' %}">Notice Board</a></li>
-                            <li><a href="{% url 'alumni_home' %}">Current Event</a></li>
-                            <li><a href="{% url 'alumni_home' %}">Upcoming Event</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-title">
-                        <span>Account Management</span>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{% url 'alumni_home' %}">Fees Collection</a></li>
-                            <li><a href="{% url 'alumni_home' %}">Expenses</a></li>
-                            <li><a href="{% url 'alumni_home' %}">Collections</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="{% url 'alumni_home' %}"><i class="fas fa-history"></i> <span>Payment History</span></a>
-                    </li>
-                    {% comment %}<li class="menu-title">
-                        <span>Management</span>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="fees-collections.html">Fees Collection</a></li>
-                           <li><a href="expenses.html">Expenses</a></li>
-                           <li><a href="salary.html">Salary</a></li>
-                           <li><a href="add-fees-collection.html">Add Fees</a></li>
-                           <li><a href="add-expenses.html">Add Expenses</a></li>
-                           <li><a href="add-salary.html">Add Salary</a></li>
-                        </ul>
-                     </li>
-                     <li>
-                        <a href="holiday.html"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
-                     </li>
-                     <li>
-                        <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
-                     </li>
-                     <li>
-                        <a href="exam.html"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
-                     </li>
-                     <li>
-                        <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
-                     </li>
-                     <li>
-                        <a href="time-table.html"><i class="fas fa-table"></i> <span>Time Table</span></a>
-                     </li>
-                     <li>
-                        <a href="library.html"><i class="fas fa-book"></i> <span>Library</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>Pages</span>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-shield-alt"></i> <span> Authentication </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="login.html">Login</a></li>
-                           <li><a href="register.html">Register</a></li>
-                           <li><a href="forgot-password.html">Forgot Password</a></li>
-                           <li><a href="error-404.html">Error Page</a></li>
-                        </ul>
-                     </li>
-                     <li>
-                        <a href="blank-page.html"><i class="fas fa-file"></i> <span>Blank Page</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>Others</span>
-                     </li>
-                     <li>
-                        <a href="sports.html"><i class="fas fa-baseball-ball"></i> <span>Sports</span></a>
-                     </li>
-                     <li>
-                        <a href="hostel.html"><i class="fas fa-hotel"></i> <span>Hostel</span></a>
-                     </li>
-                     <li>
-                        <a href="transport.html"><i class="fas fa-bus"></i> <span>Transport</span></a>
-                     </li>
-                     <li class="menu-title">
-                        <span>UI Interface</span>
-                     </li>
-                     <li>
-                        <a href="components.html"><i class="fas fa-vector-square"></i> <span>Components</span></a>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-columns"></i> <span> Forms </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="form-basic-inputs.html">Basic Inputs </a></li>
-                           <li><a href="form-input-groups.html">Input Groups </a></li>
-                           <li><a href="form-horizontal.html">Horizontal Form </a></li>
-                           <li><a href="form-vertical.html"> Vertical Form </a></li>
-                           <li><a href="form-mask.html"> Form Mask </a></li>
-                           <li><a href="form-validation.html"> Form Validation </a></li>
-                        </ul>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-table"></i> <span> Tables </span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="tables-basic.html">Basic Tables </a></li>
-                           <li><a href="data-tables.html">Data Table </a></li>
-                        </ul>
-                     </li>
-                     <li class="submenu">
-                        <a href="javascript:void(0);"><i class="fas fa-code"></i> <span>Multi Level</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li class="submenu">
-                              <a href="javascript:void(0);"> <span>Level 1</span> <span class="menu-arrow"></span></a>
-                              <ul>
-                                 <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                 <li class="submenu">
-                                    <a href="javascript:void(0);"> <span> Level 2</span> <span class="menu-arrow"></span></a>
-                                    <ul>
-                                       <li><a href="javascript:void(0);">Level 3</a></li>
-                                       <li><a href="javascript:void(0);">Level 3</a></li>
-                                    </ul>
-                                 </li>
-                                 <li><a href="javascript:void(0);"> <span>Level 2</span></a></li>
-                              </ul>
-                           </li>
-                           <li>
-                              <a href="javascript:void(0);"> <span>Level 1</span></a>
-                           </li>
-                        </ul>
-                     </li>{% endcomment %}
-                </ul>
-            {% endif %}
-        </div>
-    </div>
+    <div class="nav-section-label">Members</div>
+    <a href="{% url 'view_alumni' %}" class="nav-link {% if 'alumni' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="fas fa-user-graduate"></i> Alumni Directory
+    </a>
+    <a href="{% url 'add_alumni' %}" class="nav-link">
+      <i class="fas fa-user-plus"></i> Add Alumni
+    </a>
+    <a href="{% url 'view_staff' %}" class="nav-link {% if 'staff' in request.resolver_match.url_name and 'notify' not in request.resolver_match.url_name %}active{% endif %}">
+      <i class="fas fa-chalkboard-teacher"></i> Staff List
+    </a>
+    <a href="{% url 'membership_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'membership_applications' %}active{% endif %}">
+      <i class="fas fa-id-card-alt"></i> Membership Requests
+    </a>
+
+    <div class="nav-section-label">Payments</div>
+    <a href="{% url 'payment_records' %}" class="nav-link {% if request.resolver_match.url_name == 'payment_records' %}active{% endif %}">
+      <i class="fas fa-money-bill-wave"></i> Payment Records
+    </a>
+
+    <div class="nav-section-label">Content</div>
+    <a href="{% url 'news_list' %}" class="nav-link">
+      <i class="fas fa-newspaper"></i> News & Notices
+    </a>
+    <a href="{% url 'events' %}" class="nav-link">
+      <i class="fas fa-calendar-alt"></i> Events
+    </a>
+    <a href="{% url 'gallery' %}" class="nav-link">
+      <i class="fas fa-images"></i> Gallery
+    </a>
+    <a href="{% url 'suggestions' %}" class="nav-link">
+      <i class="fas fa-file-alt"></i> Exam Suggestions
+    </a>
+
+    <div class="nav-section-label">Communication</div>
+    <a href="{% url 'notify_staff' %}" class="nav-link {% if request.resolver_match.url_name == 'notify_staff' %}active{% endif %}">
+      <i class="fas fa-bell"></i> Notify Staff
+    </a>
+    <a href="{% url 'alum_feedback' %}" class="nav-link {% if request.resolver_match.url_name == 'alum_feedback' %}active{% endif %}">
+      <i class="fas fa-comment-dots"></i> Alumni Feedback
+    </a>
+
+    {% elif user.user_type == '2' %}
+    <!-- ══ STAFF MENU ═════════════════════════════ -->
+    <div class="nav-section-label">Overview</div>
+    <a href="{% url 'staff_home' %}" class="nav-link {% if request.resolver_match.url_name == 'staff_home' %}active{% endif %}">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
+
+    <div class="nav-section-label">My Work</div>
+    <a href="{% url 'notifications' %}" class="nav-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+      <i class="fas fa-bell"></i> My Notifications
+    </a>
+    <a href="{% url 'suggestions' %}" class="nav-link">
+      <i class="fas fa-file-upload"></i> Exam Suggestions
+    </a>
+
+    <div class="nav-section-label">Community</div>
+    <a href="{% url 'news_list' %}" class="nav-link">
+      <i class="fas fa-newspaper"></i> News & Notices
+    </a>
+    <a href="{% url 'events' %}" class="nav-link">
+      <i class="fas fa-calendar-alt"></i> Events
+    </a>
+
+    {% elif user.user_type == '3' %}
+    <!-- ══ ALUMNI MENU ════════════════════════════ -->
+    <div class="nav-section-label">Overview</div>
+    <a href="{% url 'alumni_home' %}" class="nav-link {% if request.resolver_match.url_name == 'alumni_home' %}active{% endif %}">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
+
+    <div class="nav-section-label">My Account</div>
+    <a href="{% url 'alumni_payments' %}" class="nav-link {% if request.resolver_match.url_name == 'alumni_payments' %}active{% endif %}">
+      <i class="fas fa-receipt"></i> My Payment Status
+    </a>
+    <a href="{% url 'membership_apply' %}" class="nav-link {% if request.resolver_match.url_name == 'membership_apply' %}active{% endif %}">
+      <i class="fas fa-id-card-alt"></i> Membership
+    </a>
+    <a href="{% url 'alumni_feedback' %}" class="nav-link {% if request.resolver_match.url_name == 'alumni_feedback' %}active{% endif %}">
+      <i class="fas fa-comment-dots"></i> Feedback
+    </a>
+
+    <div class="nav-section-label">Network</div>
+    <a href="{% url 'alumni_directory' %}" class="nav-link {% if request.resolver_match.url_name == 'alumni_directory' %}active{% endif %}">
+      <i class="fas fa-address-book"></i> Alumni Directory
+    </a>
+    <a href="{% url 'job_board' %}" class="nav-link {% if request.resolver_match.url_name == 'job_board' %}active{% endif %}">
+      <i class="fas fa-briefcase"></i> Job Board
+    </a>
+    <a href="{% url 'mentorship' %}" class="nav-link {% if request.resolver_match.url_name == 'mentorship' %}active{% endif %}">
+      <i class="fas fa-hands-helping"></i> Mentorship
+    </a>
+
+    <div class="nav-section-label">Community</div>
+    <a href="{% url 'news_list' %}" class="nav-link"><i class="fas fa-newspaper"></i> News</a>
+    <a href="{% url 'events' %}" class="nav-link"><i class="fas fa-calendar-alt"></i> Events</a>
+
+    {% else %}
+    <!-- ══ STUDENT MENU ═══════════════════════════ -->
+    <div class="nav-section-label">Study Hub</div>
+    <a href="{% url 'edu_home' %}" class="nav-link {% if request.resolver_match.url_name == 'edu_home' %}active{% endif %}">
+      <i class="fas fa-home"></i> My Dashboard
+    </a>
+    <a href="{% url 'ai_tutor' %}" class="nav-link {% if request.resolver_match.url_name == 'ai_tutor' %}active{% endif %}">
+      <i class="fas fa-robot"></i> AI Tutor
+    </a>
+    <a href="{% url 'daily_challenge' %}" class="nav-link {% if request.resolver_match.url_name == 'daily_challenge' %}active{% endif %}">
+      <i class="fas fa-bolt"></i> Daily Challenge
+    </a>
+    <a href="{% url 'suggestions' %}" class="nav-link {% if request.resolver_match.url_name == 'suggestions' %}active{% endif %}">
+      <i class="fas fa-file-alt"></i> Exam Suggestions
+    </a>
+    <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}">
+      <i class="fas fa-trophy"></i> Leaderboard
+    </a>
+
+    <div class="nav-section-label">Resources</div>
+    <a href="{% url 'newspapers' %}" class="nav-link {% if request.resolver_match.url_name == 'newspapers' %}active{% endif %}">
+      <i class="fas fa-newspaper"></i> Newspapers
+    </a>
+    <a href="{% url 'news_list' %}" class="nav-link"><i class="fas fa-rss"></i> News & Notices</a>
+    <a href="{% url 'events' %}" class="nav-link"><i class="fas fa-calendar-alt"></i> Events</a>
+
+    {% endif %}
+
+    <!-- Common bottom links -->
+    <div class="nav-section-label" style="margin-top:auto;"></div>
+    <a href="{% url 'profile' %}" class="nav-link">
+      <i class="fas fa-user-cog"></i> My Profile
+    </a>
+    <a href="{% url 'landing' %}" class="nav-link">
+      <i class="fas fa-globe"></i> Visit Site
+    </a>
+    <a href="{% url 'logout' %}" class="nav-link" style="color:rgba(255,100,100,.7) !important;">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+
+  </nav>
 </div>

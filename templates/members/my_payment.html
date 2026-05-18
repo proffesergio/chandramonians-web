@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Payment Status{% endblock %}
+{% block page_title %}My Payment Status{% endblock %}
+
+{% block content %}
+<div class="row g-4 justify-content-center">
+  <div class="col-lg-8">
+
+    {% if payment %}
+    <!-- Found Payment Record -->
+    <div class="card-custom overflow-hidden">
+      <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:2rem;color:#fff;">
+        <div class="d-flex align-items-center gap-4">
+          <div style="width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.75rem;flex-shrink:0;">
+            {% if payment.member_type == 'LIFE' %}🏅{% else %}📋{% endif %}
+          </div>
+          <div>
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.75;">Membership Record</div>
+            <div style="font-size:1.4rem;font-weight:800;margin-top:.2rem;">{{ payment.member_name }}</div>
+            <div class="mt-1">
+              <span class="member-type-badge {{ payment.member_type|lower }}" style="font-size:.78rem;">{{ payment.get_member_type_display }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 p-md-5">
+        <div class="row g-4">
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Payment Status</div>
+            <span class="status-badge {{ payment.status|lower }}" style="font-size:.95rem;padding:.5rem 1.25rem;">
+              {{ payment.get_status_display }}
+            </span>
+          </div>
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Amount Paid</div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--primary);">
+              {% if payment.amount %}৳{{ payment.amount|floatformat:0 }}{% else %}—{% endif %}
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Payment Date</div>
+            <div class="fw-600">{{ payment.payment_date|date:"d F Y"|default:"Not recorded" }}</div>
+          </div>
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Batch Year</div>
+            <div class="fw-600">{{ payment.batch_year|default:"Not recorded" }}</div>
+          </div>
+          {% if payment.receipt_number %}
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Receipt Number</div>
+            <div class="fw-600">{{ payment.receipt_number }}</div>
+          </div>
+          {% endif %}
+          {% if payment.phone %}
+          <div class="col-sm-6">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:.4rem;">Phone on Record</div>
+            <div class="fw-600">{{ payment.phone }}</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="mt-5 p-4 rounded-3" style="background:var(--bg);border:1px solid var(--border);">
+          <div style="font-size:.8rem;color:var(--text-muted);">
+            <i class="fas fa-info-circle me-2" style="color:var(--primary-light);"></i>
+            This record is synced from the Association's official Google Sheet. Last updated: <strong>{{ payment.last_synced_at|date:"d M Y, H:i" }}</strong>.
+            If you notice any discrepancy, please contact the Association office.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- No Record Found -->
+    <div class="card-custom p-5 text-center">
+      <i class="fas fa-search fa-3x mb-4" style="color:var(--border);"></i>
+      <h5 class="fw-800 mb-2">No Payment Record Found</h5>
+      <p style="color:var(--text-muted);font-size:.92rem;max-width:400px;margin:0 auto 1.5rem;">
+        We couldn't find a payment record matching your account in the Association's records.
+        This may be because your name or details don't match exactly.
+      </p>
+      <div class="p-4 rounded-3 text-start mb-4" style="background:#fefce8;border:1px solid #fde68a;">
+        <div style="font-size:.88rem;font-weight:700;color:#92400e;margin-bottom:.5rem;">
+          <i class="fas fa-lightbulb me-2"></i>What to do?
+        </div>
+        <ul style="font-size:.85rem;color:#78350f;margin:0;padding-left:1.25rem;line-height:1.8;">
+          <li>Contact the Association Secretary</li>
+          <li>Check if you've applied for membership yet</li>
+          <li>Verify your registered name matches the records</li>
+        </ul>
+      </div>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'apply_for_membership' %}" class="btn-primary-custom btn">
+          <i class="fas fa-file-signature me-2"></i>Apply for Membership
+        </a>
+        <a href="{% url 'alumni_home' %}" class="btn-outline-custom btn">
+          <i class="fas fa-home me-2"></i>Back to Dashboard
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

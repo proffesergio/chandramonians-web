@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Alumni Directory{% endblock %}
+{% block page_title %}Alumni Directory{% endblock %}
+
+{% block content %}
+
+<!-- Search & Filter -->
+<div class="card-custom p-4 mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label fw-600" style="font-size:.82rem;">Search</label>
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Name, profession, or company…" style="font-size:.88rem;">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label fw-600" style="font-size:.82rem;">Batch Year</label>
+      <select name="batch" class="form-select" style="font-size:.88rem;">
+        <option value="">All Batches</option>
+        {% for year in batch_years %}
+        <option value="{{ year }}" {% if request.GET.batch == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn-primary-custom btn w-100">
+        <i class="fas fa-search me-1"></i>Search
+      </button>
+    </div>
+    {% if request.GET.q or request.GET.batch %}
+    <div class="col-md-2">
+      <a href="{% url 'alumni_directory' %}" class="btn-outline-custom btn w-100">Clear</a>
+    </div>
+    {% endif %}
+  </form>
+</div>
+
+<!-- Result Count -->
+{% if alumni_list %}
+<p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.25rem;">
+  <strong>{{ alumni_list|length }}</strong> alumni found
+</p>
+{% endif %}
+
+<!-- Alumni Grid -->
+<div class="row g-3">
+  {% for alumni in alumni_list %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card-custom p-4 h-100">
+      <div class="d-flex gap-3 align-items-start">
+        <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;font-weight:800;flex-shrink:0;">
+          {{ alumni.alumni_name|first|upper }}
+        </div>
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="fw-700" style="font-size:.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            {{ alumni.alumni_name }}
+          </div>
+          {% if alumni.profession %}
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.1rem;">
+            <i class="fas fa-briefcase me-1"></i>{{ alumni.profession }}
+            {% if alumni.company %} at {{ alumni.company }}{% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mt-3">
+        {% if alumni.batch %}
+        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.3rem;">
+          <i class="fas fa-graduation-cap me-1" style="color:var(--primary-light);"></i>Batch of {{ alumni.batch }}
+        </div>
+        {% endif %}
+        {% if alumni.blood_group %}
+        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.3rem;">
+          <i class="fas fa-tint me-1" style="color:var(--danger);"></i>Blood: {{ alumni.blood_group }}
+        </div>
+        {% endif %}
+        {% if alumni.linkedin_url %}
+        <div style="margin-top:.5rem;">
+          <a href="{{ alumni.linkedin_url }}" target="_blank" rel="noopener" style="font-size:.78rem;color:#0a66c2;font-weight:600;text-decoration:none;">
+            <i class="fab fa-linkedin me-1"></i>LinkedIn
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card-custom p-5 text-center" style="border:2px dashed var(--border);">
+      <i class="fas fa-users fa-3x mb-3" style="color:var(--border);"></i>
+      <h6 class="fw-700">No alumni found</h6>
+      <p style="font-size:.88rem;color:var(--text-muted);">
+        {% if request.GET.q or request.GET.batch %}
+        Try different search terms or <a href="{% url 'alumni_directory' %}">clear filters</a>.
+        {% else %}
+        No alumni profiles have been added yet.
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Job Board{% endblock %}
+{% block page_title %}Job Board{% endblock %}
+
+{% block content %}
+
+<!-- Banner -->
+<div class="streak-banner mb-4" style="background:linear-gradient(135deg,#065f46 0%,#059669 100%);">
+  <div style="font-size:2.5rem;">💼</div>
+  <div>
+    <div style="font-weight:800;font-size:1.05rem;">Opportunities from Our Alumni Network</div>
+    <div style="font-size:.82rem;opacity:.8;margin-top:.2rem;">Jobs and internships shared by DCMHS alumni</div>
+  </div>
+</div>
+
+<!-- Coming Soon / Empty State -->
+<div class="card-custom p-5 text-center" style="border:2px dashed var(--border);">
+  <div style="font-size:3.5rem;margin-bottom:1rem;">🚧</div>
+  <h5 class="fw-800 mb-2">Coming Soon</h5>
+  <p style="color:var(--text-muted);font-size:.92rem;max-width:420px;margin:0 auto 1.5rem;">
+    The Job Board is being set up. Alumni will soon be able to post job openings, internships, and opportunities for fellow DCMHS graduates and students.
+  </p>
+  <div class="row g-3 justify-content-center mt-2">
+    <div class="col-md-4">
+      <div class="p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;margin-bottom:.4rem;">📢</div>
+        <div style="font-size:.85rem;font-weight:700;">Post a Job</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">Share opportunities</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;margin-bottom:.4rem;">🔍</div>
+        <div style="font-size:.85rem;font-weight:700;">Find Internships</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">For students & alumni</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;margin-bottom:.4rem;">🤝</div>
+        <div style="font-size:.85rem;font-weight:700;">Network</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">Connect with alumni</div>
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'alumni_home' %}" class="btn-outline-custom btn mt-4">
+    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+  </a>
+</div>
+
+{% endblock %}

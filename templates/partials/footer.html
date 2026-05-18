@@ -1,3 +1,72 @@
-<footer>
-   <p>Copyright © 2022 Hossain Billal</p>
+{% load static %}
+<footer class="pub-footer">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Brand -->
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-brand-icon">C</div>
+        <h5 style="color:#fff;font-weight:700;margin-bottom:.5rem;">Chandramonians</h5>
+        <p style="font-size:.88rem;line-height:1.7;">
+          Official alumni portal of Dulalpur Chandramoni High School. Connecting generations of students, alumni, and the school community.
+        </p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6>Quick Links</h6>
+        <a href="{% url 'landing' %}">Home</a>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'events' %}">Events</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
+        <a href="{% url 'contact' %}">Contact</a>
+      </div>
+
+      <!-- For Students -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6>For Students</h6>
+        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'ai_tutor' %}">AI Tutor</a>
+        <a href="{% url 'daily_challenge' %}">Daily Challenge</a>
+        <a href="{% url 'suggestions' %}">Exam Tips</a>
+        <a href="{% url 'newspapers' %}">Newspapers</a>
+        <a href="{% url 'leaderboard' %}">Leaderboard</a>
+      </div>
+
+      <!-- For Alumni -->
+      <div class="col-lg-4 col-md-6">
+        <h6>Contact & Info</h6>
+        <div style="font-size:.88rem;line-height:2;">
+          <div><i class="fas fa-map-marker-alt me-2" style="color:var(--accent);"></i>Dulalpur, Bangladesh</div>
+          <div><i class="fas fa-envelope me-2" style="color:var(--accent);"></i>info@chandramonians.org</div>
+          <div><i class="fas fa-globe me-2" style="color:var(--accent);"></i>www.chandramonians.org</div>
+        </div>
+        <div class="mt-3" style="font-size:.8rem;color:rgba(255,255,255,.4);">
+          <a href="{% url 'login' %}" style="color:rgba(255,255,255,.4);">Alumni Login</a> &nbsp;·&nbsp;
+          <a href="{% url 'register' %}" style="color:rgba(255,255,255,.4);">Register</a> &nbsp;·&nbsp;
+          <a href="/admin/" style="color:rgba(255,255,255,.4);">Admin</a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="footer-divider">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <p style="font-size:.82rem;margin:0;">
+        &copy; {% now "Y" %} Chandramonians — Dulalpur Chandramoni High School Alumni Association. All rights reserved.
+      </p>
+      <p style="font-size:.78rem;margin:0;opacity:.5;">
+        Built with ❤️ for DCMHS
+      </p>
+    </div>
+
+  </div>
 </footer>

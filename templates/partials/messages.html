@@ -1,34 +1,13 @@
 {% if messages %}
-    {% for message in messages %}
-        {% if message.tags == 'error' %}
-            <div class="alert alert-warning alert-warning fade show" role="alert">
-                <strong>Error!</strong> {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"
-                        onclick="this.parentNode.parentNode.removeChild(this.parentNode);">
-                    <span aria-hidden="true">×</span><span
-                        class="sr-only">Close</span>
-                </button>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endif %}
-{% if messages %}
-    {% for message in messages %}
-        {% if message.tags == 'success' %}
-            <div class="alert alert-success fade show" role="alert">
-                <strong><i class="fas fa-check-circle"></i> </strong> {{ message }}
-                <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endif %}
-{% if messages %}
-    {% for message in messages %}
-        {% if message.tags == 'warning' %}
-            <div class="alert alert-warning alert-danger fade show" role="alert">
-                <strong>Warning!</strong> {{ message }}
-                <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
-    {% endfor %}
+<div class="px-3 pt-2" style="max-width:900px;margin:0 auto;">
+  {% for message in messages %}
+    <div class="alert-custom alert-{{ message.tags|default:'info' }} fade-in-up">
+      <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+      <span>{{ message }}</span>
+      <button type="button" onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;opacity:.6;font-size:1rem;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  {% endfor %}
+</div>
 {% endif %}

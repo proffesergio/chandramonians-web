@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Exam Suggestions{% endblock %}
+{% block page_title %}Exam Suggestions{% endblock %}
+
+{% block content %}
+
+<!-- Filter Bar -->
+<div class="card-custom p-3 mb-4">
+  <form method="get" class="d-flex gap-3 flex-wrap align-items-center">
+    <div class="flex-grow-1" style="min-width:200px;">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control"
+             placeholder="Search suggestions..." style="border-color:var(--border);border-radius:var(--radius);font-size:.88rem;">
+    </div>
+    <select name="grade" class="form-select" style="width:auto;border-color:var(--border);border-radius:var(--radius);font-size:.88rem;">
+      <option value="">All Grades</option>
+      <option value="SSC" {% if request.GET.grade == 'SSC' %}selected{% endif %}>SSC</option>
+      <option value="HSC" {% if request.GET.grade == 'HSC' %}selected{% endif %}>HSC</option>
+      <option value="CLASS_6_8" {% if request.GET.grade == 'CLASS_6_8' %}selected{% endif %}>Class 6–8</option>
+    </select>
+    <select name="subject" class="form-select" style="width:auto;border-color:var(--border);border-radius:var(--radius);font-size:.88rem;">
+      <option value="">All Subjects</option>
+      {% for subject in subjects %}
+      <option value="{{ subject.pk }}" {% if request.GET.subject == subject.pk|stringformat:"s" %}selected{% endif %}>
+        {{ subject.name }}
+      </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-primary-custom btn">
+      <i class="fas fa-search me-2"></i>Filter
+    </button>
+    {% if request.GET.q or request.GET.grade or request.GET.subject %}
+    <a href="{% url 'suggestions' %}" class="btn-outline-custom btn">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- Subject Quick Chips -->
+<div class="d-flex gap-2 flex-wrap mb-4">
+  <a href="{% url 'suggestions' %}" class="subject-chip {% if not request.GET.grade %}active{% endif %}">All</a>
+  <a href="?grade=SSC" class="subject-chip {% if request.GET.grade == 'SSC' %}active{% endif %}">SSC</a>
+  <a href="?grade=HSC" class="subject-chip {% if request.GET.grade == 'HSC' %}active{% endif %}">HSC</a>
+  <a href="?grade=CLASS_6_8" class="subject-chip {% if request.GET.grade == 'CLASS_6_8' %}active{% endif %}">Class 6–8</a>
+</div>
+
+<!-- Results Count -->
+{% if suggestions %}
+<p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.25rem;">
+  Showing <strong>{{ suggestions|length }}</strong> suggestion{{ suggestions|length|pluralize }}
+</p>
+{% endif %}
+
+<!-- Suggestions Grid -->
+<div class="row g-3">
+  {% for suggestion in suggestions %}
+  <div class="col-md-6 col-lg-4">
+    <a href="{% url 'suggestion_detail' suggestion.pk %}" style="text-decoration:none;">
+      <div class="card-custom h-100 p-4" style="transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 30px rgba(26,58,110,.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+               style="width:46px;height:46px;background:var(--primary-pale);">
+            <i class="fas fa-file-alt" style="color:var(--primary-light);font-size:1.1rem;"></i>
+          </div>
+          <div class="flex-grow-1 overflow-hidden">
+            <span class="card-category {% if suggestion.subject.grade == 'SSC' %}edu{% elif suggestion.subject.grade == 'HSC' %}assoc{% else %}general{% endif %} mb-1">
+              {{ suggestion.subject.get_grade_display }}
+            </span>
+            <h6 class="fw-700 mb-0" style="font-size:.9rem;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);">
+              {{ suggestion.title }}
+            </h6>
+          </div>
+        </div>
+
+        <div style="font-size:.78rem;color:var(--text-muted);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">
+          {{ suggestion.content|truncatechars:120 }}
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
+          <div style="font-size:.75rem;color:var(--text-muted);">
+            <i class="fas fa-book me-1"></i>{{ suggestion.subject.name }}
+            &nbsp;·&nbsp;
+            <i class="fas fa-calendar me-1"></i>{{ suggestion.year }}
+          </div>
+          {% if suggestion.file %}
+          <span style="font-size:.72rem;font-weight:700;color:var(--success);"><i class="fas fa-paperclip me-1"></i>File</span>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card-custom p-5 text-center" style="border:2px dashed var(--border);">
+      <i class="fas fa-file-alt fa-3x mb-3" style="color:var(--border);"></i>
+      <h6 class="fw-700">No suggestions found</h6>
+      <p style="font-size:.88rem;color:var(--text-muted);">
+        {% if request.GET.q or request.GET.grade or request.GET.subject %}
+        Try adjusting your filters, or <a href="{% url 'suggestions' %}">view all suggestions</a>.
+        {% else %}
+        Your teacher will upload exam suggestions here soon. Check back later!
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

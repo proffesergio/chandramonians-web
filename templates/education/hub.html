@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Study Hub{% endblock %}
+{% block page_title %}Study Hub{% endblock %}
+
+{% block content %}
+
+<!-- ─── Streak Banner ─────────────────────────────────────── -->
+<div class="streak-banner">
+  <div class="streak-fire">🔥</div>
+  <div class="flex-grow-1">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <span class="streak-count">{{ progress.current_streak }}</span>
+      <div>
+        <div style="font-weight:700;font-size:1.05rem;">Day Streak!</div>
+        <div style="font-size:.82rem;opacity:.8;">Keep coming back daily to maintain your streak</div>
+      </div>
+    </div>
+    <div class="mt-2">
+      <div class="d-flex justify-content-between mb-1" style="font-size:.75rem;opacity:.8;">
+        <span>{{ progress.total_xp }} XP</span>
+        <span>Next level: {{ progress.total_xp|add:"50" }} XP</span>
+      </div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill" style="width: {% widthratio progress.total_xp|default:0 100 100 %}%;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="text-end d-none d-md-block">
+    <div style="font-size:.75rem;opacity:.7;">Longest streak</div>
+    <div style="font-size:1.5rem;font-weight:800;">{{ progress.longest_streak }} 🏆</div>
+  </div>
+</div>
+
+<!-- ─── Quick Access ──────────────────────────────────────── -->
+<div class="quick-access-grid">
+  <a href="{% url 'ai_tutor' %}" class="quick-card">
+    <i class="fas fa-robot" style="color:var(--primary-light);"></i>
+    <span>AI Tutor</span>
+  </a>
+  <a href="{% url 'daily_challenge' %}" class="quick-card">
+    <i class="fas fa-bolt" style="color:var(--accent);"></i>
+    <span>Daily Challenge</span>
+  </a>
+  <a href="{% url 'suggestions' %}" class="quick-card">
+    <i class="fas fa-file-alt" style="color:var(--success);"></i>
+    <span>Exam Tips</span>
+  </a>
+  <a href="{% url 'leaderboard' %}" class="quick-card">
+    <i class="fas fa-trophy" style="color:#d97706;"></i>
+    <span>Leaderboard</span>
+  </a>
+  <a href="{% url 'newspapers' %}" class="quick-card">
+    <i class="fas fa-newspaper" style="color:#6d28d9;"></i>
+    <span>Newspapers</span>
+  </a>
+  <a href="{% url 'news_list' %}" class="quick-card">
+    <i class="fas fa-rss" style="color:var(--danger);"></i>
+    <span>Notices</span>
+  </a>
+</div>
+
+<div class="row g-4">
+  <!-- LEFT: Today's Challenge + Recent Suggestions -->
+  <div class="col-lg-8">
+
+    <!-- Today's Challenge Card -->
+    {% if today_challenge %}
+    <div class="card-custom mb-4">
+      <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:1.25rem 1.5rem;color:#fff;border-radius:var(--radius) var(--radius) 0 0;">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div style="font-size:.75rem;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Today's Challenge</div>
+            <div style="font-size:.95rem;font-weight:700;margin-top:.2rem;">{{ today_challenge.subject.name }} — {{ today_challenge.subject.get_grade_display }}</div>
+          </div>
+          <div class="xp-award"><i class="fas fa-star"></i> +10 XP</div>
+        </div>
+      </div>
+      <div class="p-4">
+        <p style="font-size:.95rem;font-weight:600;margin-bottom:1.5rem;">{{ today_challenge.question }}</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="{% url 'daily_challenge' %}" class="btn-primary-custom btn">
+            <i class="fas fa-bolt me-2"></i>Take Challenge
+          </a>
+          <span style="font-size:.8rem;color:var(--text-muted);align-self:center;">
+            <i class="fas fa-clock me-1"></i>{{ progress.challenges_completed }} challenges done
+          </span>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="card-custom mb-4 p-4 text-center" style="border:2px dashed var(--border);">
+      <i class="fas fa-calendar-day fa-3x mb-3" style="color:var(--border);"></i>
+      <h6 class="fw-700">No challenge today yet</h6>
+      <p style="font-size:.85rem;color:var(--text-muted);">Check back later — your teacher will post today's challenge soon.</p>
+    </div>
+    {% endif %}
+
+    <!-- Recent Exam Suggestions -->
+    <div class="card-custom">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-file-alt me-2" style="color:var(--primary-light);"></i>Recent Exam Suggestions</h6>
+        <a href="{% url 'suggestions' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">View all <i class="fas fa-arrow-right ms-1"></i></a>
+      </div>
+      <div class="p-3">
+        {% for suggestion in recent_suggestions %}
+        <a href="{% url 'suggestion_detail' suggestion.pk %}" style="text-decoration:none;">
+          <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-2" style="background:var(--bg);transition:var(--transition);" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background='var(--bg)'">
+            <div class="d-flex align-items-center justify-content-center rounded-2 flex-shrink-0" style="width:40px;height:40px;background:var(--primary-pale);">
+              <i class="fas fa-file-alt" style="color:var(--primary-light);"></i>
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ suggestion.title }}</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">{{ suggestion.subject.name }} · {{ suggestion.year }}</div>
+            </div>
+            <span class="card-category {% if suggestion.subject.grade == 'SSC' %}edu{% else %}assoc{% endif %}">{{ suggestion.subject.get_grade_display }}</span>
+          </div>
+        </a>
+        {% empty %}
+        <div class="p-3 text-center text-muted" style="font-size:.88rem;">No suggestions available yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div><!-- /col-lg-8 -->
+
+  <!-- RIGHT: Stats + Leaderboard -->
+  <div class="col-lg-4">
+
+    <!-- My Stats -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom">
+        <h6 class="fw-700 mb-0"><i class="fas fa-chart-bar me-2" style="color:var(--accent);"></i>My Progress</h6>
+      </div>
+      <div class="p-3">
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span style="font-size:.85rem;">Total XP</span>
+          <span class="fw-800" style="color:var(--primary);">{{ progress.total_xp }} ⚡</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span style="font-size:.85rem;">Current Streak</span>
+          <span class="fw-800" style="color:var(--accent);">{{ progress.current_streak }} 🔥</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span style="font-size:.85rem;">Best Streak</span>
+          <span class="fw-800" style="color:var(--success);">{{ progress.longest_streak }} 🏆</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2">
+          <span style="font-size:.85rem;">Challenges Done</span>
+          <span class="fw-800" style="color:var(--primary-light);">{{ progress.challenges_completed }} ✅</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini Leaderboard -->
+    <div class="card-custom">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-trophy me-2" style="color:#d97706;"></i>Top Learners</h6>
+        <a href="{% url 'leaderboard' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">Full list</a>
+      </div>
+      <div class="p-3">
+        {% for entry in leaderboard %}
+        <div class="lb-row {% if entry.user == request.user %}my-row{% endif %}">
+          <div class="lb-rank">
+            {% if forloop.counter == 1 %}🥇
+            {% elif forloop.counter == 2 %}🥈
+            {% elif forloop.counter == 3 %}🥉
+            {% else %}{{ forloop.counter }}{% endif %}
+          </div>
+          <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width:32px;height:32px;background:var(--primary-pale);font-size:.8rem;font-weight:700;color:var(--primary);">
+            {{ entry.user.first_name|first|upper }}
+          </div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              {% if entry.user == request.user %}You{% else %}{{ entry.user.first_name }}{% endif %}
+            </div>
+          </div>
+          <div class="fw-700" style="font-size:.82rem;color:var(--primary);">{{ entry.total_xp }} XP</div>
+        </div>
+        {% empty %}
+        <div class="p-3 text-center text-muted" style="font-size:.85rem;">Be the first on the leaderboard!</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div><!-- /col-lg-4 -->
+</div>
+
+<!-- ─── Newspaper Quick Links ─────────────────────────────── -->
+<div class="card-custom mt-4">
+  <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+    <h6 class="fw-700 mb-0"><i class="fas fa-newspaper me-2" style="color:#6d28d9;"></i>Today's Newspapers</h6>
+    <a href="{% url 'newspapers' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">All links</a>
+  </div>
+  <div class="p-3">
+    <div class="row g-2">
+      {% for paper in newspapers %}
+      <div class="col-md-4 col-6">
+        <a href="{{ paper.url }}" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="news-link-card">
+            <div class="news-link-icon">{{ paper.icon }}</div>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:var(--text);">{{ paper.name }}</div>
+              <div style="font-size:.72rem;color:var(--text-muted);">{{ paper.lang }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

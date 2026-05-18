@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Tutor{% endblock %}
+{% block page_title %}AI Tutor{% endblock %}
+
+{% block extra_css %}
+<style>
+  .dash-content { padding-bottom: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4" style="height:calc(100vh - 140px);">
+
+  <!-- LEFT: Subject Panel -->
+  <div class="col-lg-3 d-none d-lg-block">
+    <div class="card-custom h-100 d-flex flex-column">
+      <div class="p-3 border-bottom">
+        <h6 class="fw-700 mb-0" style="font-size:.88rem;">
+          <i class="fas fa-book me-2" style="color:var(--primary-light);"></i>Select Subject
+        </h6>
+      </div>
+      <div class="p-3 flex-grow-1 overflow-auto">
+        <div id="subjectPanel">
+          <button class="subject-chip active mb-2" onclick="selectSubject(this, '')">All Subjects</button>
+          {% for subject in subjects %}
+          <button class="subject-chip mb-2" onclick="selectSubject(this, '{{ subject.name }}')">{{ subject.name }}</button>
+          {% endfor %}
+        </div>
+        <hr>
+        <div style="font-size:.78rem;color:var(--text-muted);line-height:1.7;">
+          <strong>Tips:</strong><br>
+          • Ask specific questions<br>
+          • Include your class level<br>
+          • For math, describe the problem clearly<br>
+          • Ask for step-by-step solutions
+        </div>
+      </div>
+      <div class="p-3 border-top">
+        <div style="font-size:.72rem;color:var(--text-muted);text-align:center;">
+          <i class="fas fa-robot me-1" style="color:var(--accent);"></i>
+          Powered by Google Gemini AI<br>
+          Free tier — ~1,500 queries/day
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Chat Interface -->
+  <div class="col-lg-9">
+    <div class="chat-wrapper">
+
+      <!-- Subject chips (mobile) -->
+      <div class="chat-subject-bar d-lg-none">
+        <button class="subject-chip active" onclick="selectSubject(this, '')">All</button>
+        {% for subject in subjects %}
+        <button class="subject-chip" onclick="selectSubject(this, '{{ subject.name }}')">{{ subject.name }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Chat window -->
+      <div class="chat-messages" id="chatMessages">
+
+        <!-- Welcome message -->
+        {% if not chat_history %}
+        <div class="bubble-row">
+          <div class="bubble-avatar bot-av"><i class="fas fa-robot"></i></div>
+          <div class="bubble bot">
+            <strong>Assalamu Alaikum! 👋</strong><br>
+            I'm your AI study assistant for DCMHS. I can help you with:<br>
+            <ul style="margin:.5rem 0 0;padding-left:1.25rem;">
+              <li>Any SSC or HSC subject question</li>
+              <li>Step-by-step math & science solutions</li>
+              <li>Bengali or English literature</li>
+              <li>Exam preparation tips</li>
+            </ul>
+            <br>What would you like to learn today?
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Previous chat history -->
+        {% for chat in chat_history %}
+        <div class="bubble-row user-row">
+          <div class="bubble-avatar user-av">{{ request.user.first_name|first|upper }}</div>
+          <div class="bubble user">{{ chat.question }}</div>
+        </div>
+        <div class="bubble-row">
+          <div class="bubble-avatar bot-av"><i class="fas fa-robot"></i></div>
+          <div class="bubble bot">{{ chat.answer|linebreaksbr }}</div>
+        </div>
+        {% endfor %}
+
+        <!-- HTMX response target -->
+        <div id="chatResponse"></div>
+
+      </div>
+
+      <!-- Input Area -->
+      <form id="chatForm"
+            hx-post="{% url 'ai_tutor_ask' %}"
+            hx-target="#chatResponse"
+            hx-swap="beforeend"
+            hx-on::after-request="scrollToBottom(); clearInput();">
+        {% csrf_token %}
+        <input type="hidden" name="subject" id="subjectInput" value="">
+        <div class="chat-input-area">
+          <input
+            type="text"
+            name="question"
+            id="questionInput"
+            class="chat-input"
+            placeholder="Ask any academic question…"
+            autocomplete="off"
+            required>
+          <button type="submit" class="btn-send" id="sendBtn">
+            <i class="fas fa-paper-plane htmx-indicator" id="sendingIcon"></i>
+            <span class="htmx-request" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
+            <i class="fas fa-paper-plane" id="defaultIcon"></i>
+          </button>
+        </div>
+      </form>
+
+    </div><!-- /chat-wrapper -->
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentSubject = '';
+
+function selectSubject(btn, subject) {
+  document.querySelectorAll('.subject-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  currentSubject = subject;
+  document.getElementById('subjectInput').value = subject;
+}
+
+function scrollToBottom() {
+  const container = document.getElementById('chatMessages');
+  container.scrollTop = container.scrollHeight;
+}
+
+function clearInput() {
+  document.getElementById('questionInput').value = '';
+}
+
+// Scroll to bottom on load
+document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+// Show typing indicator during HTMX request
+document.body.addEventListener('htmx:beforeRequest', function(evt) {
+  if (evt.detail.elt.id === 'chatForm') {
+    const q = document.getElementById('questionInput').value;
+    const userBubble = `
+      <div class="bubble-row user-row fade-in-up">
+        <div class="bubble-avatar user-av">{{ request.user.first_name|first|upper }}</div>
+        <div class="bubble user">${q}</div>
+      </div>
+      <div class="bubble-row" id="typingBubble">
+        <div class="bubble-avatar bot-av"><i class="fas fa-robot"></i></div>
+        <div class="bubble bot">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+        </div>
+      </div>`;
+    document.getElementById('chatResponse').insertAdjacentHTML('beforeend', userBubble);
+    scrollToBottom();
+  }
+});
+
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+  const typing = document.getElementById('typingBubble');
+  if (typing) typing.remove();
+  scrollToBottom();
+});
+</script>
+{% endblock %}

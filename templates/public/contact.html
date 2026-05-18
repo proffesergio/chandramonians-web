@@ -1,0 +1,113 @@
+{% extends 'public_base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<section style="background:linear-gradient(135deg,var(--primary) 0%,#1e4a8a 100%);padding:3.5rem 0 2rem;color:#fff;">
+  <div class="container">
+    <h1 style="font-size:2.2rem;font-weight:900;margin-bottom:.5rem;">Contact Us</h1>
+    <p style="opacity:.8;font-size:.95rem;margin:0;">Get in touch with the Chandramonians Association</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+
+      <!-- Contact Form -->
+      <div class="col-lg-7">
+        <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:2rem 2rem;">
+          <h5 class="fw-800 mb-4">Send us a Message</h5>
+          {% if sent %}
+          <div class="alert" style="background:#f0fdf4;border:1px solid #86efac;color:#16a34a;border-radius:var(--radius-sm);padding:1rem;">
+            <i class="fas fa-check-circle me-2"></i><strong>Message sent!</strong> We'll get back to you soon.
+          </div>
+          {% else %}
+          <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <label class="form-label fw-600" style="font-size:.85rem;">Full Name</label>
+                <input type="text" name="name" class="form-control" placeholder="Your name" required style="font-size:.88rem;">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label fw-600" style="font-size:.85rem;">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="your@email.com" required style="font-size:.88rem;">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-600" style="font-size:.85rem;">Phone (optional)</label>
+                <input type="tel" name="phone" class="form-control" placeholder="+880…" style="font-size:.88rem;">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-600" style="font-size:.85rem;">Subject</label>
+                <select name="subject" class="form-select" style="font-size:.88rem;">
+                  <option value="membership">Membership Inquiry</option>
+                  <option value="payment">Payment Query</option>
+                  <option value="event">Event Information</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-600" style="font-size:.85rem;">Message</label>
+                <textarea name="message" class="form-control" rows="5" placeholder="Write your message here…" required style="font-size:.88rem;"></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="pub-cta-btn" style="border:none;cursor:pointer;">
+                  <i class="fas fa-paper-plane me-2"></i>Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="col-lg-5">
+        <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:2rem;margin-bottom:1.5rem;">
+          <h6 class="fw-800 mb-4" style="color:var(--primary);">Association Contact</h6>
+          <div class="d-flex gap-3 align-items-start mb-4">
+            <div style="width:42px;height:42px;background:var(--primary-pale);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-map-marker-alt" style="color:var(--primary);"></i>
+            </div>
+            <div>
+              <div class="fw-600" style="font-size:.88rem;">School Address</div>
+              <div style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">Dulalpur, Chirirbandar<br>Dinajpur, Bangladesh</div>
+            </div>
+          </div>
+          <div class="d-flex gap-3 align-items-start mb-4">
+            <div style="width:42px;height:42px;background:var(--primary-pale);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-envelope" style="color:var(--primary);"></i>
+            </div>
+            <div>
+              <div class="fw-600" style="font-size:.88rem;">Email</div>
+              <div style="font-size:.82rem;color:var(--text-muted);">chandramonians@gmail.com</div>
+            </div>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <div style="width:42px;height:42px;background:var(--primary-pale);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fab fa-facebook-f" style="color:var(--primary);"></i>
+            </div>
+            <div>
+              <div class="fw-600" style="font-size:.88rem;">Facebook</div>
+              <div style="font-size:.82rem;color:var(--text-muted);">facebook.com/chandramonians</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div style="background:var(--primary-pale);border-radius:var(--radius);padding:1.5rem;text-align:center;">
+          <i class="fas fa-map fa-2x mb-2" style="color:var(--primary-light);"></i>
+          <div style="font-size:.85rem;color:var(--text-muted);">Dulalpur, Chirirbandar, Dinajpur</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

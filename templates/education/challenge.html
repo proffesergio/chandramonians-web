@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Daily Challenge{% endblock %}
+{% block page_title %}Daily Challenge{% endblock %}
+
+{% block content %}
+<div class="row g-4 justify-content-center">
+  <div class="col-lg-8">
+
+    {% if already_completed %}
+    <!-- Already Completed State -->
+    <div class="card-custom text-center p-5">
+      <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
+      <h4 class="fw-800 mb-2">Challenge Completed!</h4>
+      <p style="color:var(--text-muted);font-size:.95rem;">You've already answered today's challenge. Come back tomorrow for a new one!</p>
+      <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+        <a href="{% url 'edu_home' %}" class="btn-primary-custom btn">
+          <i class="fas fa-home me-2"></i>Back to Hub
+        </a>
+        <a href="{% url 'leaderboard' %}" class="btn-outline-custom btn">
+          <i class="fas fa-trophy me-2"></i>View Leaderboard
+        </a>
+      </div>
+      {% if last_result %}
+      <div class="mt-4 p-4 rounded-3" style="background:var(--success-pale,#f0fdf4);border:1px solid #bbf7d0;">
+        <div style="font-size:.85rem;color:var(--success);font-weight:600;">
+          <i class="fas fa-check-circle me-2"></i>Your answer was correct! You earned +10 XP.
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% elif not challenge %}
+    <!-- No Challenge Today -->
+    <div class="card-custom text-center p-5" style="border:2px dashed var(--border);">
+      <i class="fas fa-calendar-day fa-4x mb-4" style="color:var(--border);"></i>
+      <h4 class="fw-800 mb-2">No Challenge Today Yet</h4>
+      <p style="color:var(--text-muted);">Your teacher hasn't posted today's challenge yet. Check back soon!</p>
+      <a href="{% url 'edu_home' %}" class="btn-primary-custom btn mt-3">
+        <i class="fas fa-arrow-left me-2"></i>Back to Study Hub
+      </a>
+    </div>
+
+    {% else %}
+    <!-- Challenge Card -->
+    <div class="card-custom overflow-hidden">
+
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:1.5rem 2rem;color:#fff;">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div>
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.75;">Today's Challenge</div>
+            <div style="font-size:1.1rem;font-weight:800;margin-top:.2rem;">
+              <i class="fas fa-book me-2" style="opacity:.8;"></i>{{ challenge.subject.name }}
+              <span style="font-size:.8rem;font-weight:600;opacity:.75;margin-left:.5rem;">{{ challenge.subject.get_grade_display }}</span>
+            </div>
+          </div>
+          <div class="xp-award" style="font-size:.9rem;padding:.5rem 1rem;">
+            <i class="fas fa-star me-1"></i>+10 XP
+          </div>
+        </div>
+        <!-- Streak info -->
+        <div class="mt-3 d-flex gap-3" style="font-size:.8rem;opacity:.85;">
+          <span><i class="fas fa-fire me-1"></i>{{ progress.current_streak }}-day streak</span>
+          <span><i class="fas fa-bolt me-1"></i>{{ progress.total_xp }} XP total</span>
+          <span><i class="fas fa-check me-1"></i>{{ progress.challenges_completed }} challenges done</span>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="p-4 p-md-5">
+        <p style="font-size:1.05rem;font-weight:600;line-height:1.7;color:var(--text);margin-bottom:2rem;">{{ challenge.question }}</p>
+
+        <!-- MCQ Options -->
+        <form id="challengeForm"
+              hx-post="{% url 'submit_challenge' %}"
+              hx-target="#challengeResult"
+              hx-swap="innerHTML"
+              hx-on::after-request="onChallengeSubmit()">
+          {% csrf_token %}
+          <input type="hidden" name="challenge_id" value="{{ challenge.pk }}">
+
+          <div class="options-grid" id="optionsGrid">
+            <label class="option-card" for="opt_a">
+              <input type="radio" name="answer" id="opt_a" value="a" required>
+              <span class="option-letter">A</span>
+              <span class="option-text">{{ challenge.option_a }}</span>
+            </label>
+            <label class="option-card" for="opt_b">
+              <input type="radio" name="answer" id="opt_b" value="b">
+              <span class="option-letter">B</span>
+              <span class="option-text">{{ challenge.option_b }}</span>
+            </label>
+            <label class="option-card" for="opt_c">
+              <input type="radio" name="answer" id="opt_c" value="c">
+              <span class="option-letter">C</span>
+              <span class="option-text">{{ challenge.option_c }}</span>
+            </label>
+            <label class="option-card" for="opt_d">
+              <input type="radio" name="answer" id="opt_d" value="d">
+              <span class="option-letter">D</span>
+              <span class="option-text">{{ challenge.option_d }}</span>
+            </label>
+          </div>
+
+          <div class="mt-4 d-flex gap-3 align-items-center">
+            <button type="submit" class="btn-primary-custom btn" id="submitBtn">
+              <i class="fas fa-paper-plane me-2"></i>Submit Answer
+            </button>
+            <span style="font-size:.8rem;color:var(--text-muted);">
+              <i class="fas fa-clock me-1"></i>{{ challenge.date }}
+            </span>
+          </div>
+        </form>
+
+        <!-- Result Target -->
+        <div id="challengeResult" class="mt-4"></div>
+
+      </div>
+    </div>
+
+    <!-- Tips Card -->
+    <div class="card-custom p-4 mt-4">
+      <h6 class="fw-700 mb-3"><i class="fas fa-lightbulb me-2" style="color:var(--accent);"></i>How to earn more XP</h6>
+      <div class="row g-3">
+        <div class="col-sm-4">
+          <div class="text-center p-3 rounded-3" style="background:var(--primary-pale);">
+            <div style="font-size:1.5rem;margin-bottom:.4rem;">✅</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--primary);">+10 XP</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Correct answer</div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="text-center p-3 rounded-3" style="background:#fff7ed;">
+            <div style="font-size:1.5rem;margin-bottom:.4rem;">🔥</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--accent);">+20 XP</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Every 7-day streak</div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="text-center p-3 rounded-3" style="background:#f0fdf4;">
+            <div style="font-size:1.5rem;margin-bottom:.4rem;">⚡</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--success);">+2 XP</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Daily login</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Right: Streak Sidebar -->
+  <div class="col-lg-4">
+    <div class="card-custom p-4 mb-4">
+      <h6 class="fw-700 mb-3"><i class="fas fa-fire me-2" style="color:var(--accent);"></i>Your Streak</h6>
+      <div class="text-center py-3">
+        <div style="font-size:3.5rem;font-weight:800;color:var(--accent);line-height:1;">{{ progress.current_streak }}</div>
+        <div style="font-size:.85rem;color:var(--text-muted);margin-top:.3rem;">days in a row</div>
+      </div>
+      <div class="xp-bar-wrap mt-3">
+        <div class="xp-bar-fill" style="width:{% widthratio progress.current_streak 7 100 %}%;"></div>
+      </div>
+      <div class="d-flex justify-content-between mt-1" style="font-size:.72rem;color:var(--text-muted);">
+        <span>{{ progress.current_streak }} / 7 days</span>
+        <span>Streak bonus at 7 🔥</span>
+      </div>
+    </div>
+
+    <div class="card-custom p-4">
+      <h6 class="fw-700 mb-3"><i class="fas fa-chart-bar me-2" style="color:var(--primary-light);"></i>Stats</h6>
+      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+        <span style="font-size:.85rem;">Total XP</span>
+        <span class="fw-800" style="color:var(--primary);">{{ progress.total_xp }} ⚡</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+        <span style="font-size:.85rem;">Best Streak</span>
+        <span class="fw-800" style="color:var(--accent);">{{ progress.longest_streak }} 🏆</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <span style="font-size:.85rem;">Challenges Done</span>
+        <span class="fw-800" style="color:var(--success);">{{ progress.challenges_completed }} ✅</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Highlight selected option
+document.querySelectorAll('.option-card input[type=radio]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    this.closest('.option-card').classList.add('selected');
+  });
+});
+
+function onChallengeSubmit() {
+  document.getElementById('submitBtn').disabled = true;
+  document.querySelectorAll('.option-card').forEach(c => c.style.pointerEvents = 'none');
+}
+</script>
+{% endblock %}

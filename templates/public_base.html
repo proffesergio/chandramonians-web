@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Chandramonians — DCMHS Alumni Portal{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}Dulalpur Chandramoni High School Alumni Association — connecting students, alumni, and the school community.{% endblock %}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/chandramonians.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% include 'partials/public_nav.html' %}
+
+{% include 'partials/messages.html' %}
+
+{% block content %}{% endblock %}
+
+{% include 'partials/footer.html' %}
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<!-- Stats Counter Animation -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const counters = document.querySelectorAll('[data-count]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = +el.dataset.count, step = target / 60;
+      let current = 0;
+      const t = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = Math.floor(current).toLocaleString();
+        if (current >= target) clearInterval(t);
+      }, 25);
+      observer.unobserve(el);
+    });
+  }, { threshold: .3 });
+  counters.forEach(c => observer.observe(c));
+});
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

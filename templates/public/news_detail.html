@@ -1,0 +1,96 @@
+{% extends 'public_base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div style="background:var(--bg);border-bottom:1px solid var(--border);padding:.75rem 0;">
+  <div class="container">
+    <nav style="font-size:.8rem;color:var(--text-muted);">
+      <a href="{% url 'home' %}" style="color:var(--primary-light);text-decoration:none;">Home</a>
+      <span class="mx-2">/</span>
+      <a href="{% url 'news_list' %}" style="color:var(--primary-light);text-decoration:none;">News</a>
+      <span class="mx-2">/</span>
+      <span>{{ article.title|truncatechars:40 }}</span>
+    </nav>
+  </div>
+</div>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+
+      <!-- Article -->
+      <div class="col-lg-8">
+        <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;">
+          {% if article.cover_image %}
+          <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" style="width:100%;max-height:400px;object-fit:cover;">
+          {% endif %}
+          <div class="p-4 p-md-5">
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+              <span class="card-category {% if article.category == 'EDU' %}edu{% elif article.category == 'ASSOC' %}assoc{% else %}general{% endif %}">
+                {{ article.get_category_display }}
+              </span>
+            </div>
+            <h1 style="font-size:1.75rem;font-weight:900;line-height:1.35;color:var(--text);margin-bottom:1rem;">{{ article.title }}</h1>
+            <div class="d-flex gap-3 flex-wrap mb-4" style="font-size:.82rem;color:var(--text-muted);padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+              <span><i class="fas fa-clock me-1"></i>{{ article.published_at|date:"d F Y" }}</span>
+              {% if article.author %}<span><i class="fas fa-user me-1"></i>{{ article.author.get_full_name|default:article.author.email }}</span>{% endif %}
+            </div>
+            <div style="font-size:.97rem;line-height:2;color:var(--text);">
+              {{ article.content|linebreaksbr }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Share -->
+        <div class="mt-4 p-4 rounded-3" style="background:var(--bg);border:1px solid var(--border);">
+          <div style="font-size:.85rem;font-weight:700;color:var(--text-muted);margin-bottom:.75rem;">Share this article</div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="social-btn facebook">
+              <i class="fab fa-facebook-f me-1"></i>Facebook
+            </a>
+            <a href="https://wa.me/?text={{ article.title|urlencode }} {{ request.build_absolute_uri|urlencode }}" target="_blank" class="social-btn whatsapp" style="background:#25D366;color:#fff;">
+              <i class="fab fa-whatsapp me-1"></i>WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        {% if recent_articles %}
+        <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+          <h6 class="fw-700 mb-3" style="color:var(--primary);">More Articles</h6>
+          {% for art in recent_articles %}
+          <a href="{% url 'news_detail' art.slug %}" style="text-decoration:none;">
+            <div class="d-flex gap-3 mb-3 pb-3" style="border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background=''">
+              <div style="font-size:1.5rem;flex-shrink:0;">📰</div>
+              <div>
+                <div class="fw-600" style="font-size:.82rem;color:var(--text);line-height:1.4;">{{ art.title|truncatechars:65 }}</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem;">{{ art.published_at|date:"d M Y" }}</div>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="background:var(--primary-pale);border-radius:var(--radius);padding:1.5rem;">
+          <h6 class="fw-700 mb-2" style="color:var(--primary);">Join the Association</h6>
+          <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1rem;">Stay connected with DCMHS alumni and support your alma mater.</p>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}" class="pub-cta-btn" style="font-size:.82rem;padding:.6rem 1.25rem;">Join Now</a>
+          {% else %}
+          <a href="{% url 'apply_for_membership' %}" class="pub-cta-btn" style="font-size:.82rem;padding:.6rem 1.25rem;">Apply for Membership</a>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

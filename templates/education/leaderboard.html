@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leaderboard{% endblock %}
+{% block page_title %}Leaderboard{% endblock %}
+
+{% block content %}
+
+<!-- Podium (Top 3) -->
+{% if leaderboard|length >= 1 %}
+<div class="podium-wrap mb-5">
+
+  {% if leaderboard|length >= 2 %}
+  <div class="podium-item silver">
+    <div class="podium-avatar">{{ leaderboard.1.user.first_name|first|upper }}</div>
+    <div class="podium-name">
+      {% if leaderboard.1.user == request.user %}You{% else %}{{ leaderboard.1.user.first_name }}{% endif %}
+    </div>
+    <div class="podium-xp">{{ leaderboard.1.total_xp }} XP</div>
+    <div class="podium-block silver-block">🥈</div>
+  </div>
+  {% endif %}
+
+  <div class="podium-item gold">
+    <div class="podium-crown">👑</div>
+    <div class="podium-avatar gold-av">{{ leaderboard.0.user.first_name|first|upper }}</div>
+    <div class="podium-name">
+      {% if leaderboard.0.user == request.user %}You{% else %}{{ leaderboard.0.user.first_name }}{% endif %}
+    </div>
+    <div class="podium-xp">{{ leaderboard.0.total_xp }} XP</div>
+    <div class="podium-block gold-block">🥇</div>
+  </div>
+
+  {% if leaderboard|length >= 3 %}
+  <div class="podium-item bronze">
+    <div class="podium-avatar">{{ leaderboard.2.user.first_name|first|upper }}</div>
+    <div class="podium-name">
+      {% if leaderboard.2.user == request.user %}You{% else %}{{ leaderboard.2.user.first_name }}{% endif %}
+    </div>
+    <div class="podium-xp">{{ leaderboard.2.total_xp }} XP</div>
+    <div class="podium-block bronze-block">🥉</div>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <!-- Full Leaderboard -->
+  <div class="col-lg-8">
+    <div class="card-custom">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-trophy me-2" style="color:#d97706;"></i>All Rankings</h6>
+        <span style="font-size:.8rem;color:var(--text-muted);">All-time by XP</span>
+      </div>
+      <div class="p-3">
+        {% for entry in leaderboard %}
+        <div class="lb-row {% if entry.user == request.user %}my-row{% endif %}">
+          <div class="lb-rank">
+            {% if forloop.counter == 1 %}🥇
+            {% elif forloop.counter == 2 %}🥈
+            {% elif forloop.counter == 3 %}🥉
+            {% else %}<span style="font-size:.85rem;font-weight:700;color:var(--text-muted);">{{ forloop.counter }}</span>{% endif %}
+          </div>
+          <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+               style="width:38px;height:38px;background:{% if entry.user == request.user %}var(--primary){% else %}var(--primary-pale){% endif %};font-size:.85rem;font-weight:700;color:{% if entry.user == request.user %}#fff{% else %}var(--primary){% endif %};">
+            {{ entry.user.first_name|first|upper }}
+          </div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div style="font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              {% if entry.user == request.user %}<span style="color:var(--primary);">You</span>{% else %}{{ entry.user.first_name }} {{ entry.user.last_name|first }}.{% endif %}
+            </div>
+            <div style="font-size:.72rem;color:var(--text-muted);">
+              <i class="fas fa-fire me-1" style="color:var(--accent);"></i>{{ entry.current_streak }}-day streak
+              &nbsp;·&nbsp;
+              <i class="fas fa-check me-1" style="color:var(--success);"></i>{{ entry.challenges_completed }} challenges
+            </div>
+          </div>
+          <div class="text-end">
+            <div class="fw-800" style="color:var(--primary);font-size:.95rem;">{{ entry.total_xp }}</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">XP</div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="p-5 text-center">
+          <i class="fas fa-trophy fa-3x mb-3" style="color:var(--border);"></i>
+          <p style="color:var(--text-muted);font-size:.9rem;">No learners yet. Be the first to earn XP!</p>
+          <a href="{% url 'daily_challenge' %}" class="btn-primary-custom btn">Take Today's Challenge</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: My Position + How to Climb -->
+  <div class="col-lg-4">
+
+    <!-- My Rank Card -->
+    <div class="card-custom p-4 mb-4" style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;">
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.75;">Your Position</div>
+      <div style="font-size:3rem;font-weight:900;line-height:1;margin:.4rem 0;">
+        {% if my_rank %}#{{ my_rank }}{% else %}—{% endif %}
+      </div>
+      <div style="font-size:.85rem;opacity:.85;">out of {{ leaderboard|length }} students</div>
+      <hr style="border-color:rgba(255,255,255,.2);margin:1rem 0;">
+      <div class="d-flex justify-content-between">
+        <div>
+          <div style="font-size:1.3rem;font-weight:800;">{{ my_progress.total_xp }}</div>
+          <div style="font-size:.72rem;opacity:.7;">Total XP</div>
+        </div>
+        <div>
+          <div style="font-size:1.3rem;font-weight:800;">{{ my_progress.current_streak }}</div>
+          <div style="font-size:.72rem;opacity:.7;">Day Streak</div>
+        </div>
+        <div>
+          <div style="font-size:1.3rem;font-weight:800;">{{ my_progress.challenges_completed }}</div>
+          <div style="font-size:.72rem;opacity:.7;">Challenges</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Climb -->
+    <div class="card-custom p-4">
+      <h6 class="fw-700 mb-3"><i class="fas fa-rocket me-2" style="color:var(--primary-light);"></i>Climb the Ranks</h6>
+      <div class="d-flex gap-3 align-items-center mb-3 p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;">⚡</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;">Daily Challenge</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">+10 XP for correct answers</div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center mb-3 p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;">🔥</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;">Keep Your Streak</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">+20 XP bonus every 7 days</div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center p-3 rounded-3" style="background:var(--bg);">
+        <div style="font-size:1.5rem;">📅</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;">Log In Daily</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">+2 XP just for showing up</div>
+        </div>
+      </div>
+      <a href="{% url 'daily_challenge' %}" class="btn-primary-custom btn w-100 mt-3">
+        <i class="fas fa-bolt me-2"></i>Take Today's Challenge
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

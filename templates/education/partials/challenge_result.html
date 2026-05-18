@@ -1,0 +1,62 @@
+{% if is_correct %}
+<div class="fade-in-up p-4 rounded-3" style="background:#f0fdf4;border:2px solid #86efac;">
+  <div class="d-flex align-items-start gap-3">
+    <div style="font-size:2rem;flex-shrink:0;">✅</div>
+    <div class="flex-grow-1">
+      <div class="fw-800" style="color:#16a34a;font-size:1.05rem;">Correct! Well done! 🎉</div>
+      {% if xp_earned > 10 %}
+      <div class="d-flex gap-2 flex-wrap mt-2">
+        <span class="xp-award"><i class="fas fa-star me-1"></i>+10 XP</span>
+        <span class="xp-award" style="background:var(--accent);color:#1a3a6e;"><i class="fas fa-fire me-1"></i>+{{ xp_earned|add:"-10" }} Streak Bonus!</span>
+      </div>
+      {% else %}
+      <span class="xp-award mt-2 d-inline-block"><i class="fas fa-star me-1"></i>+{{ xp_earned }} XP earned</span>
+      {% endif %}
+      {% if new_streak %}
+      <div class="mt-2" style="font-size:.82rem;color:#16a34a;font-weight:600;">
+        <i class="fas fa-fire me-1"></i>{{ new_streak }}-day streak! Keep it going!
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% if explanation %}
+  <div class="mt-3 pt-3 border-top" style="border-color:#bbf7d0 !important;">
+    <div style="font-size:.8rem;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem;">
+      <i class="fas fa-book-open me-1"></i>Explanation
+    </div>
+    <p style="font-size:.88rem;color:#166534;margin:0;line-height:1.6;">{{ explanation }}</p>
+  </div>
+  {% endif %}
+</div>
+
+{% else %}
+<div class="fade-in-up p-4 rounded-3" style="background:#fef2f2;border:2px solid #fca5a5;">
+  <div class="d-flex align-items-start gap-3">
+    <div style="font-size:2rem;flex-shrink:0;">❌</div>
+    <div class="flex-grow-1">
+      <div class="fw-800" style="color:#dc2626;font-size:1.05rem;">Not quite right.</div>
+      <div class="mt-1" style="font-size:.88rem;color:#b91c1c;">
+        The correct answer was: <strong>{{ correct_option|upper }}. {{ correct_text }}</strong>
+      </div>
+      <div class="mt-2" style="font-size:.8rem;color:var(--text-muted);">Don't worry — reviewing mistakes is how you learn! Try again tomorrow.</div>
+    </div>
+  </div>
+  {% if explanation %}
+  <div class="mt-3 pt-3 border-top" style="border-color:#fca5a5 !important;">
+    <div style="font-size:.8rem;font-weight:700;color:#b91c1c;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem;">
+      <i class="fas fa-book-open me-1"></i>Explanation
+    </div>
+    <p style="font-size:.88rem;color:#7f1d1d;margin:0;line-height:1.6;">{{ explanation }}</p>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="d-flex gap-2 mt-3 flex-wrap">
+  <a href="{% url 'leaderboard' %}" class="btn-primary-custom btn btn-sm">
+    <i class="fas fa-trophy me-2"></i>Leaderboard
+  </a>
+  <a href="{% url 'edu_home' %}" class="btn-outline-custom btn btn-sm">
+    <i class="fas fa-home me-2"></i>Study Hub
+  </a>
+</div>

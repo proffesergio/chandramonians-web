@@ -1,0 +1,74 @@
+{% extends 'public_base.html' %}
+{% load static %}
+
+{% block title %}Photo Gallery{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<section style="background:linear-gradient(135deg,var(--primary) 0%,#1e4a8a 100%);padding:3.5rem 0 2rem;color:#fff;">
+  <div class="container">
+    <h1 style="font-size:2.2rem;font-weight:900;margin-bottom:.5rem;">Photo Gallery</h1>
+    <p style="opacity:.8;font-size:.95rem;margin:0;">Memories from DCMHS and Chandramonians events</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Category Filter -->
+    {% if categories %}
+    <div class="d-flex gap-2 flex-wrap mb-4">
+      <a href="{% url 'gallery' %}" class="subject-chip {% if not request.GET.category %}active{% endif %}">All</a>
+      {% for cat in categories %}
+      <a href="?category={{ cat }}" class="subject-chip {% if request.GET.category == cat %}active{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if photos %}
+    <div class="gallery-grid">
+      {% for photo in photos %}
+      <div class="gallery-item" data-bs-toggle="modal" data-bs-target="#photoModal{{ forloop.counter }}" style="cursor:pointer;">
+        <img src="{{ photo.photo.url }}" alt="{{ photo.title|default:'Gallery photo' }}" loading="lazy">
+        <div class="gallery-overlay">
+          <div style="font-size:1.5rem;margin-bottom:.5rem;">🔍</div>
+          {% if photo.title %}<div style="font-size:.85rem;font-weight:600;">{{ photo.title }}</div>{% endif %}
+          {% if photo.category %}<div style="font-size:.75rem;opacity:.75;margin-top:.2rem;">{{ photo.category }}</div>{% endif %}
+        </div>
+      </div>
+
+      <!-- Modal for this photo -->
+      <div class="modal fade" id="photoModal{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content" style="border-radius:var(--radius);overflow:hidden;">
+            <div class="modal-header" style="border-bottom:1px solid var(--border);">
+              <h6 class="modal-title fw-700">{{ photo.title|default:"Gallery Photo" }}</h6>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+              <img src="{{ photo.photo.url }}" alt="{{ photo.title|default:'Gallery photo' }}" style="width:100%;max-height:75vh;object-fit:contain;background:#000;">
+            </div>
+            {% if photo.category %}
+            <div class="modal-footer" style="border-top:1px solid var(--border);font-size:.82rem;color:var(--text-muted);">
+              <i class="fas fa-tag me-1"></i>{{ photo.category }}
+              <span class="ms-3"><i class="fas fa-calendar me-1"></i>{{ photo.uploaded_at|date:"d M Y" }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+      <i class="fas fa-images fa-3x mb-3" style="color:var(--border);"></i>
+      <h5 class="fw-700">No photos yet</h5>
+      <p style="color:var(--text-muted);">The gallery will be updated with photos from our events and school activities.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
