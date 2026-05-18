@@ -1,12 +1,13 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as current_lang %}
 <nav class="pub-nav navbar navbar-expand-lg">
   <div class="container">
 
     <a class="navbar-brand" href="{% url 'landing' %}">
-      <div class="brand-icon">C</div>
+      <img src="{% static 'assets/img/chandramonians.png' %}" alt="Chandramonians" style="width:36px;height:36px;border-radius:9px;object-fit:cover;margin-right:.1rem;">
       <div>
         <div style="line-height:1.1;">Chandramonians</div>
-        <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">DCMHS Alumni Association</div>
+        <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">দুলালপুর চন্দ্রমণি হাই স্কুল</div>
       </div>
     </a>
 
@@ -16,40 +17,59 @@
 
     <div class="collapse navbar-collapse" id="pubNav">
       <ul class="navbar-nav mx-auto gap-1">
-        <li class="nav-item"><a class="nav-link" href="{% url 'landing' %}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'news_list' %}">News</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">Events</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'public_directory' %}">Alumni</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'landing' %}">{% trans "Home" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">{% trans "About" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'news_list' %}">{% trans "News" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">{% trans "Events" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">{% trans "Gallery" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'public_directory' %}">{% trans "Alumni" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
       </ul>
 
       <div class="d-flex gap-2 align-items-center">
         {% if user.is_authenticated %}
           {% if user.user_type == '4' %}
             <a href="{% url 'edu_home' %}" class="nav-link btn-login">
-              <i class="fas fa-graduation-cap me-1"></i> Study Hub
+              <i class="fas fa-graduation-cap me-1"></i> {% trans "Study Hub" %}
             </a>
           {% elif user.user_type == '3' %}
             <a href="{% url 'alumni_home' %}" class="nav-link btn-login">
-              <i class="fas fa-user-graduate me-1"></i> My Portal
+              <i class="fas fa-user-graduate me-1"></i> {% trans "My Portal" %}
             </a>
           {% elif user.user_type == '1' %}
             <a href="{% url 'hod_home' %}" class="nav-link btn-login">
-              <i class="fas fa-th-large me-1"></i> Dashboard
+              <i class="fas fa-th-large me-1"></i> {% trans "Dashboard" %}
             </a>
           {% else %}
             <a href="{% url 'staff_home' %}" class="nav-link btn-login">
-              <i class="fas fa-th-large me-1"></i> Dashboard
+              <i class="fas fa-th-large me-1"></i> {% trans "Dashboard" %}
             </a>
           {% endif %}
         {% else %}
-          <a href="{% url 'login' %}" class="nav-link" style="color:rgba(255,255,255,.8);">Sign In</a>
+          <a href="{% url 'login' %}" class="nav-link" style="color:rgba(255,255,255,.8);">{% trans "Sign In" %}</a>
           <a href="{% url 'register' %}" class="nav-link btn-login">
-            <i class="fas fa-user-plus me-1"></i> Join Now
+            <i class="fas fa-user-plus me-1"></i> {% trans "Join Now" %}
           </a>
         {% endif %}
+
+        <!-- Language Switcher -->
+        <form action="{% url 'set_language' %}" method="post" class="d-inline ms-1">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.path }}">
+          {% if current_lang == 'bn' %}
+            <button type="submit" name="language" value="en"
+              style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+              🇬🇧 EN
+            </button>
+          {% else %}
+            <button type="submit" name="language" value="bn"
+              style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+              🇧🇩 বাংলা
+            </button>
+          {% endif %}
+        </form>
       </div>
     </div>
 

@@ -1,25 +1,87 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback
+from django.db.models import Sum, Count
+from app.models import (
+    SessionYear, Alumni, CustomUser, Staff, StaffNotification,
+    ApplyForMembership, AlumniFeedback,
+    MembershipPayment, NewsArticle, Event, DailyChallenge,
+    StudentProgress, ExamSuggestion, AIChat, Subject,
+)
 from django.contrib import messages
+from django.utils import timezone
 
 
 @login_required(login_url='/')
 def homeView(request):
-    alumni_count = Alumni.objects.all().count()
-    staff_count = Staff.objects.all().count()
-    user_count = CustomUser.objects.all().count()
+    if request.user.user_type != '1':
+        messages.error(request, 'Access denied.')
+        return redirect('landing')
 
+    # Core counts
+    alumni_count = Alumni.objects.count()
+    staff_count = Staff.objects.count()
+    student_count = CustomUser.objects.filter(user_type='4').count()
+    user_count = CustomUser.objects.count()
+
+    # Membership applications
+    pending_apps = ApplyForMembership.objects.filter(status=0).count()
+    approved_apps = ApplyForMembership.objects.filter(status=1).count()
+    recent_apps = ApplyForMembership.objects.select_related('alumni').order_by('-id')[:5]
+
+    # Payment records (Google Sheets synced)
+    life_members = MembershipPayment.objects.filter(member_type='LIFE').count()
+    general_members = MembershipPayment.objects.filter(member_type='GENERAL').count()
+    paid_payments = MembershipPayment.objects.filter(status='PAID').count()
+    pending_payments = MembershipPayment.objects.filter(status='PENDING').count()
+    total_collected = MembershipPayment.objects.filter(
+        status='PAID'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    last_sync = MembershipPayment.objects.order_by('-last_synced_at').first()
+
+    # Content stats
+    published_articles = NewsArticle.objects.filter(is_published=True).count()
+    upcoming_events = Event.objects.filter(
+        is_published=True, event_date__gte=timezone.now()
+    ).count()
+    total_suggestions = ExamSuggestion.objects.filter(is_published=True).count()
+    today_challenge = DailyChallenge.objects.filter(date=timezone.now().date()).first()
+
+    # Student engagement
+    total_xp = StudentProgress.objects.aggregate(total=Sum('total_xp'))['total'] or 0
+    active_students = StudentProgress.objects.filter(current_streak__gte=1).count()
+    ai_queries = AIChat.objects.count()
+
+    # Chart: gender split
     alumni_gender_male = Alumni.objects.filter(gender='Male').count()
     alumni_gender_female = Alumni.objects.filter(gender='Female').count()
 
-    # dictionary to use on templates
+    # Recent feedback
+    recent_feedback = AlumniFeedback.objects.order_by('-id')[:4]
+
     context = {
         'alumni_count': alumni_count,
         'staff_count': staff_count,
+        'student_count': student_count,
         'user_count': user_count,
+        'pending_apps': pending_apps,
+        'approved_apps': approved_apps,
+        'recent_apps': recent_apps,
+        'life_members': life_members,
+        'general_members': general_members,
+        'paid_payments': paid_payments,
+        'pending_payments': pending_payments,
+        'total_collected': total_collected,
+        'last_sync': last_sync,
+        'published_articles': published_articles,
+        'upcoming_events': upcoming_events,
+        'total_suggestions': total_suggestions,
+        'today_challenge': today_challenge,
+        'total_xp': total_xp,
+        'active_students': active_students,
+        'ai_queries': ai_queries,
         'alumni_gender_male': alumni_gender_male,
         'alumni_gender_female': alumni_gender_female,
+        'recent_feedback': recent_feedback,
     }
     return render(request, 'hod/home.html', context)
 

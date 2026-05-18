@@ -1,0 +1,500 @@
+# Bengali translations for Chandramonians
+# Dulalpur Chandramoni High School Alumni & Student Portal
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: bn\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ── Navigation ─────────────────────────────────────────────────
+msgid "Home"
+msgstr "হোম"
+
+msgid "About"
+msgstr "আমাদের সম্পর্কে"
+
+msgid "About Us"
+msgstr "আমাদের সম্পর্কে"
+
+msgid "News"
+msgstr "সংবাদ"
+
+msgid "News & Notices"
+msgstr "সংবাদ ও বিজ্ঞপ্তি"
+
+msgid "Events"
+msgstr "ইভেন্ট"
+
+msgid "Gallery"
+msgstr "গ্যালারি"
+
+msgid "Alumni"
+msgstr "প্রাক্তন শিক্ষার্থী"
+
+msgid "Contact"
+msgstr "যোগাযোগ"
+
+msgid "Sign In"
+msgstr "লগইন করুন"
+
+msgid "Join Now"
+msgstr "যোগ দিন"
+
+# ── Auth Portals ───────────────────────────────────────────────
+msgid "Dashboard"
+msgstr "ড্যাশবোর্ড"
+
+msgid "Study Hub"
+msgstr "স্টাডি হাব"
+
+msgid "My Portal"
+msgstr "আমার পোর্টাল"
+
+# ── Login Page ─────────────────────────────────────────────────
+msgid "Alumni & Student Hub"
+msgstr "প্রাক্তন শিক্ষার্থী ও ছাত্র হাব"
+
+msgid "Dulalpur Chandramoni High School"
+msgstr "দুলালপুর চন্দ্রমণি হাই স্কুল"
+
+msgid "Connecting generations of DCMHS graduates and empowering current students through knowledge and community."
+msgstr "জ্ঞান ও সম্প্রদায়ের মাধ্যমে প্রাক্তন শিক্ষার্থীদের প্রজন্মকে সংযুক্ত করে বর্তমান শিক্ষার্থীদের ক্ষমতায়ন করা।"
+
+msgid "AI-powered academic tutoring"
+msgstr "এআই চালিত একাডেমিক টিউটরিং"
+
+msgid "Daily challenges & leaderboard"
+msgstr "দৈনিক চ্যালেঞ্জ ও লিডারবোর্ড"
+
+msgid "Member payment records"
+msgstr "সদস্য পেমেন্ট রেকর্ড"
+
+msgid "Alumni network & job board"
+msgstr "প্রাক্তন শিক্ষার্থী নেটওয়ার্ক ও চাকরির বোর্ড"
+
+msgid "Welcome back"
+msgstr "স্বাগতম"
+
+msgid "Sign in to your DCMHS account"
+msgstr "আপনার একাউন্টে প্রবেশ করুন"
+
+msgid "Email Address"
+msgstr "ইমেইল ঠিকানা"
+
+msgid "Password"
+msgstr "পাসওয়ার্ড"
+
+msgid "Forgot password?"
+msgstr "পাসওয়ার্ড ভুলে গেছেন?"
+
+msgid "Don't have an account?"
+msgstr "একাউন্ট নেই?"
+
+msgid "Create one"
+msgstr "তৈরি করুন"
+
+msgid "Back to main site"
+msgstr "মূল সাইটে ফিরুন"
+
+# ── Register Page ──────────────────────────────────────────────
+msgid "Create Account"
+msgstr "একাউন্ট তৈরি করুন"
+
+msgid "Join the Chandramonians family"
+msgstr "চন্দ্রমণিয়ান্স পরিবারে যোগ দিন"
+
+msgid "First Name"
+msgstr "প্রথম নাম"
+
+msgid "Last Name"
+msgstr "শেষ নাম"
+
+msgid "Username"
+msgstr "ইউজারনেম"
+
+msgid "Confirm Password"
+msgstr "পাসওয়ার্ড নিশ্চিত করুন"
+
+msgid "I am a..."
+msgstr "আমি একজন..."
+
+msgid "Student"
+msgstr "শিক্ষার্থী"
+
+msgid "Staff"
+msgstr "কর্মী"
+
+msgid "Already have an account?"
+msgstr "ইতিমধ্যে একাউন্ট আছে?"
+
+# ── Sidebar — HOD ──────────────────────────────────────────────
+msgid "Overview"
+msgstr "সারসংক্ষেপ"
+
+msgid "Members"
+msgstr "সদস্যরা"
+
+msgid "Alumni Directory"
+msgstr "প্রাক্তন শিক্ষার্থী তালিকা"
+
+msgid "Add Alumni"
+msgstr "প্রাক্তন শিক্ষার্থী যোগ করুন"
+
+msgid "Staff List"
+msgstr "কর্মী তালিকা"
+
+msgid "Membership Requests"
+msgstr "সদস্যতার আবেদন"
+
+msgid "Payments"
+msgstr "পেমেন্ট"
+
+msgid "Payment Records"
+msgstr "পেমেন্ট রেকর্ড"
+
+msgid "Content"
+msgstr "বিষয়বস্তু"
+
+msgid "Exam Suggestions"
+msgstr "পরীক্ষার পরামর্শ"
+
+msgid "Communication"
+msgstr "যোগাযোগ ব্যবস্থা"
+
+msgid "Notify Staff"
+msgstr "কর্মীদের জানান"
+
+msgid "Alumni Feedback"
+msgstr "প্রাক্তন শিক্ষার্থীদের মতামত"
+
+# ── Sidebar — Staff ────────────────────────────────────────────
+msgid "My Work"
+msgstr "আমার কাজ"
+
+msgid "My Notifications"
+msgstr "আমার বিজ্ঞপ্তি"
+
+msgid "Community"
+msgstr "সমাজ"
+
+# ── Sidebar — Alumni ───────────────────────────────────────────
+msgid "My Account"
+msgstr "আমার একাউন্ট"
+
+msgid "My Payment Status"
+msgstr "আমার পেমেন্ট অবস্থা"
+
+msgid "Membership"
+msgstr "সদস্যপদ"
+
+msgid "Feedback"
+msgstr "মতামত"
+
+msgid "Network"
+msgstr "নেটওয়ার্ক"
+
+msgid "Job Board"
+msgstr "চাকরির বোর্ড"
+
+msgid "Mentorship"
+msgstr "মেন্টরশিপ"
+
+# ── Sidebar — Student ──────────────────────────────────────────
+msgid "My Dashboard"
+msgstr "আমার ড্যাশবোর্ড"
+
+msgid "AI Tutor"
+msgstr "এআই শিক্ষক"
+
+msgid "Daily Challenge"
+msgstr "দৈনিক চ্যালেঞ্জ"
+
+msgid "Leaderboard"
+msgstr "লিডারবোর্ড"
+
+msgid "Resources"
+msgstr "সম্পদ"
+
+msgid "Newspapers"
+msgstr "সংবাদপত্র"
+
+# ── Sidebar — Common ───────────────────────────────────────────
+msgid "My Profile"
+msgstr "আমার প্রোফাইল"
+
+msgid "Visit Site"
+msgstr "সাইট দেখুন"
+
+msgid "Logout"
+msgstr "লগআউট"
+
+# ── Footer ─────────────────────────────────────────────────────
+msgid "Quick Links"
+msgstr "দ্রুত লিঙ্ক"
+
+msgid "For Students"
+msgstr "শিক্ষার্থীদের জন্য"
+
+msgid "Contact & Info"
+msgstr "যোগাযোগ ও তথ্য"
+
+msgid "Register"
+msgstr "নিবন্ধন করুন"
+
+msgid "Exam Tips"
+msgstr "পরীক্ষার টিপস"
+
+msgid "Alumni Login"
+msgstr "প্রাক্তন শিক্ষার্থী লগইন"
+
+# ── Base template ──────────────────────────────────────────────
+msgid "Head of Department"
+msgstr "বিভাগের প্রধান"
+
+# ── Public Home ────────────────────────────────────────────────
+msgid "Welcome to"
+msgstr "স্বাগত"
+
+msgid "Your gateway to the DCMHS alumni community, student learning hub, and association services. Connecting generations of students, alumni, and educators."
+msgstr "ডিসিএমএইচএস প্রাক্তন শিক্ষার্থী সম্প্রদায়, শিক্ষার্থী শিক্ষা কেন্দ্র এবং সমিতি সেবার প্রবেশদ্বার।"
+
+msgid "Join the Community"
+msgstr "সম্প্রদায়ে যোগ দিন"
+
+msgid "Go to Study Hub"
+msgstr "স্টাডি হাবে যান"
+
+msgid "My Alumni Portal"
+msgstr "আমার প্রাক্তন পোর্টাল"
+
+msgid "Go to Dashboard"
+msgstr "ড্যাশবোর্ডে যান"
+
+msgid "Latest News"
+msgstr "সর্বশেষ সংবাদ"
+
+msgid "Get instant academic help"
+msgstr "তাৎক্ষণিক একাডেমিক সাহায্য পান"
+
+msgid "Study Streak"
+msgstr "পড়াশোনার ধারা"
+
+msgid "Build your daily habit"
+msgstr "আপনার দৈনিক অভ্যাস গড়ুন"
+
+msgid "Class Leaderboard"
+msgstr "শ্রেণীর লিডারবোর্ড"
+
+msgid "Top students this week"
+msgstr "এই সপ্তাহের শীর্ষ শিক্ষার্থী"
+
+msgid "News & Updates"
+msgstr "সংবাদ ও আপডেট"
+
+msgid "Read more"
+msgstr "আরও পড়ুন"
+
+msgid "Upcoming Events"
+msgstr "আসন্ন ইভেন্ট"
+
+msgid "View All Events"
+msgstr "সব ইভেন্ট দেখুন"
+
+msgid "View All News"
+msgstr "সব সংবাদ দেখুন"
+
+msgid "Our Alumni Network"
+msgstr "আমাদের প্রাক্তন শিক্ষার্থী নেটওয়ার্ক"
+
+msgid "Active Alumni"
+msgstr "সক্রিয় প্রাক্তন শিক্ষার্থী"
+
+msgid "Students Enrolled"
+msgstr "নিবন্ধিত শিক্ষার্থী"
+
+msgid "Years of Legacy"
+msgstr "উত্তরাধিকারের বছর"
+
+msgid "Events Per Year"
+msgstr "প্রতি বছর ইভেন্ট"
+
+# ── Education / Student Hub ────────────────────────────────────
+msgid "Welcome back,"
+msgstr "স্বাগতম,"
+
+msgid "Current Level"
+msgstr "বর্তমান স্তর"
+
+msgid "XP Points"
+msgstr "এক্সপি পয়েন্ট"
+
+msgid "Day Streak"
+msgstr "দিনের ধারা"
+
+msgid "Challenges Done"
+msgstr "সম্পন্ন চ্যালেঞ্জ"
+
+msgid "AI Queries"
+msgstr "এআই প্রশ্ন"
+
+msgid "Today's Challenge"
+msgstr "আজকের চ্যালেঞ্জ"
+
+msgid "Achievements"
+msgstr "অর্জনসমূহ"
+
+msgid "Start Challenge"
+msgstr "চ্যালেঞ্জ শুরু করুন"
+
+msgid "Ask AI Tutor"
+msgstr "এআই শিক্ষককে জিজ্ঞাসা করুন"
+
+msgid "View Leaderboard"
+msgstr "লিডারবোর্ড দেখুন"
+
+msgid "Browse Suggestions"
+msgstr "পরামর্শ দেখুন"
+
+msgid "Read Newspapers"
+msgstr "সংবাদপত্র পড়ুন"
+
+msgid "No challenge posted yet for today."
+msgstr "আজকের জন্য এখনও কোনো চ্যালেঞ্জ পোস্ট হয়নি।"
+
+msgid "You already completed today's challenge!"
+msgstr "আপনি আজকের চ্যালেঞ্জ সম্পন্ন করেছেন!"
+
+msgid "Well done!"
+msgstr "চমৎকার!"
+
+msgid "Keep Going"
+msgstr "এগিয়ে যান"
+
+# ── HOD Dashboard ──────────────────────────────────────────────
+msgid "Total Alumni"
+msgstr "মোট প্রাক্তন শিক্ষার্থী"
+
+msgid "Total Staff"
+msgstr "মোট কর্মী"
+
+msgid "Students Registered"
+msgstr "নিবন্ধিত শিক্ষার্থী"
+
+msgid "Total Users"
+msgstr "মোট ব্যবহারকারী"
+
+msgid "Pending Applications"
+msgstr "অপেক্ষমাণ আবেদন"
+
+msgid "Approved Members"
+msgstr "অনুমোদিত সদস্য"
+
+msgid "Life Members"
+msgstr "আজীবন সদস্য"
+
+msgid "General Members"
+msgstr "সাধারণ সদস্য"
+
+msgid "Paid"
+msgstr "পরিশোধিত"
+
+msgid "Pending"
+msgstr "অপেক্ষমাণ"
+
+msgid "Sync Now"
+msgstr "এখনই সিঙ্ক করুন"
+
+msgid "Total Collected"
+msgstr "মোট সংগৃহীত"
+
+msgid "Payment Summary"
+msgstr "পেমেন্ট সারসংক্ষেপ"
+
+msgid "Active Streak Users"
+msgstr "সক্রিয় ধারা ব্যবহারকারী"
+
+msgid "Total AI Queries"
+msgstr "মোট এআই প্রশ্ন"
+
+msgid "Total XP Awarded"
+msgstr "মোট এক্সপি প্রদান"
+
+msgid "Student Engagement"
+msgstr "শিক্ষার্থীদের অংশগ্রহণ"
+
+msgid "Recent Membership Applications"
+msgstr "সাম্প্রতিক সদস্যতার আবেদন"
+
+msgid "Approve"
+msgstr "অনুমোদন করুন"
+
+msgid "Deny"
+msgstr "প্রত্যাখ্যান করুন"
+
+msgid "Content Status"
+msgstr "বিষয়বস্তুর অবস্থা"
+
+msgid "Published Articles"
+msgstr "প্রকাশিত নিবন্ধ"
+
+msgid "Upcoming Events"
+msgstr "আসন্ন ইভেন্ট"
+
+msgid "Exam Suggestions"
+msgstr "পরীক্ষার পরামর্শ"
+
+msgid "Today's Challenge"
+msgstr "আজকের চ্যালেঞ্জ"
+
+msgid "Quick Actions"
+msgstr "দ্রুত কার্যক্রম"
+
+msgid "Manage Alumni"
+msgstr "প্রাক্তন শিক্ষার্থী পরিচালনা"
+
+msgid "Payment Records"
+msgstr "পেমেন্ট রেকর্ড"
+
+msgid "Membership Applications"
+msgstr "সদস্যতার আবেদনসমূহ"
+
+msgid "Django Admin"
+msgstr "অ্যাডমিন প্যানেল"
+
+msgid "Notify Staff"
+msgstr "কর্মীদের জানান"
+
+msgid "Manage News"
+msgstr "সংবাদ পরিচালনা"
+
+msgid "Add Challenge"
+msgstr "চ্যালেঞ্জ যোগ করুন"
+
+msgid "Manage Suggestions"
+msgstr "পরামর্শ পরিচালনা"
+
+msgid "Recent Feedback"
+msgstr "সাম্প্রতিক মতামত"
+
+msgid "No feedback yet."
+msgstr "এখনও কোনো মতামত নেই।"
+
+msgid "No recent applications."
+msgstr "সাম্প্রতিক কোনো আবেদন নেই।"
+
+msgid "Last synced"
+msgstr "সর্বশেষ সিঙ্ক"
+
+msgid "Never"
+msgstr "কখনো না"
+
+msgid "Gender Distribution"
+msgstr "লিঙ্গ বিতরণ"
+
+msgid "Male"
+msgstr "পুরুষ"
+
+msgid "Female"
+msgstr "মহিলা"

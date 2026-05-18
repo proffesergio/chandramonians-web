@@ -338,7 +338,7 @@ python manage.py collectstatic    # Collect static files
 - [ ] `Student` model has `USERNAME_FIELD` and `REQUIRED_FIELDS` — these are AbstractUser attributes and don't belong on Student; remove them
 - [ ] No email verification on registration — add for production
 - [ ] No rate limiting on AI tutor endpoint — add `ai_queries_used` check (e.g., max 20/day for free tier)
-- [ ] Templates `base.html`, `partials/header.html`, `partials/sidebar.html` need Bootstrap 5.3 upgrade (still on mixed Bootstrap 4/5)
+- [x] Templates upgraded to Bootstrap 5.3 + HTMX + Alpine.js
 - [ ] `static/assets/` contains jQuery loaded twice in some templates — deduplicate
 - [ ] No test suite yet — add `app/tests.py` before production launch
 
@@ -361,8 +361,9 @@ python manage.py collectstatic    # Collect static files
 | Public views (home, news, events) | ✅ Written (needs templates) |
 | Student educational hub views | ✅ Written (needs templates) |
 | Member/payment views | ✅ Written (needs templates) |
-| Templates: public/ | ⏳ Pending (Phase 7) |
-| Templates: education/ | ⏳ Pending (Phase 7) |
-| Templates: members/ | ⏳ Pending (Phase 7) |
-| Bootstrap 5.3 base template | ⏳ Pending (Phase 7) |
+| Templates: public/ | ✅ Done |
+| Templates: education/ | ✅ Done |
+| Templates: members/ | ✅ Done |
+| Bootstrap 5.3 base template | ✅ Done |
+| Django i18n EN/BN (bilingual) | ✅ Done — 159 strings, language switcher in nav + sidebar |
 | Deployment to Railway | ⏳ Pending (Phase 8) |

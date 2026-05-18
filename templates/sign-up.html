@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  {% load static %}
+  {% load static i18n %}
   <link rel="stylesheet" href="{% static 'assets/css/chandramonians.css' %}">
   <style>
     body { background: var(--bg); font-family: 'Inter', sans-serif; min-height: 100vh; }
@@ -79,8 +79,8 @@
         <div style="font-size:1rem;font-weight:800;color:var(--primary);">Chandramonians</div>
       </div>
 
-      <h3 style="font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:.4rem;">Create your account</h3>
-      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.75rem;">Join the DCMHS community today</p>
+      <h3 style="font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:.4rem;">{% trans "Create Account" %}</h3>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.75rem;">{% trans "Join the Chandramonians family" %}</p>
 
       {% if messages %}
       {% for message in messages %}
@@ -95,7 +95,7 @@
 
         <!-- Role Selection -->
         <div class="mb-4">
-          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.75rem;display:block;">I am a…</label>
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.75rem;display:block;">{% trans "I am a..." %}</label>
           <div class="row g-2">
             <div class="col-6">
               <label class="role-card" for="role_student" id="label_4">
@@ -143,28 +143,28 @@
         <!-- Name Row -->
         <div class="row g-3 mb-3">
           <div class="col-sm-6">
-            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">First Name</label>
+            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "First Name" %}</label>
             <div class="input-wrap">
               <i class="fas fa-user input-icon"></i>
               <input type="text" name="first_name" class="auth-input" placeholder="First name" required>
             </div>
           </div>
           <div class="col-sm-6">
-            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Last Name</label>
+            <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "Last Name" %}</label>
             <input type="text" name="last_name" class="auth-input no-icon" placeholder="Last name" style="padding-left:1rem;" required>
           </div>
         </div>
 
         <!-- Username & Email -->
         <div class="mb-3">
-          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Username</label>
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "Username" %}</label>
           <div class="input-wrap">
             <i class="fas fa-at input-icon"></i>
             <input type="text" name="username" class="auth-input" placeholder="Choose a username" required>
           </div>
         </div>
         <div class="mb-3">
-          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Email Address</label>
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "Email Address" %}</label>
           <div class="input-wrap">
             <i class="fas fa-envelope input-icon"></i>
             <input type="email" name="email" class="auth-input" placeholder="your@email.com" required>
@@ -173,7 +173,7 @@
 
         <!-- Password -->
         <div class="mb-1">
-          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Password</label>
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "Password" %}</label>
           <div class="input-wrap">
             <i class="fas fa-lock input-icon"></i>
             <input type="password" name="password" id="pwdInput" class="auth-input" placeholder="Create a strong password" required oninput="checkStrength(this.value)">
@@ -185,7 +185,7 @@
           <div style="font-size:.72rem;color:var(--text-muted);margin-top:.3rem;" id="strengthText"></div>
         </div>
         <div class="mb-4 mt-3">
-          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">Confirm Password</label>
+          <label style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.4rem;display:block;">{% trans "Confirm Password" %}</label>
           <div class="input-wrap">
             <i class="fas fa-lock input-icon"></i>
             <input type="password" name="confirm_password" id="cpwdInput" class="auth-input" placeholder="Repeat your password" required>
@@ -196,7 +196,7 @@
         </div>
 
         <button type="submit" class="auth-btn">
-          <i class="fas fa-user-plus me-2"></i>Create Account
+          <i class="fas fa-user-plus me-2"></i>{% trans "Create Account" %}
         </button>
       </form>
 
@@ -205,13 +205,27 @@
       </div>
 
       <div class="text-center" style="font-size:.88rem;color:var(--text-muted);">
-        Already have an account?
-        <a href="{% url 'login' %}" style="color:var(--primary);font-weight:700;text-decoration:none;"> Sign in</a>
+        {% trans "Already have an account?" %}
+        <a href="{% url 'login' %}" style="color:var(--primary);font-weight:700;text-decoration:none;"> {% trans "Sign In" %}</a>
       </div>
 
+      <!-- Language Switcher -->
       <div class="text-center mt-3">
+        {% get_current_language as current_lang %}
+        <form action="{% url 'set_language' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.path }}">
+          {% if current_lang == 'bn' %}
+            <button type="submit" name="language" value="en" style="background:none;border:none;font-size:.75rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;">🇬🇧 English</button>
+          {% else %}
+            <button type="submit" name="language" value="bn" style="background:none;border:none;font-size:.75rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;">🇧🇩 বাংলা</button>
+          {% endif %}
+        </form>
+      </div>
+
+      <div class="text-center mt-2">
         <a href="/" style="font-size:.78rem;color:var(--text-muted);text-decoration:none;">
-          <i class="fas fa-arrow-left me-1"></i>Back to main site
+          <i class="fas fa-arrow-left me-1"></i>{% trans "Back to main site" %}
         </a>
       </div>
     </div>

@@ -39,3 +39,6 @@ google-generativeai==0.8.6
 
 # Background scheduler (hourly Sheets sync)
 django-apscheduler==0.7.0
+
+# Translation (.po → .mo without system gettext, Windows-friendly)
+polib==1.2.0

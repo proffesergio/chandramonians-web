@@ -1,148 +1,409 @@
 {% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}HOD Dashboard{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+
 {% block content %}
 
-    <div class="page-header">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="container">
-                    <h5 class="page-title">দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়- Alumni Portal</h5>
-                </div>
-                <ul class="breadcrumb">
-                    {#                    <li class="breadcrumb-item active">Admin Dashboard</li>#}
-                </ul>
-                <div class="container">
-                    <div class="flex-lg-row">
-                        <div class="alert alert-danger alert-dismissible" role="alert">
-                            <button type="button" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"
-                                    class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
-                                    class="sr-only">Close</span></button>
-                            <strong><i class="fa fa-warning"></i> Important Notice!</strong>
-                            <marquee><p style="">This website is
-                                under development phase, We appreciate your positive feedback!</p></marquee>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- ── Welcome Banner ─────────────────────────────────────── -->
+<div class="p-4 rounded-4 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3"
+     style="background:linear-gradient(135deg,var(--primary) 0%,#1e4a8a 60%,var(--primary-light) 100%);color:#fff;">
+  <div class="d-flex align-items-center gap-3">
+    <img src="{% static 'assets/img/chandramonians.png' %}" alt="Chandramonians" style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.15);padding:4px;">
+    <div>
+      <div style="font-size:.75rem;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Chandramonians Admin</div>
+      <h4 class="fw-900 mb-0" style="font-size:1.3rem;">Welcome back, {{ request.user.first_name }} 👋</h4>
+      <div style="font-size:.82rem;opacity:.8;margin-top:.2rem;">দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয় — Head of Department</div>
     </div>
-    <div class="row">
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-one w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="db-info">
-                            <h3>{{ alumni_count }}</h3>
-                            <h6>Alumni</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-two w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="db-info">
-                            <h3>{{ staff_count }}</h3>
-                            <h6>Total Staffs</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-three w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="db-info">
-                            <h3>{{ user_count }}</h3>
-                            <h6>Total Users</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-four w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-icon">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                        </div>
-                        <div class="db-info">
-                            <h3>05</h3>
-                            <h6>Application Pending</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'add_alumni' %}" class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:var(--radius-sm);font-weight:600;font-size:.82rem;">
+      <i class="fas fa-plus me-1"></i>{% trans "Add Alumni" %}
+    </a>
+    <a href="{% url 'payment_records' %}" class="btn btn-sm" style="background:var(--accent);color:var(--primary-dark);border:none;border-radius:var(--radius-sm);font-weight:700;font-size:.82rem;">
+      <i class="fas fa-sync-alt me-1"></i>Payment Records
+    </a>
+  </div>
+</div>
+
+<!-- ── Stat Cards Row 1: People ──────────────────────────── -->
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon blue"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ alumni_count }}</div>
+        <div class="dash-stat-label">{% trans "Alumni" %}</div>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 col-lg-6">
-            <div class="card card-chart">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col-6">
-                            <h5 class="card-title">Alumni Chart</h5>
-                        </div>
-                        <div class="col-6">
-                            <ul class="list-inline-group text-right mb-0 pl-0">
-                                <li class="list-inline-item">
-                                    <div class="form-group mb-0 amount-spent-select">
-                                        <select class="form-control form-control-sm">
-                                            <option>Today</option>
-                                            <option>Last Week</option>
-                                            <option>Last Month</option>
-                                        </select>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ staff_count }}</div>
+        <div class="dash-stat-label">{% trans "Staff" %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon amber"><i class="fas fa-user-graduate"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ student_count }}</div>
+        <div class="dash-stat-label">{% trans "Students Registered" %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon rose"><i class="fas fa-users"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ user_count }}</div>
+        <div class="dash-stat-label">{% trans "Total Users" %}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Stat Cards Row 2: Payments ────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon purple"><i class="fas fa-id-card"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ life_members }}</div>
+        <div class="dash-stat-label">{% trans "Life Members" %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon amber"><i class="fas fa-user-check"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ general_members }}</div>
+        <div class="dash-stat-label">{% trans "General Members" %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon green"><i class="fas fa-check-circle"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ paid_payments }}</div>
+        <div class="dash-stat-label">Paid Records</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="dash-stat">
+      <div class="dash-stat-icon rose"><i class="fas fa-clock"></i></div>
+      <div>
+        <div class="dash-stat-val">{{ pending_apps }}</div>
+        <div class="dash-stat-label">{% trans "Pending Applications" %}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- ── LEFT COLUMN ────────────────────────────────────── -->
+  <div class="col-lg-8">
+
+    <!-- Quick Actions Grid -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom">
+        <h6 class="fw-700 mb-0"><i class="fas fa-bolt me-2" style="color:var(--accent);"></i>Quick Actions</h6>
+      </div>
+      <div class="p-4">
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <a href="{% url 'view_alumni' %}" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:var(--primary-pale);border:1px solid #c7d7f0;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-users fa-lg mb-2" style="color:var(--primary);"></i>
+                <div style="font-size:.82rem;font-weight:700;color:var(--primary);">Alumni List</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">{{ alumni_count }} records</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="{% url 'payment_records' %}" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#f0fdf4;border:1px solid #bbf7d0;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-money-bill-wave fa-lg mb-2" style="color:var(--success);"></i>
+                <div style="font-size:.82rem;font-weight:700;color:var(--success);">Payments</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">{{ life_members|add:general_members }} total</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="{% url 'membership_applications' %}" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#fef3c7;border:1px solid #fde68a;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-file-signature fa-lg mb-2" style="color:#d97706;"></i>
+                <div style="font-size:.82rem;font-weight:700;color:#d97706;">Applications</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">
+                  {% if pending_apps > 0 %}<span style="color:var(--danger);">{{ pending_apps }} pending</span>{% else %}None pending{% endif %}
                 </div>
-                <div class="card-body">
-                    <div id="alumni_bar"></div>
-                </div>
-            </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="/admin/" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#fdf4ff;border:1px solid #e9d5ff;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-cogs fa-lg mb-2" style="color:#7c3aed;"></i>
+                <div style="font-size:.82rem;font-weight:700;color:#7c3aed;">Admin Panel</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">Full control</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="{% url 'notify_staff' %}" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#fff1f2;border:1px solid #fecdd3;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-bell fa-lg mb-2" style="color:var(--danger);"></i>
+                <div style="font-size:.82rem;font-weight:700;color:var(--danger);">Notify Staff</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">Send alerts</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="/admin/app/newsarticle/add/" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#ecfdf5;border:1px solid #a7f3d0;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-newspaper fa-lg mb-2" style="color:#059669;"></i>
+                <div style="font-size:.82rem;font-weight:700;color:#059669;">Add News</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">{{ published_articles }} published</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="/admin/app/dailychallenge/add/" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#eff6ff;border:1px solid #bfdbfe;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-bolt fa-lg mb-2" style="color:#2563eb;"></i>
+                <div style="font-size:.82rem;font-weight:700;color:#2563eb;">Daily Challenge</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">{% if today_challenge %}Today's set ✓{% else %}Not set today{% endif %}</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="/admin/app/examsuggestion/add/" style="text-decoration:none;">
+              <div class="text-center p-3 rounded-3 h-100" style="background:#fff7ed;border:1px solid #fed7aa;transition:var(--transition);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                <i class="fas fa-file-alt fa-lg mb-2" style="color:#ea580c;"></i>
+                <div style="font-size:.82rem;font-weight:700;color:#ea580c;">Suggestions</div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">{{ total_suggestions }} published</div>
+              </div>
+            </a>
+          </div>
         </div>
-        <div class="col-md-12 col-lg-6">
-            <div class="card card-chart">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col-6">
-                            <h5 class="card-title">Feedback Chart</h5>
-                        </div>
-                        <div class="col-6">
-                            <ul class="list-inline-group text-right mb-0 pl-0">
-                                <li class="list-inline-item">
-                                    <div class="form-group mb-0 amount-spent-select">
-                                        <select class="form-control form-control-sm">
-                                            <option>Today</option>
-                                            <option>Last Week</option>
-                                            <option>Last Month</option>
-                                        </select>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="pie_chart"></div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    {% include 'partials/chart.html' %}
+    <!-- Payment Summary Card -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-wallet me-2" style="color:var(--success);"></i>Payment Summary</h6>
+        <div class="d-flex gap-2 align-items-center">
+          {% if last_sync %}
+          <span style="font-size:.72rem;color:var(--text-muted);"><i class="fas fa-sync-alt me-1"></i>Synced {{ last_sync.last_synced_at|timesince }} ago</span>
+          {% endif %}
+          <form method="post" action="{% url 'trigger_sync' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm" style="background:var(--primary);color:#fff;border-radius:var(--radius-sm);font-size:.75rem;font-weight:600;padding:.3rem .8rem;">
+              <i class="fas fa-sync-alt me-1"></i>Sync Now
+            </button>
+          </form>
+          <a href="{% url 'payment_records' %}" style="font-size:.8rem;font-weight:600;color:var(--primary-light);">View All</a>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3" style="background:var(--primary-pale);">
+              <div class="d-flex align-items-center gap-3">
+                <div style="width:44px;height:44px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;flex-shrink:0;">🏅</div>
+                <div>
+                  <div style="font-size:1.5rem;font-weight:900;color:var(--primary);">{{ life_members }}</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">Life Members</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3" style="background:#fff7ed;">
+              <div class="d-flex align-items-center gap-3">
+                <div style="width:44px;height:44px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--primary-dark);font-size:1.1rem;flex-shrink:0;">📋</div>
+                <div>
+                  <div style="font-size:1.5rem;font-weight:900;color:var(--accent-dark);">{{ general_members }}</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">General Members</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="text-center p-3 rounded-3" style="background:#f0fdf4;">
+              <div style="font-size:1.2rem;font-weight:900;color:var(--success);">{{ paid_payments }}</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">Paid</div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="text-center p-3 rounded-3" style="background:#fef3c7;">
+              <div style="font-size:1.2rem;font-weight:900;color:#d97706;">{{ pending_payments }}</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">Pending</div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="text-center p-3 rounded-3" style="background:var(--primary-pale);">
+              <div style="font-size:1rem;font-weight:900;color:var(--primary);">৳{{ total_collected|floatformat:0 }}</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">Total Collected</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Engagement Stats -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-chart-line me-2" style="color:var(--primary-light);"></i>Student Engagement</h6>
+        <a href="{% url 'leaderboard' %}" style="font-size:.8rem;font-weight:600;color:var(--primary-light);">Leaderboard</a>
+      </div>
+      <div class="p-4">
+        <div class="row g-3">
+          <div class="col-4">
+            <div class="text-center">
+              <div style="font-size:2rem;font-weight:900;color:var(--primary);">{{ student_count }}</div>
+              <div style="font-size:.78rem;color:var(--text-muted);">Registered Students</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="text-center">
+              <div style="font-size:2rem;font-weight:900;color:var(--accent);">{{ active_students }}</div>
+              <div style="font-size:.78rem;color:var(--text-muted);">Active Streaks</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="text-center">
+              <div style="font-size:2rem;font-weight:900;color:var(--success);">{{ ai_queries }}</div>
+              <div style="font-size:.78rem;color:var(--text-muted);">AI Tutor Queries</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
+          <div style="font-size:.85rem;color:var(--text-muted);">Total XP awarded to students</div>
+          <div class="fw-800" style="color:var(--primary);font-size:1.05rem;">{{ total_xp }} ⚡</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gender Chart (using ApexCharts) -->
+    <div class="card-custom">
+      <div class="p-4 border-bottom">
+        <h6 class="fw-700 mb-0"><i class="fas fa-chart-pie me-2" style="color:#6d28d9;"></i>Alumni Gender Distribution</h6>
+      </div>
+      <div class="p-4">
+        <div id="genderChart"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT COLUMN ───────────────────────────────────── -->
+  <div class="col-lg-4">
+
+    <!-- Pending Applications -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-file-signature me-2" style="color:var(--accent);"></i>Membership Requests</h6>
+        <a href="{% url 'membership_applications' %}" style="font-size:.8rem;font-weight:600;color:var(--primary-light);">View all</a>
+      </div>
+      <div class="p-3">
+        {% for app in recent_apps %}
+        <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-2" style="background:var(--bg);">
+          <div style="width:36px;height:36px;background:var(--primary-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:.85rem;flex-shrink:0;">
+            {{ app.alumni.alumni_name|first|upper }}
+          </div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div style="font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ app.alumni.alumni_name }}</div>
+            <div style="font-size:.72rem;color:var(--text-muted);">{{ app.alumni.batch }} batch</div>
+          </div>
+          <span style="font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;
+            {% if app.status == 0 %}background:#fef3c7;color:#d97706;
+            {% elif app.status == 1 %}background:#dcfce7;color:#16a34a;
+            {% else %}background:#fee2e2;color:#dc2626;{% endif %}">
+            {% if app.status == 0 %}Pending{% elif app.status == 1 %}Approved{% else %}Denied{% endif %}
+          </span>
+        </div>
+        {% empty %}
+        <div class="p-3 text-center" style="font-size:.85rem;color:var(--text-muted);">No recent applications.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Content Status -->
+    <div class="card-custom mb-4">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-layer-group me-2" style="color:var(--primary-light);"></i>Content Status</h6>
+        <a href="/admin/" style="font-size:.8rem;font-weight:600;color:var(--primary-light);">Manage</a>
+      </div>
+      <div class="p-3">
+        <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3" style="background:var(--bg);">
+          <span style="font-size:.85rem;"><i class="fas fa-newspaper me-2" style="color:#059669;"></i>News Articles</span>
+          <span class="fw-700" style="color:var(--primary);">{{ published_articles }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3" style="background:var(--bg);">
+          <span style="font-size:.85rem;"><i class="fas fa-calendar me-2" style="color:var(--accent);"></i>Upcoming Events</span>
+          <span class="fw-700" style="color:var(--primary);">{{ upcoming_events }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3" style="background:var(--bg);">
+          <span style="font-size:.85rem;"><i class="fas fa-file-alt me-2" style="color:#ea580c;"></i>Exam Suggestions</span>
+          <span class="fw-700" style="color:var(--primary);">{{ total_suggestions }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background:{% if today_challenge %}#f0fdf4{% else %}#fef2f2{% endif %};">
+          <span style="font-size:.85rem;"><i class="fas fa-bolt me-2" style="color:#2563eb;"></i>Today's Challenge</span>
+          <span class="fw-700" style="color:{% if today_challenge %}var(--success){% else %}var(--danger){% endif %};">
+            {% if today_challenge %}Set ✓{% else %}Not Set!{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Feedback -->
+    <div class="card-custom">
+      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+        <h6 class="fw-700 mb-0"><i class="fas fa-comments me-2" style="color:var(--danger);"></i>Recent Feedback</h6>
+        <a href="{% url 'alumni_feedback' %}" style="font-size:.8rem;font-weight:600;color:var(--primary-light);">View all</a>
+      </div>
+      <div class="p-3">
+        {% for fb in recent_feedback %}
+        <div class="p-3 mb-2 rounded-3" style="background:var(--bg);border-left:3px solid var(--primary-light);">
+          <div class="fw-600" style="font-size:.82rem;color:var(--text);">{{ fb.alumni.alumni_name }}</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.2rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ fb.feedback }}</div>
+        </div>
+        {% empty %}
+        <div class="p-3 text-center" style="font-size:.85rem;color:var(--text-muted);">No feedback yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Gender pie chart
+var options = {
+  series: [{{ alumni_gender_male }}, {{ alumni_gender_female }}],
+  chart: { type: 'donut', height: 280 },
+  labels: ['Male', 'Female'],
+  colors: ['#1a3a6e', '#e9a800'],
+  legend: { position: 'bottom' },
+  plotOptions: {
+    pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', formatter: () => '{{ alumni_count }}' } } } }
+  },
+  dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' },
+};
+var chart = new ApexCharts(document.querySelector("#genderChart"), options);
+chart.render();
+</script>
 {% endblock %}

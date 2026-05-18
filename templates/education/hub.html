@@ -1,215 +1,504 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}Study Hub{% endblock %}
 {% block page_title %}Study Hub{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ── Gaming Variables ──────────────────────── */
+:root {
+  --xp-glow: 0 0 12px rgba(233,168,0,.6);
+  --card-game: #0f1729;
+  --game-border: rgba(255,255,255,.08);
+  --neon-blue: #38bdf8;
+  --neon-gold: #fbbf24;
+  --neon-green: #4ade80;
+  --neon-purple: #a78bfa;
+}
+
+/* ── Level Badge ─────────────────────────── */
+.level-badge {
+  display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,#1a3a6e 0%,#2563eb 100%);
+  color:#fff;font-size:1.2rem;font-weight:900;
+  box-shadow:0 0 20px rgba(37,99,235,.5);
+  border:2px solid rgba(255,255,255,.2);
+  position:relative;flex-shrink:0;
+}
+.level-badge::after {
+  content:attr(data-level);position:absolute;bottom:-8px;left:50%;
+  transform:translateX(-50%);font-size:.55rem;font-weight:800;
+  background:var(--neon-gold);color:#1a3a6e;
+  padding:.1rem .4rem;border-radius:999px;white-space:nowrap;
+}
+
+/* ── XP Bar ──────────────────────────────── */
+.xp-track { height:10px;border-radius:5px;background:rgba(255,255,255,.1);overflow:visible;position:relative; }
+.xp-fill {
+  height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--neon-gold) 0%,#f59e0b 100%);
+  transition:width 1.2s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:var(--xp-glow);position:relative;
+}
+.xp-fill::after {
+  content:'';position:absolute;right:-1px;top:-2px;
+  width:14px;height:14px;background:var(--neon-gold);
+  border-radius:50%;box-shadow:var(--xp-glow);
+  animation:xp-pulse 1.5s ease-in-out infinite;
+}
+@keyframes xp-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+/* ── Game Card ───────────────────────────── */
+.game-card {
+  background:linear-gradient(145deg,#0f1729 0%,#162040 100%);
+  border:1px solid var(--game-border);border-radius:16px;
+  padding:1.5rem;transition:all .25s ease;
+  position:relative;overflow:hidden;
+}
+.game-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--neon-blue),transparent);
+  opacity:0;transition:.3s;
+}
+.game-card:hover::before { opacity:1; }
+.game-card:hover { transform:translateY(-4px);box-shadow:0 12px 40px rgba(56,189,248,.1); }
+
+/* ── Achievement Badge ───────────────────── */
+.achievement {
+  display:flex;align-items:center;gap:.75rem;
+  padding:.85rem 1rem;border-radius:12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  transition:.2s;
+}
+.achievement:hover { background:rgba(255,255,255,.08); }
+.achievement-icon {
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;flex-shrink:0;
+}
+.achievement.locked { opacity:.4; filter:grayscale(1); }
+
+/* ── Streak Ring ─────────────────────────── */
+.streak-ring { position:relative;display:inline-flex;align-items:center;justify-content:center; }
+.streak-ring svg { transform:rotate(-90deg); }
+.streak-ring-text { position:absolute;text-align:center; }
+
+/* ── Quick Card ──────────────────────────── */
+.hub-quick-card {
+  background:rgba(255,255,255,.04);border:1px solid var(--game-border);
+  border-radius:14px;padding:1.25rem;text-decoration:none;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  transition:all .2s ease;position:relative;overflow:hidden;
+}
+.hub-quick-card:hover { border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.06);transform:translateY(-3px); }
+.hub-quick-card .card-glow {
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:60%;height:2px;border-radius:999px;opacity:0;transition:.3s;
+}
+.hub-quick-card:hover .card-glow { opacity:1; }
+
+/* ── Typing indicator ────────────────────── */
+.typing-indicator { display:flex;gap:5px;align-items:center;padding:.25rem 0; }
+.typing-dot { width:8px;height:8px;border-radius:50%;background:var(--primary-light);animation:bounce .9s infinite; }
+.typing-dot:nth-child(2) { animation-delay:.2s; }
+.typing-dot:nth-child(3) { animation-delay:.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+/* ── Rank badge ──────────────────────────── */
+.rank-badge {
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:28px;height:28px;border-radius:8px;
+  font-size:.72rem;font-weight:800;padding:0 .5rem;
+}
+
+/* ── Leaderboard row (dark) ──────────────── */
+.lb-dark {
+  display:flex;align-items:center;gap:.85rem;
+  padding:.75rem 1rem;border-radius:10px;margin-bottom:.4rem;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);
+  transition:.2s;
+}
+.lb-dark:hover { background:rgba(56,189,248,.06);border-color:rgba(56,189,248,.2); }
+.lb-dark.my-row { background:rgba(37,99,235,.15);border-color:rgba(37,99,235,.4); }
+
+/* ── Challenge card highlight ──────────── */
+.challenge-live {
+  background:linear-gradient(135deg,rgba(37,99,235,.15) 0%,rgba(99,102,241,.1) 100%);
+  border:1px solid rgba(99,102,241,.3);border-radius:16px;
+  padding:1.5rem;position:relative;overflow:hidden;
+}
+.challenge-live::before {
+  content:'LIVE';position:absolute;top:.75rem;right:.75rem;
+  font-size:.6rem;font-weight:900;letter-spacing:.1em;
+  background:var(--danger);color:#fff;padding:.2rem .5rem;border-radius:4px;
+  animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* Fade-in animation */
+.fade-in-up { animation:fadeInUp .4s ease both; }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<!-- ─── Streak Banner ─────────────────────────────────────── -->
-<div class="streak-banner">
-  <div class="streak-fire">🔥</div>
-  <div class="flex-grow-1">
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-      <span class="streak-count">{{ progress.current_streak }}</span>
-      <div>
-        <div style="font-weight:700;font-size:1.05rem;">Day Streak!</div>
-        <div style="font-size:.82rem;opacity:.8;">Keep coming back daily to maintain your streak</div>
+{% with level=progress.total_xp|divisibleby:100 xp_in_level=progress.total_xp|add:0 %}
+{% with user_level=progress.total_xp|floatformat:"-2" %}
+
+<!-- ── Hero: Player Card ─────────────────────────────────── -->
+<div class="game-card mb-4 fade-in-up" style="background:linear-gradient(135deg,#0a1628 0%,#0f2044 50%,#162040 100%);border-color:rgba(37,99,235,.3);">
+  <div class="row align-items-center g-4">
+    <div class="col-auto">
+      <div class="level-badge" data-level="LVL {{ progress.total_xp|divisibleby:100|add:1 }}">
+        🎮
       </div>
     </div>
-    <div class="mt-2">
-      <div class="d-flex justify-content-between mb-1" style="font-size:.75rem;opacity:.8;">
-        <span>{{ progress.total_xp }} XP</span>
-        <span>Next level: {{ progress.total_xp|add:"50" }} XP</span>
+    <div class="col">
+      <div style="font-size:.7rem;color:var(--neon-blue);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">
+        Chandramonians Scholar
       </div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-fill" style="width: {% widthratio progress.total_xp|default:0 100 100 %}%;"></div>
+      <div style="font-size:1.3rem;font-weight:900;color:#fff;">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.1rem;">চন্দ্রমণিয়ান্স স্টুডেন্ট</div>
+    </div>
+    <div class="col-auto d-none d-md-block">
+      <div class="d-flex gap-4">
+        <div class="text-center">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--neon-gold);line-height:1;">{{ progress.total_xp }}</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Total XP</div>
+        </div>
+        <div class="text-center">
+          <div style="font-size:1.8rem;font-weight:900;color:#fb923c;line-height:1;">{{ progress.current_streak }}</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Day Streak</div>
+        </div>
+        <div class="text-center">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--neon-green);line-height:1;">{{ progress.challenges_completed }}</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Challenges</div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="text-end d-none d-md-block">
-    <div style="font-size:.75rem;opacity:.7;">Longest streak</div>
-    <div style="font-size:1.5rem;font-weight:800;">{{ progress.longest_streak }} 🏆</div>
+
+  <!-- XP Progress Bar -->
+  <div class="mt-4">
+    <div class="d-flex justify-content-between mb-2">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.6);font-weight:600;">
+        <i class="fas fa-bolt me-1" style="color:var(--neon-gold);"></i>Level Progress
+      </span>
+      <span style="font-size:.75rem;color:var(--neon-gold);font-weight:700;">{{ progress.total_xp }} / {{ progress.total_xp|add:50 }} XP</span>
+    </div>
+    <div class="xp-track">
+      <div class="xp-fill" id="xpFill" style="width:0%;" data-pct="{% widthratio progress.total_xp|add:0 100 100 %}"></div>
+    </div>
+    <div class="d-flex justify-content-between mt-2" style="font-size:.68rem;color:rgba(255,255,255,.35);">
+      <span>Level {{ progress.total_xp|floatformat:"-2"|add:"1" }}</span>
+      <span>Next level in {{ progress.total_xp|add:50 }} XP</span>
+    </div>
   </div>
 </div>
 
-<!-- ─── Quick Access ──────────────────────────────────────── -->
-<div class="quick-access-grid">
-  <a href="{% url 'ai_tutor' %}" class="quick-card">
-    <i class="fas fa-robot" style="color:var(--primary-light);"></i>
-    <span>AI Tutor</span>
-  </a>
-  <a href="{% url 'daily_challenge' %}" class="quick-card">
-    <i class="fas fa-bolt" style="color:var(--accent);"></i>
-    <span>Daily Challenge</span>
-  </a>
-  <a href="{% url 'suggestions' %}" class="quick-card">
-    <i class="fas fa-file-alt" style="color:var(--success);"></i>
-    <span>Exam Tips</span>
-  </a>
-  <a href="{% url 'leaderboard' %}" class="quick-card">
-    <i class="fas fa-trophy" style="color:#d97706;"></i>
-    <span>Leaderboard</span>
-  </a>
-  <a href="{% url 'newspapers' %}" class="quick-card">
-    <i class="fas fa-newspaper" style="color:#6d28d9;"></i>
-    <span>Newspapers</span>
-  </a>
-  <a href="{% url 'news_list' %}" class="quick-card">
-    <i class="fas fa-rss" style="color:var(--danger);"></i>
-    <span>Notices</span>
-  </a>
+<!-- ── Mobile Stats ─────────────────────────────────────── -->
+<div class="d-flex d-md-none gap-2 mb-4">
+  <div class="flex-fill text-center p-3 rounded-3" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);">
+    <div style="font-size:1.3rem;font-weight:900;color:var(--neon-gold);">{{ progress.total_xp }}</div>
+    <div style="font-size:.65rem;color:rgba(255,255,255,.5);">XP</div>
+  </div>
+  <div class="flex-fill text-center p-3 rounded-3" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);">
+    <div style="font-size:1.3rem;font-weight:900;color:#fb923c;">{{ progress.current_streak }}🔥</div>
+    <div style="font-size:.65rem;color:rgba(255,255,255,.5);">Streak</div>
+  </div>
+  <div class="flex-fill text-center p-3 rounded-3" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);">
+    <div style="font-size:1.3rem;font-weight:900;color:var(--neon-green);">{{ progress.challenges_completed }}</div>
+    <div style="font-size:.65rem;color:rgba(255,255,255,.5);">Done</div>
+  </div>
+</div>
+
+<!-- ── Quick Access Grid ─────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-4 col-md-2">
+    <a href="{% url 'ai_tutor' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,var(--neon-blue),transparent);"></div>
+      <span style="font-size:1.75rem;">🤖</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "AI Tutor" %}</span>
+    </a>
+  </div>
+  <div class="col-4 col-md-2">
+    <a href="{% url 'daily_challenge' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,var(--neon-gold),transparent);"></div>
+      <span style="font-size:1.75rem;">⚡</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "Daily Challenge" %}</span>
+    </a>
+  </div>
+  <div class="col-4 col-md-2">
+    <a href="{% url 'leaderboard' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,var(--neon-purple),transparent);"></div>
+      <span style="font-size:1.75rem;">🏆</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "Leaderboard" %}</span>
+    </a>
+  </div>
+  <div class="col-4 col-md-2">
+    <a href="{% url 'suggestions' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,var(--neon-green),transparent);"></div>
+      <span style="font-size:1.75rem;">📚</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "Exam Tips" %}</span>
+    </a>
+  </div>
+  <div class="col-4 col-md-2">
+    <a href="{% url 'newspapers' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,#f472b6,transparent);"></div>
+      <span style="font-size:1.75rem;">📰</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "Newspapers" %}</span>
+    </a>
+  </div>
+  <div class="col-4 col-md-2">
+    <a href="{% url 'news_list' %}" class="hub-quick-card">
+      <div class="card-glow" style="background:linear-gradient(90deg,#fb7185,transparent);"></div>
+      <span style="font-size:1.75rem;">📢</span>
+      <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);text-align:center;">{% trans "News & Notices" %}</span>
+    </a>
+  </div>
 </div>
 
 <div class="row g-4">
-  <!-- LEFT: Today's Challenge + Recent Suggestions -->
+
+  <!-- ── LEFT ──────────────────────────────────────────── -->
   <div class="col-lg-8">
 
-    <!-- Today's Challenge Card -->
+    <!-- Today's Challenge -->
     {% if today_challenge %}
-    <div class="card-custom mb-4">
-      <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:1.25rem 1.5rem;color:#fff;border-radius:var(--radius) var(--radius) 0 0;">
-        <div class="d-flex align-items-center justify-content-between">
-          <div>
-            <div style="font-size:.75rem;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Today's Challenge</div>
-            <div style="font-size:.95rem;font-weight:700;margin-top:.2rem;">{{ today_challenge.subject.name }} — {{ today_challenge.subject.get_grade_display }}</div>
+    <div class="challenge-live mb-4 fade-in-up">
+      <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+        <div>
+          <div style="font-size:.7rem;color:var(--neon-blue);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;">
+            <i class="fas fa-bolt me-1"></i>Today's Challenge
           </div>
-          <div class="xp-award"><i class="fas fa-star"></i> +10 XP</div>
+          <div style="font-size:1rem;font-weight:700;color:#fff;">{{ today_challenge.subject.name }} — {{ today_challenge.subject.get_grade_display }}</div>
+        </div>
+        <div style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:.5rem .85rem;text-align:center;flex-shrink:0;">
+          <div style="font-size:1.1rem;font-weight:900;color:var(--neon-gold);">+10</div>
+          <div style="font-size:.6rem;color:rgba(255,255,255,.5);font-weight:600;">XP</div>
         </div>
       </div>
-      <div class="p-4">
-        <p style="font-size:.95rem;font-weight:600;margin-bottom:1.5rem;">{{ today_challenge.question }}</p>
-        <div class="d-flex gap-2 flex-wrap">
-          <a href="{% url 'daily_challenge' %}" class="btn-primary-custom btn">
-            <i class="fas fa-bolt me-2"></i>Take Challenge
-          </a>
-          <span style="font-size:.8rem;color:var(--text-muted);align-self:center;">
-            <i class="fas fa-clock me-1"></i>{{ progress.challenges_completed }} challenges done
-          </span>
-        </div>
+      <p style="font-size:.9rem;color:rgba(255,255,255,.8);line-height:1.6;margin-bottom:1.25rem;">{{ today_challenge.question|truncatechars:120 }}</p>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <a href="{% url 'daily_challenge' %}" style="background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;border:none;border-radius:10px;padding:.65rem 1.5rem;font-weight:700;font-size:.88rem;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 4px 15px rgba(37,99,235,.4);">
+          <i class="fas fa-gamepad"></i>Play Now
+        </a>
+        <span style="font-size:.78rem;color:rgba(255,255,255,.4);">
+          <i class="fas fa-check me-1"></i>{{ progress.challenges_completed }} completed so far
+        </span>
       </div>
     </div>
     {% else %}
-    <div class="card-custom mb-4 p-4 text-center" style="border:2px dashed var(--border);">
-      <i class="fas fa-calendar-day fa-3x mb-3" style="color:var(--border);"></i>
-      <h6 class="fw-700">No challenge today yet</h6>
-      <p style="font-size:.85rem;color:var(--text-muted);">Check back later — your teacher will post today's challenge soon.</p>
+    <div class="game-card mb-4 text-center py-4">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">⏳</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:.3rem;">No Challenge Yet Today</div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.4);">Your teacher will post today's challenge soon</div>
     </div>
     {% endif %}
 
-    <!-- Recent Exam Suggestions -->
-    <div class="card-custom">
-      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
-        <h6 class="fw-700 mb-0"><i class="fas fa-file-alt me-2" style="color:var(--primary-light);"></i>Recent Exam Suggestions</h6>
-        <a href="{% url 'suggestions' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">View all <i class="fas fa-arrow-right ms-1"></i></a>
+    <!-- Achievements -->
+    <div class="game-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-800 mb-0" style="color:#fff;"><i class="fas fa-medal me-2" style="color:var(--neon-gold);"></i>Achievements</h6>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.4);">Earned by XP milestones</span>
       </div>
-      <div class="p-3">
-        {% for suggestion in recent_suggestions %}
-        <a href="{% url 'suggestion_detail' suggestion.pk %}" style="text-decoration:none;">
-          <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-2" style="background:var(--bg);transition:var(--transition);" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background='var(--bg)'">
-            <div class="d-flex align-items-center justify-content-center rounded-2 flex-shrink-0" style="width:40px;height:40px;background:var(--primary-pale);">
-              <i class="fas fa-file-alt" style="color:var(--primary-light);"></i>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="achievement {% if progress.challenges_completed < 1 %}locked{% endif %}">
+            <div class="achievement-icon" style="background:rgba(251,191,36,.15);">🌟</div>
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#fff;">First Step</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.4);">Complete 1 challenge</div>
             </div>
-            <div class="flex-grow-1 overflow-hidden">
-              <div class="fw-600" style="font-size:.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ suggestion.title }}</div>
-              <div style="font-size:.75rem;color:var(--text-muted);">{{ suggestion.subject.name }} · {{ suggestion.year }}</div>
-            </div>
-            <span class="card-category {% if suggestion.subject.grade == 'SSC' %}edu{% else %}assoc{% endif %}">{{ suggestion.subject.get_grade_display }}</span>
+            {% if progress.challenges_completed >= 1 %}<i class="fas fa-check-circle ms-auto" style="color:var(--neon-gold);flex-shrink:0;"></i>{% endif %}
           </div>
-        </a>
-        {% empty %}
-        <div class="p-3 text-center text-muted" style="font-size:.88rem;">No suggestions available yet.</div>
-        {% endfor %}
+        </div>
+        <div class="col-6">
+          <div class="achievement {% if progress.current_streak < 3 %}locked{% endif %}">
+            <div class="achievement-icon" style="background:rgba(251,146,60,.15);">🔥</div>
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#fff;">On Fire</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.4);">3-day streak</div>
+            </div>
+            {% if progress.current_streak >= 3 %}<i class="fas fa-check-circle ms-auto" style="color:var(--neon-gold);flex-shrink:0;"></i>{% endif %}
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="achievement {% if progress.total_xp < 50 %}locked{% endif %}">
+            <div class="achievement-icon" style="background:rgba(167,139,250,.15);">⚡</div>
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#fff;">XP Collector</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.4);">Earn 50 XP</div>
+            </div>
+            {% if progress.total_xp >= 50 %}<i class="fas fa-check-circle ms-auto" style="color:var(--neon-gold);flex-shrink:0;"></i>{% endif %}
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="achievement {% if progress.current_streak < 7 %}locked{% endif %}">
+            <div class="achievement-icon" style="background:rgba(56,189,248,.15);">🏆</div>
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#fff;">Week Warrior</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.4);">7-day streak</div>
+            </div>
+            {% if progress.current_streak >= 7 %}<i class="fas fa-check-circle ms-auto" style="color:var(--neon-gold);flex-shrink:0;"></i>{% endif %}
+          </div>
+        </div>
       </div>
     </div>
 
-  </div><!-- /col-lg-8 -->
+    <!-- Recent Suggestions -->
+    <div class="game-card">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-800 mb-0" style="color:#fff;"><i class="fas fa-file-alt me-2" style="color:var(--neon-blue);"></i>Exam Suggestions</h6>
+        <a href="{% url 'suggestions' %}" style="font-size:.78rem;color:var(--neon-blue);font-weight:600;text-decoration:none;">View all →</a>
+      </div>
+      {% for suggestion in recent_suggestions %}
+      <a href="{% url 'suggestion_detail' suggestion.pk %}" style="text-decoration:none;">
+        <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-2" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);transition:.2s;" onmouseover="this.style.borderColor='rgba(56,189,248,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.05)'">
+          <div style="width:40px;height:40px;background:rgba(56,189,248,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">📄</div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div style="font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ suggestion.title }}</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.4);">{{ suggestion.subject.name }} · {{ suggestion.year }}</div>
+          </div>
+          <span style="font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;flex-shrink:0;
+            {% if suggestion.subject.grade == 'SSC' %}background:rgba(37,99,235,.2);color:var(--neon-blue);{% else %}background:rgba(167,139,250,.2);color:var(--neon-purple);{% endif %}">
+            {{ suggestion.subject.get_grade_display }}
+          </span>
+        </div>
+      </a>
+      {% empty %}
+      <div style="text-align:center;padding:1.5rem;color:rgba(255,255,255,.3);font-size:.85rem;">No suggestions yet. Check back soon!</div>
+      {% endfor %}
+    </div>
 
-  <!-- RIGHT: Stats + Leaderboard -->
+  </div>
+
+  <!-- ── RIGHT ──────────────────────────────────────────── -->
   <div class="col-lg-4">
 
-    <!-- My Stats -->
-    <div class="card-custom mb-4">
-      <div class="p-4 border-bottom">
-        <h6 class="fw-700 mb-0"><i class="fas fa-chart-bar me-2" style="color:var(--accent);"></i>My Progress</h6>
+    <!-- Streak Card -->
+    <div class="game-card mb-4 text-center">
+      <div style="font-size:.7rem;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Daily Streak</div>
+      <div style="position:relative;display:inline-block;margin-bottom:1rem;">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#fb923c" stroke-width="8"
+                  stroke-dasharray="314" stroke-dashoffset="{{ 314|add:"-"|add:progress.current_streak|floatformat:0 }}"
+                  stroke-linecap="round" transform="rotate(-90 60 60)"
+                  style="transition:stroke-dashoffset 1.5s ease;" id="streakArc"/>
+        </svg>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+          <div style="font-size:2.2rem;font-weight:900;color:#fb923c;line-height:1;">{{ progress.current_streak }}</div>
+          <div style="font-size:.62rem;color:rgba(255,255,255,.4);font-weight:600;">DAYS</div>
+        </div>
       </div>
-      <div class="p-3">
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-          <span style="font-size:.85rem;">Total XP</span>
-          <span class="fw-800" style="color:var(--primary);">{{ progress.total_xp }} ⚡</span>
+      <div style="font-size:.8rem;color:rgba(255,255,255,.5);">Best: <span style="color:#fb923c;font-weight:700;">{{ progress.longest_streak }} days 🏆</span></div>
+      <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,.06);">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-bottom:.5rem;">Next streak bonus at 7 days</div>
+        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;background:linear-gradient(90deg,#fb923c,#f59e0b);border-radius:3px;width:{% widthratio progress.current_streak 7 100 %}%;transition:width 1s ease;"></div>
         </div>
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-          <span style="font-size:.85rem;">Current Streak</span>
-          <span class="fw-800" style="color:var(--accent);">{{ progress.current_streak }} 🔥</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-          <span style="font-size:.85rem;">Best Streak</span>
-          <span class="fw-800" style="color:var(--success);">{{ progress.longest_streak }} 🏆</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center py-2">
-          <span style="font-size:.85rem;">Challenges Done</span>
-          <span class="fw-800" style="color:var(--primary-light);">{{ progress.challenges_completed }} ✅</span>
+        <div class="d-flex justify-content-between mt-1" style="font-size:.65rem;color:rgba(255,255,255,.25);">
+          <span>{{ progress.current_streak }}/7</span><span>+20 XP</span>
         </div>
       </div>
     </div>
 
     <!-- Mini Leaderboard -->
-    <div class="card-custom">
-      <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
-        <h6 class="fw-700 mb-0"><i class="fas fa-trophy me-2" style="color:#d97706;"></i>Top Learners</h6>
-        <a href="{% url 'leaderboard' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">Full list</a>
+    <div class="game-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-800 mb-0" style="color:#fff;font-size:.9rem;"><i class="fas fa-trophy me-2" style="color:var(--neon-gold);"></i>Top Learners</h6>
+        <a href="{% url 'leaderboard' %}" style="font-size:.75rem;color:var(--neon-blue);font-weight:600;text-decoration:none;">Full list</a>
       </div>
-      <div class="p-3">
-        {% for entry in leaderboard %}
-        <div class="lb-row {% if entry.user == request.user %}my-row{% endif %}">
-          <div class="lb-rank">
-            {% if forloop.counter == 1 %}🥇
-            {% elif forloop.counter == 2 %}🥈
-            {% elif forloop.counter == 3 %}🥉
-            {% else %}{{ forloop.counter }}{% endif %}
-          </div>
-          <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width:32px;height:32px;background:var(--primary-pale);font-size:.8rem;font-weight:700;color:var(--primary);">
-            {{ entry.user.first_name|first|upper }}
-          </div>
-          <div class="flex-grow-1 overflow-hidden">
-            <div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              {% if entry.user == request.user %}You{% else %}{{ entry.user.first_name }}{% endif %}
-            </div>
-          </div>
-          <div class="fw-700" style="font-size:.82rem;color:var(--primary);">{{ entry.total_xp }} XP</div>
+      {% for entry in leaderboard %}
+      <div class="lb-dark {% if entry.user == request.user %}my-row{% endif %}">
+        <div style="width:22px;text-align:center;flex-shrink:0;">
+          {% if forloop.counter == 1 %}<span style="font-size:1rem;">🥇</span>
+          {% elif forloop.counter == 2 %}<span style="font-size:1rem;">🥈</span>
+          {% elif forloop.counter == 3 %}<span style="font-size:1rem;">🥉</span>
+          {% else %}<span style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.3);">{{ forloop.counter }}</span>{% endif %}
         </div>
-        {% empty %}
-        <div class="p-3 text-center text-muted" style="font-size:.85rem;">Be the first on the leaderboard!</div>
+        <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:800;flex-shrink:0;">
+          {{ entry.user.first_name|first|upper }}
+        </div>
+        <div class="flex-grow-1 overflow-hidden">
+          <div style="font-size:.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            {% if entry.user == request.user %}<span style="color:var(--neon-blue);">You</span>{% else %}{{ entry.user.first_name }}{% endif %}
+          </div>
+          <div style="font-size:.68rem;color:rgba(255,255,255,.35);">🔥{{ entry.current_streak }}d</div>
+        </div>
+        <div style="font-size:.82rem;font-weight:800;color:var(--neon-gold);">{{ entry.total_xp }}</div>
+      </div>
+      {% empty %}
+      <div style="text-align:center;padding:1rem;color:rgba(255,255,255,.3);font-size:.82rem;">Be the first on the leaderboard!</div>
+      {% endfor %}
+    </div>
+
+    <!-- Newspapers -->
+    <div class="game-card">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-800 mb-0" style="color:#fff;font-size:.9rem;"><i class="fas fa-newspaper me-2" style="color:#f472b6;"></i>Today's Papers</h6>
+        <a href="{% url 'newspapers' %}" style="font-size:.75rem;color:var(--neon-blue);font-weight:600;text-decoration:none;">All links</a>
+      </div>
+      <div class="row g-2">
+        {% for paper in newspapers %}
+        <div class="col-6">
+          <a href="{{ paper.url }}" target="_blank" rel="noopener" style="text-decoration:none;">
+            <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);transition:.2s;" onmouseover="this.style.borderColor='rgba(244,114,182,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.05)'">
+              <span style="font-size:1.1rem;flex-shrink:0;">{{ paper.icon }}</span>
+              <div style="overflow:hidden;">
+                <div style="font-size:.75rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ paper.name }}</div>
+                <div style="font-size:.63rem;color:rgba(255,255,255,.35);">{{ paper.lang }}</div>
+              </div>
+            </div>
+          </a>
+        </div>
         {% endfor %}
       </div>
     </div>
 
-  </div><!-- /col-lg-4 -->
-</div>
-
-<!-- ─── Newspaper Quick Links ─────────────────────────────── -->
-<div class="card-custom mt-4">
-  <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
-    <h6 class="fw-700 mb-0"><i class="fas fa-newspaper me-2" style="color:#6d28d9;"></i>Today's Newspapers</h6>
-    <a href="{% url 'newspapers' %}" style="font-size:.82rem;font-weight:600;color:var(--primary-light);">All links</a>
-  </div>
-  <div class="p-3">
-    <div class="row g-2">
-      {% for paper in newspapers %}
-      <div class="col-md-4 col-6">
-        <a href="{{ paper.url }}" target="_blank" rel="noopener" style="text-decoration:none;">
-          <div class="news-link-card">
-            <div class="news-link-icon">{{ paper.icon }}</div>
-            <div>
-              <div style="font-size:.85rem;font-weight:700;color:var(--text);">{{ paper.name }}</div>
-              <div style="font-size:.72rem;color:var(--text-muted);">{{ paper.lang }}</div>
-            </div>
-          </div>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
   </div>
 </div>
 
+{% endwith %}
+{% endwith %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Animate XP fill bar on load
+document.addEventListener('DOMContentLoaded', function() {
+  const fill = document.getElementById('xpFill');
+  if (fill) {
+    const pct = fill.dataset.pct || 0;
+    setTimeout(() => { fill.style.width = Math.min(pct, 100) + '%'; }, 200);
+  }
+
+  // Animate streak arc
+  const arc = document.getElementById('streakArc');
+  if (arc) {
+    const streak = parseInt('{{ progress.current_streak }}') || 0;
+    const maxDays = 7;
+    const circumference = 314;
+    const offset = circumference - (Math.min(streak, maxDays) / maxDays) * circumference;
+    setTimeout(() => { arc.style.strokeDashoffset = offset; }, 400);
+  }
+
+  // Animate counters on numbers
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current;
+      if (current >= target) clearInterval(timer);
+    }, 30);
+  });
+});
+</script>
 {% endblock %}
