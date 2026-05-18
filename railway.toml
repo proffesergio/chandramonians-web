@@ -2,9 +2,9 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "gunicorn webapp.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
-releaseCommand = "python manage.py migrate --noinput && python manage.py compile_translations && python manage.py collectstatic --noinput"
-healthcheckPath = "/"
-healthcheckTimeout = 100
+startCommand = "python manage.py migrate --noinput && gunicorn webapp.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+releaseCommand = "python manage.py collectstatic --noinput"
+healthcheckPath = "/health/"
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3

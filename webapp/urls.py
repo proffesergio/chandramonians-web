@@ -8,6 +8,7 @@ from . import views, Hod_Views, Staff_Views, Alumni_Views
 from . import Public_Views, Education_Views, Member_Views
 
 urlpatterns = [
+    path('health/', Public_Views.health_check_view, name='health_check'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
