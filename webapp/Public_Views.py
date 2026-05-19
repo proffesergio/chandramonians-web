@@ -134,21 +134,21 @@ def alumni_public_directory_view(request):
 
 
 def public_members_view(request):
-    """Public: full membership list from Google Sheets — name, batch, type, status."""
-    member_type = request.GET.get('type', '')
+    """Public: membership directory split into Life / General tabs."""
     batch = request.GET.get('batch', '')
     status = request.GET.get('status', '')
     search = request.GET.get('q', '')
 
     qs = MembershipPayment.objects.all()
-    if member_type:
-        qs = qs.filter(member_type=member_type)
     if batch:
         qs = qs.filter(batch_year=batch)
     if status:
         qs = qs.filter(status=status)
     if search:
         qs = qs.filter(member_name__icontains=search)
+
+    life_members = qs.filter(member_type='LIFE')
+    general_members = qs.filter(member_type='GENERAL')
 
     batch_years = MembershipPayment.objects.values_list(
         'batch_year', flat=True
@@ -160,13 +160,13 @@ def public_members_view(request):
     ).first()
 
     return render(request, 'public/members.html', {
-        'members': qs,
+        'life_members': life_members,
+        'general_members': general_members,
         'batch_years': batch_years,
         'life_count': life_count,
         'general_count': general_count,
         'total': life_count + general_count,
         'last_sync': last_sync,
-        'filter_type': member_type,
         'filter_batch': batch,
         'filter_status': status,
         'search': search,

@@ -120,11 +120,12 @@ class MembershipPayment(models.Model):
     batch_year = models.CharField(max_length=20, blank=True)
     phone = models.CharField(max_length=20, blank=True)
     status = models.CharField(max_length=10, choices=STATUS, default='PAID')
-    sheet_row_id = models.IntegerField(unique=True)
+    sheet_row_id = models.IntegerField()
     last_synced_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['member_type', 'member_name']
+        unique_together = [('member_type', 'sheet_row_id')]
 
     def __str__(self):
         return f"{self.member_name} ({self.get_member_type_display()})"

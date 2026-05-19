@@ -47,6 +47,8 @@ urlpatterns = [
     path('hod/payments/', Member_Views.payment_records_view, name='payment_records'),
     path('hod/payments/sync/', Member_Views.trigger_sync_view, name='trigger_sync'),
     path('hod/payments/export/', Member_Views.export_payments_csv, name='export_payments'),
+    path('hod/payments/upload/csv/', Member_Views.upload_payments_csv_view, name='upload_payments_csv'),
+    path('hod/payments/upload/excel/', Member_Views.upload_payments_excel_view, name='upload_payments_excel'),
 
     # ── Staff Panel ───────────────────────────────────────────────────────────
     path('Staff/home', Staff_Views.homeView, name='staff_home'),

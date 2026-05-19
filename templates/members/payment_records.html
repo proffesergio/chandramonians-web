@@ -64,6 +64,16 @@
       <a href="{% url 'export_payments' %}" class="btn btn-sm" style="background:var(--success);color:#fff;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;padding:.45rem 1rem;">
         <i class="fas fa-download me-1"></i>Export CSV
       </a>
+      <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#excelUploadModal"
+        style="background:#217346;color:#fff;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;padding:.45rem 1rem;"
+        title="Upload .xlsx downloaded from Google Sheets — imports both tabs at once">
+        <i class="fas fa-file-excel me-1"></i>Upload Excel
+      </button>
+      <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#csvUploadModal"
+        style="background:#6c757d;color:#fff;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;padding:.45rem 1rem;"
+        title="Upload a single-tab CSV">
+        <i class="fas fa-file-csv me-1"></i>Upload CSV
+      </button>
     </div>
   </div>
   {% if sync_message %}
@@ -164,6 +174,91 @@
       </div>
     </div>
 
+  </div>
+</div>
+<!-- Excel Upload Modal -->
+<div class="modal fade" id="excelUploadModal" tabindex="-1" aria-labelledby="excelUploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius);border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h6 class="modal-title fw-700" id="excelUploadModalLabel">
+          <i class="fas fa-file-excel me-2" style="color:#217346;"></i>Upload Excel File
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'upload_payments_excel' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="alert alert-info mb-3" style="font-size:.83rem;">
+            <i class="fas fa-lightbulb me-1"></i>
+            <strong>How to export from Google Sheets:</strong><br>
+            Open the sheet → <strong>File → Download → Microsoft Excel (.xlsx)</strong><br>
+            This exports <em>all tabs</em> — both Life Members and General Members are imported automatically.
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-600" style="font-size:.85rem;">Excel File (.xlsx)</label>
+            <input type="file" name="excel_file" accept=".xlsx" class="form-control form-control-sm" required>
+          </div>
+          <div class="alert alert-warning mb-0" style="font-size:.8rem;">
+            <i class="fas fa-info-circle me-1"></i>
+            Tabs named with <strong>"Life"</strong> → Life Members &nbsp;|&nbsp;
+            <strong>"General"</strong> → General Members. Other tabs are ignored. Existing rows are updated (upsert).
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--border);">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm" style="background:#217346;color:#fff;font-weight:600;">
+            <i class="fas fa-file-import me-1"></i>Import Both Tabs
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CSV Upload Modal -->
+<div class="modal fade" id="csvUploadModal" tabindex="-1" aria-labelledby="csvUploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius);border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h6 class="modal-title fw-700" id="csvUploadModalLabel">
+          <i class="fas fa-upload me-2" style="color:var(--primary-light);"></i>Upload CSV
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'upload_payments_csv' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p class="text-muted mb-3" style="font-size:.85rem;">
+            Upload a CSV exported from Google Sheets. Column names are flexible —
+            <strong>Name</strong>, <strong>Payment Date</strong>, <strong>Amount</strong>,
+            <strong>Receipt No</strong>, <strong>Batch Year</strong>, <strong>Phone</strong>,
+            <strong>Status</strong> are recognised automatically.
+          </p>
+          <div class="mb-3">
+            <label class="form-label fw-600" style="font-size:.85rem;">Member Type</label>
+            <select name="member_type" class="form-select form-select-sm">
+              <option value="LIFE">Life Members</option>
+              <option value="GENERAL">General Members</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-600" style="font-size:.85rem;">CSV File</label>
+            <input type="file" name="csv_file" accept=".csv" class="form-control form-control-sm" required>
+          </div>
+          <div class="alert alert-warning mb-0" style="font-size:.8rem;">
+            <i class="fas fa-info-circle me-1"></i>
+            Existing rows matched by position will be updated (upsert). No records are deleted.
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--border);">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm" style="background:var(--primary);color:#fff;font-weight:600;">
+            <i class="fas fa-file-import me-1"></i>Import
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}
