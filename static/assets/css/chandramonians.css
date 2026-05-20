@@ -85,6 +85,25 @@ img { max-width: 100%; }
 }
 .pub-nav .nav-link:hover,
 .pub-nav .nav-link.active { color: var(--primary) !important; background: var(--primary-pale); }
+/* Nav links with icons */
+.pub-nav .nav-link-icon {
+  display: inline-flex; align-items: center; gap: .38rem;
+}
+.pub-nav .nav-icon {
+  font-size: .72rem;
+  opacity: .65;
+  transition: var(--transition);
+  transform: scale(1);
+}
+.pub-nav .nav-link-icon:hover .nav-icon,
+.pub-nav .nav-link-icon.active .nav-icon {
+  opacity: 1;
+  color: var(--primary);
+  transform: scale(1.18) translateY(-1px);
+}
+/* Dropdown items */
+.pub-nav .dropdown-item:hover { background: var(--primary-pale); }
+
 .pub-nav .btn-login {
   background: var(--primary); color: #fff !important;
   font-weight: 700; border-radius: 50px; padding: .45rem 1.2rem !important;

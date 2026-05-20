@@ -4,26 +4,53 @@
 {% block content %}
 
 <!-- ═══ HERO ═══════════════════════════════════════════════ -->
-<section class="hero">
-  <div class="container position-relative z-1">
+<section class="hero hero-animated" id="heroSection">
+
+  <!-- Aurora beam layer -->
+  <div class="hero-aurora" aria-hidden="true">
+    <div class="aurora-beam aurora-beam-1"></div>
+    <div class="aurora-beam aurora-beam-2"></div>
+    <div class="aurora-beam aurora-beam-3"></div>
+  </div>
+
+  <!-- Floating decorative icons -->
+  <div class="hero-floats" aria-hidden="true">
+    <span class="hf hf-1"><i class="fas fa-graduation-cap"></i></span>
+    <span class="hf hf-2"><i class="fas fa-atom"></i></span>
+    <span class="hf hf-3"><i class="fas fa-book-open"></i></span>
+    <span class="hf hf-4"><i class="fas fa-star"></i></span>
+    <span class="hf hf-5"><i class="fas fa-trophy"></i></span>
+    <span class="hf hf-6"><i class="fas fa-school"></i></span>
+    <span class="hf hf-7"><i class="fas fa-flask"></i></span>
+    <span class="hf hf-8"><i class="fas fa-music"></i></span>
+    <span class="hf hf-9"><i class="fas fa-futbol"></i></span>
+  </div>
+
+  <!-- Glowing orb decorations -->
+  <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
+
+  <div class="container position-relative" style="z-index:2;">
     <div class="row align-items-center g-5">
+
+      <!-- LEFT: Text content -->
       <div class="col-lg-6">
-        <div class="hero-badge">
-          🎓 ESTD. 1935 — দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়
+        <div class="hero-badge hero-anim-badge">
+          🎓 ESTD. 1935 — দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়
         </div>
-        <h1 class="display-hero fw-800 mb-3">
-          Welcome to<br />
-          <span style="color: var(--accent)">Chandramonians</span>
+
+        <h1 class="display-hero fw-800 mb-3 hero-anim-title">
+          Welcome to<br>
+          <span class="hero-accent-text">Chandramonians</span>
         </h1>
-        <p
-          class="mb-4"
-          style="font-size: 1.08rem; opacity: 0.9; line-height: 1.75"
-        >
+
+        <!-- Typewriter tagline -->
+        <p class="mb-4 hero-anim-sub" style="font-size:1.08rem;opacity:.9;line-height:1.75;">
           The official alumni portal of Dulalpur Chandramoni High School —
-          connecting generations of students, alumni, and educators in one
-          thriving digital home.
+          connecting <span id="heroTyped" class="hero-typed"></span>
         </p>
-        <div class="d-flex flex-wrap gap-3">
+
+        <div class="d-flex flex-wrap gap-3 hero-anim-btns">
           {% if not user.is_authenticated %}
           <a href="{% url 'register' %}" class="btn-hero-primary">
             <i class="fas fa-user-plus me-2"></i>{% trans "Join the Community" %}
@@ -49,119 +76,272 @@
           </a>
           {% endif %}
         </div>
+
         {% if total_members %}
-        <div
-          class="mt-4 d-flex align-items-center gap-2"
-          style="font-size: 0.82rem; opacity: 0.75"
-        >
-          <span style="display: inline-flex; gap: -6px">
-            {% for i in "123" %}<span
-              style="
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-                background: var(--accent);
-                border: 2px solid rgba(255, 255, 255, 0.4);
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 0.7rem;
-                font-weight: 800;
-                color: var(--primary-dark);
-                margin-right: -6px;
-              "
-              >{{ forloop.counter }}</span
-            >{% endfor %}
+        <div class="mt-4 d-flex align-items-center gap-2 hero-anim-meta" style="font-size:.82rem;opacity:.75;">
+          <span style="display:inline-flex;">
+            {% for i in "123" %}<span style="width:28px;height:28px;border-radius:50%;background:var(--accent);border:2px solid rgba(255,255,255,.4);display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--primary-dark);margin-right:-6px;">{{ forloop.counter }}</span>{% endfor %}
           </span>
-          <span style="margin-left: 14px"
-            ><strong>{{ total_members }}+</strong> members and growing</span
-          >
+          <span style="margin-left:14px;"><strong>{{ total_members }}+</strong> members and growing</span>
         </div>
         {% endif %}
       </div>
 
+      <!-- RIGHT: Animated visual panel -->
       <div class="col-lg-6 d-none d-lg-block">
-        <div class="hero-visual">
-          <div class="row g-3">
+        <div class="hero-visual hero-visual-animated">
+
+          <!-- Spinning ring decoration -->
+          <div class="hv-ring-wrap" aria-hidden="true">
+            <div class="hv-ring hv-ring-outer"></div>
+            <div class="hv-ring hv-ring-mid"></div>
+          </div>
+
+          <div class="row g-3 position-relative" style="z-index:1;">
             <div class="col-6">
-              <div
-                class="p-3 rounded-3 mb-3"
-                style="background: rgba(255, 255, 255, 0.1)"
-              >
-                <i
-                  class="fas fa-robot fa-2x mb-2"
-                  style="color: var(--accent)"
-                ></i>
-                <div style="font-weight: 700; font-size: 0.9rem">AI Tutor</div>
-                <div style="font-size: 0.75rem; opacity: 0.7">
-                  Instant academic help, 24/7
-                </div>
+              <div class="hv-card hv-card-delay-0">
+                <div class="hv-card-icon"><i class="fas fa-robot"></i></div>
+                <div class="fw-700" style="font-size:.9rem;">AI Tutor</div>
+                <div style="font-size:.75rem;opacity:.7;">Instant academic help, 24/7</div>
               </div>
-              <div
-                class="p-3 rounded-3"
-                style="background: rgba(255, 255, 255, 0.1)"
-              >
-                <i
-                  class="fas fa-users fa-2x mb-2"
-                  style="color: var(--accent)"
-                ></i>
-                <div style="font-weight: 700; font-size: 0.9rem">
-                  {{ total_members|default:"Growing" }} Members
-                </div>
-                <div style="font-size: 0.75rem; opacity: 0.7">
-                  Life & General members
-                </div>
+              <div class="hv-card hv-card-delay-2 mt-3">
+                <div class="hv-card-icon"><i class="fas fa-users"></i></div>
+                <div class="fw-700" style="font-size:.9rem;">{{ total_members|default:"Growing" }} Members</div>
+                <div style="font-size:.75rem;opacity:.7;">Life &amp; General members</div>
               </div>
             </div>
             <div class="col-6 mt-4">
-              <div
-                class="p-3 rounded-3 mb-3"
-                style="background: rgba(255, 255, 255, 0.1)"
-              >
-                <i
-                  class="fas fa-user-graduate fa-2x mb-2"
-                  style="color: var(--accent)"
-                ></i>
-                <div style="font-weight: 700; font-size: 0.9rem">
-                  Alumni Network
-                </div>
-                <div style="font-size: 0.75rem; opacity: 0.7">
-                  {{ alumni_count }} registered alumni
-                </div>
+              <div class="hv-card hv-card-delay-1">
+                <div class="hv-card-icon"><i class="fas fa-user-graduate"></i></div>
+                <div class="fw-700" style="font-size:.9rem;">Alumni Network</div>
+                <div style="font-size:.75rem;opacity:.7;">{{ alumni_count }} registered alumni</div>
               </div>
-              <div
-                class="p-3 rounded-3"
-                style="background: rgba(255, 255, 255, 0.1)"
-              >
-                <i
-                  class="fas fa-trophy fa-2x mb-2"
-                  style="color: var(--accent)"
-                ></i>
-                <div style="font-weight: 700; font-size: 0.9rem">
-                  Daily Challenges
-                </div>
-                <div style="font-size: 0.75rem; opacity: 0.7">
-                  Learn, earn XP, compete
-                </div>
+              <div class="hv-card hv-card-delay-3 mt-3">
+                <div class="hv-card-icon"><i class="fas fa-trophy"></i></div>
+                <div class="fw-700" style="font-size:.9rem;">Daily Challenges</div>
+                <div style="font-size:.75rem;opacity:.7;">Learn, earn XP, compete</div>
               </div>
             </div>
           </div>
+
+          <!-- Live pulse dot -->
+          <div class="hv-live" aria-hidden="true">
+            <span class="hv-pulse"></span> Live
+          </div>
         </div>
       </div>
+
     </div>
   </div>
-  <div
-    class="position-absolute bottom-0 start-50 translate-middle-x pb-4"
-    style="animation: fadeInUp 1s 1s both"
-  >
-    <a href="#stats" style="color: rgba(255, 255, 255, 0.5)"
-      ><i
-        class="fas fa-chevron-down fa-lg"
-        style="animation: typing 1.5s ease infinite"
-      ></i
-    ></a>
+
+  <!-- Scroll indicator -->
+  <div class="position-absolute bottom-0 start-50 translate-middle-x pb-4 hero-scroll-hint">
+    <a href="#stats" style="color:rgba(255,255,255,.5);" aria-label="Scroll down">
+      <i class="fas fa-chevron-down fa-lg"></i>
+    </a>
   </div>
 </section>
+
+<style>
+/* ─── Hero animated layer ─────────────────────────────────── */
+.hero-animated { overflow: hidden; }
+
+/* Aurora beams */
+.hero-aurora { position:absolute;inset:0;pointer-events:none;overflow:hidden; }
+.aurora-beam {
+  position:absolute; border-radius:50%;
+  filter:blur(80px); opacity:.22;
+  animation:auroraMove 14s ease-in-out infinite alternate;
+}
+.aurora-beam-1 { width:600px;height:400px;background:#6366f1;top:-10%;left:-8%;animation-delay:0s; }
+.aurora-beam-2 { width:500px;height:350px;background:#0ea5e9;top:30%;right:-5%;animation-delay:4s; }
+.aurora-beam-3 { width:400px;height:300px;background:#f59e0b;bottom:-5%;left:35%;animation-delay:8s; }
+@keyframes auroraMove {
+  0%   { transform:translate(0,0) scale(1); }
+  50%  { transform:translate(30px,20px) scale(1.08); }
+  100% { transform:translate(-20px,10px) scale(.96); }
+}
+
+/* Floating icons */
+.hero-floats { position:absolute;inset:0;pointer-events:none;overflow:hidden; }
+.hf {
+  position:absolute; color:rgba(255,255,255,.09);
+  animation:hfFloat 7s ease-in-out infinite;
+  font-size:1.6rem;
+}
+.hf-1  { top: 8%; left: 5%;  animation-delay:0s;   font-size:2.4rem; }
+.hf-2  { top:12%; left:82%;  animation-delay:1.1s; font-size:1.4rem; }
+.hf-3  { top:55%; left: 3%;  animation-delay:2.3s; font-size:1.8rem; }
+.hf-4  { top:72%; left:78%;  animation-delay:0.6s; font-size:1.3rem; }
+.hf-5  { top:22%; left:90%;  animation-delay:3.1s; font-size:2rem;   }
+.hf-6  { top:82%; left:18%;  animation-delay:1.7s; font-size:1.5rem; }
+.hf-7  { top:40%; left:94%;  animation-delay:4.2s; font-size:1.2rem; }
+.hf-8  { top:90%; left:55%;  animation-delay:2.8s; font-size:1.4rem; }
+.hf-9  { top:62%; left:48%;  animation-delay:0.3s; font-size:1.1rem; }
+@keyframes hfFloat {
+  0%,100% { transform:translateY(0) rotate(0deg); opacity:.09; }
+  50%      { transform:translateY(-22px) rotate(12deg); opacity:.18; }
+}
+
+/* Glowing orbs */
+.hero-orb {
+  position:absolute; border-radius:50%; pointer-events:none;
+  animation:orbPulse 6s ease-in-out infinite;
+}
+.hero-orb-1 {
+  width:340px; height:340px;
+  background:radial-gradient(circle,rgba(99,102,241,.32) 0%,transparent 70%);
+  top:-80px; right:15%;
+  animation-delay:0s;
+}
+.hero-orb-2 {
+  width:260px; height:260px;
+  background:radial-gradient(circle,rgba(245,158,11,.22) 0%,transparent 70%);
+  bottom:5%; left:5%;
+  animation-delay:3s;
+}
+@keyframes orbPulse {
+  0%,100% { transform:scale(1); opacity:.7; }
+  50%      { transform:scale(1.18); opacity:1; }
+}
+
+/* Text entrance animations */
+.hero-anim-badge  { animation:heroSlideUp .6s .1s both; }
+.hero-anim-title  { animation:heroSlideUp .7s .25s both; }
+.hero-anim-sub    { animation:heroSlideUp .7s .4s both; }
+.hero-anim-btns   { animation:heroSlideUp .7s .55s both; }
+.hero-anim-meta   { animation:heroSlideUp .7s .7s both; }
+@keyframes heroSlideUp {
+  from { opacity:0; transform:translateY(28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Gold shimmer on "Chandramonians" */
+.hero-accent-text {
+  color: var(--accent);
+  background: linear-gradient(90deg, #fbbf24 0%, #fde68a 35%, var(--accent) 60%, #fde68a 80%, #fbbf24 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: accentShimmer 3.5s ease-in-out infinite;
+}
+@keyframes accentShimmer {
+  0%,100% { background-position: 0% center; }
+  50%      { background-position: 100% center; }
+}
+
+/* Typewriter */
+.hero-typed {
+  border-right: 2px solid var(--accent);
+  padding-right: 2px;
+  animation: caretBlink .75s step-end infinite;
+}
+@keyframes caretBlink {
+  0%,100% { border-color: var(--accent); }
+  50%      { border-color: transparent; }
+}
+
+/* Visual panel */
+.hero-visual-animated { position:relative; animation:heroSlideUp .9s .3s both; }
+.hv-ring-wrap { position:absolute;inset:-20px;pointer-events:none; }
+.hv-ring { position:absolute; border-radius:50%; border-style:dashed; }
+.hv-ring-outer {
+  inset:0; border:1px dashed rgba(255,255,255,.1);
+  animation:spinRing 24s linear infinite;
+}
+.hv-ring-mid {
+  inset:30px; border:1px dashed rgba(245,158,11,.15);
+  animation:spinRing 16s linear infinite reverse;
+}
+@keyframes spinRing {
+  from { transform:rotate(0deg); }
+  to   { transform:rotate(360deg); }
+}
+
+/* Feature cards */
+.hv-card {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px; padding: .85rem;
+  backdrop-filter: blur(6px);
+  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+  animation: heroSlideUp .7s both;
+}
+.hv-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  background: rgba(255,255,255,.18);
+  box-shadow: 0 14px 36px rgba(0,0,0,.3);
+}
+.hv-card-delay-0 { animation-delay:.5s; }
+.hv-card-delay-1 { animation-delay:.65s; }
+.hv-card-delay-2 { animation-delay:.8s; }
+.hv-card-delay-3 { animation-delay:.95s; }
+.hv-card-icon {
+  width: 36px; height: 36px;
+  background: rgba(245,158,11,.25);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: var(--accent);
+  margin-bottom: .55rem;
+}
+
+/* Live indicator */
+.hv-live {
+  position: absolute; top: -12px; right: 12px;
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 20px; padding: .2rem .75rem;
+  font-size: .7rem; font-weight: 700; color: #fff;
+  display: flex; align-items: center; gap: .4rem;
+  backdrop-filter: blur(6px);
+  animation: heroSlideUp .6s 1s both;
+}
+.hv-pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 6px #22c55e;
+  animation: hvPulse 1.5s ease-in-out infinite;
+}
+@keyframes hvPulse {
+  0%,100% { transform:scale(1); box-shadow:0 0 4px #22c55e; }
+  50%      { transform:scale(1.4); box-shadow:0 0 12px #22c55e; }
+}
+
+/* Scroll hint */
+.hero-scroll-hint { animation: heroSlideUp .7s 1.1s both; }
+.hero-scroll-hint i { animation: scrollBounce 2s ease-in-out infinite; }
+@keyframes scrollBounce {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(7px); }
+}
+</style>
+
+<script>
+/* Typewriter for hero tagline */
+(function(){
+  var el = document.getElementById('heroTyped');
+  if(!el) return;
+  var phrases = [
+    'generations of students.',
+    'alumni across the world.',
+    'educators & learners.',
+    'a thriving community.',
+  ];
+  var pi = 0, ci = 0, deleting = false;
+  function tick(){
+    var phrase = phrases[pi];
+    if(!deleting){
+      el.textContent = phrase.slice(0, ++ci);
+      if(ci === phrase.length){ deleting = true; setTimeout(tick, 2000); return; }
+    } else {
+      el.textContent = phrase.slice(0, --ci);
+      if(ci === 0){ deleting = false; pi = (pi + 1) % phrases.length; setTimeout(tick, 400); return; }
+    }
+    setTimeout(tick, deleting ? 45 : 72);
+  }
+  setTimeout(tick, 1200);
+})();
+</script>
 
 <!-- ═══ STATS ════════════════════════════════════════════════ -->
 <section id="stats" class="section section-alt">
@@ -847,8 +1027,7 @@
           </p>
           <div class="d-flex align-items-center justify-content-between mt-3">
             <span style="font-size: 0.75rem; color: var(--text-muted)"
-              ><i class="fas fa-clock me-1"></i>{{ article.published_at|date:"M
-              d, Y" }}</span
+              ><i class="fas fa-clock me-1"></i>{{ article.published_at|date:"M d, Y" }}</span
             >
             <a
               href="{% url 'news_detail' article.slug %}"
@@ -943,7 +1122,6 @@
       <div class="col-lg-7">
         <!-- Timeline -->
         <div class="ps-lg-4">
-          {% for item in timeline_items %}{% endfor %}
           <div style="position: relative; padding-left: 2.5rem">
             <div
               style="

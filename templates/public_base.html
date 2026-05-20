@@ -59,5 +59,121 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 {% block extra_js %}{% endblock %}
+
+<!-- Background particle & orbital canvas -->
+<canvas id="bgCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;opacity:.45;" aria-hidden="true"></canvas>
+<script>
+(function(){
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles, orbs;
+
+  const PARTICLE_COUNT = 55;
+  const ORB_COUNT = 4;
+  const PHY = { gravity: 0.015, friction: 0.998 };
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x  = rand(0, W);
+      this.y  = init ? rand(0, H) : H + 10;
+      this.r  = rand(1, 2.8);
+      this.vx = rand(-0.25, 0.25);
+      this.vy = rand(-0.6, -0.15);
+      this.alpha = rand(0.3, 0.9);
+      this.twinkle = rand(0, Math.PI * 2);
+      this.color = Math.random() > 0.7 ? '#f59e0b' : '#3b82f6';
+    }
+    update() {
+      this.x  += this.vx;
+      this.vy -= PHY.gravity * 0.04;
+      this.vy *= PHY.friction;
+      this.y  += this.vy;
+      this.twinkle += 0.04;
+      if (this.y < -10 || this.x < -10 || this.x > W + 10) this.reset(false);
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha * (0.7 + 0.3 * Math.sin(this.twinkle));
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class OrbitalSystem {
+    constructor() {
+      this.cx   = rand(W * 0.1, W * 0.9);
+      this.cy   = rand(H * 0.1, H * 0.9);
+      this.rings = Array.from({length: rand(2,4)|0}, (_, i) => ({
+        radius: 28 + i * 22,
+        angle:  rand(0, Math.PI * 2),
+        speed:  rand(0.003, 0.009) * (Math.random() > 0.5 ? 1 : -1),
+        dotR:   rand(2, 4),
+        color:  ['#3b82f6','#f59e0b','#6366f1','#10b981'][i % 4],
+      }));
+      this.vx = rand(-0.08, 0.08);
+      this.vy = rand(-0.05, 0.05);
+    }
+    update() {
+      this.cx += this.vx; this.cy += this.vy;
+      if (this.cx < -80 || this.cx > W + 80) this.vx *= -1;
+      if (this.cy < -80 || this.cy > H + 80) this.vy *= -1;
+      this.rings.forEach(r => r.angle += r.speed);
+    }
+    draw() {
+      this.rings.forEach(r => {
+        ctx.save();
+        ctx.globalAlpha = 0.12;
+        ctx.strokeStyle = r.color;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(this.cx, this.cy, r.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        const dx = this.cx + Math.cos(r.angle) * r.radius;
+        const dy = this.cy + Math.sin(r.angle) * r.radius;
+        ctx.save();
+        ctx.globalAlpha = 0.55;
+        ctx.fillStyle = r.color;
+        ctx.beginPath();
+        ctx.arc(dx, dy, r.dotR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({length: PARTICLE_COUNT}, () => new Particle());
+    orbs = Array.from({length: ORB_COUNT}, () => new OrbitalSystem());
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    orbs.forEach(o => { o.update(); o.draw(); });
+    requestAnimationFrame(loop);
+  }
+
+  // Disable on small / low-power devices
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (!mq.matches && window.innerWidth > 600) {
+    window.addEventListener('resize', resize);
+    init();
+    loop();
+  }
+})();
+</script>
 </body>
 </html>

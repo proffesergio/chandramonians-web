@@ -14,17 +14,35 @@
             </ul>
             <div class="container">
                 <div class="flex-lg-row">
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <button type="button" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"
-                            class="close" data-dismiss="alert"><span aria-hidden="true">X</span><span
-                                class="sr-only">Close</span></button>
-                        <strong><i class="fa fa-warning"></i> <span class="text-danger text-info"> Important
-                                Notice!</span></strong>
-                        <marquee>
-                            <p class="font-family: 'Poppins', sans-serif; font-size: 12pt">This website is
-                                under development phase, We appreciate your positive feedback!</p>
-                        </marquee>
+                    {% if membership_record %}
+                    <div class="alert d-flex align-items-center gap-3 mb-3"
+                         style="background:{% if membership_record.status == 'PAID' %}#f0fdf4;border:1px solid #86efac;{% elif membership_record.status == 'PARTIAL' %}#fffbeb;border:1px solid #fde68a;{% else %}#fef2f2;border:1px solid #fca5a5;{% endif %}border-radius:10px;padding:.9rem 1.1rem;">
+                      <i class="fas {% if membership_record.status == 'PAID' %}fa-id-card text-success{% elif membership_record.status == 'PARTIAL' %}fa-clock{% else %}fa-exclamation-circle text-danger{% endif %}" style="font-size:1.3rem;flex-shrink:0;"></i>
+                      <div>
+                        <div class="fw-700" style="font-size:.88rem;">
+                          Association Membership Found
+                        </div>
+                        <div style="font-size:.82rem;color:#475569;">
+                          You are listed as a <strong>{{ membership_record.get_member_type_display }}</strong>.
+                          Status: <strong>{{ membership_record.get_status_display }}</strong>
+                          {% if membership_record.batch_year %} · Batch {{ membership_record.batch_year }}{% endif %}
+                        </div>
+                      </div>
                     </div>
+                    {% else %}
+                    <div class="alert d-flex align-items-center gap-3 mb-3"
+                         style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.9rem 1.1rem;">
+                      <i class="fas fa-info-circle" style="color:#3b82f6;font-size:1.3rem;flex-shrink:0;"></i>
+                      <div>
+                        <div class="fw-700" style="font-size:.88rem;">Not yet linked to a membership record</div>
+                        <div style="font-size:.82rem;color:#475569;">
+                          Your name was not found in the member list. If you are a member, please
+                          <a href="{% url 'contact' %}">contact us</a> to link your record, or
+                          <a href="{% url 'membership_apply' %}">apply for membership</a>.
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

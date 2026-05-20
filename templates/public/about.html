@@ -6,22 +6,83 @@
 {% block content %}
 
 <!-- Hero -->
-<section style="background:linear-gradient(135deg,var(--primary) 0%,#1e4a8a 100%);padding:5rem 0 3rem;color:#fff;">
-  <div class="container">
+<section class="about-hero" style="background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 55%,#2563eb 100%);padding:5.5rem 0 3.5rem;color:#fff;position:relative;overflow:hidden;">
+  <!-- Animated floating icons -->
+  <div class="about-float-icons" aria-hidden="true">
+    <span class="float-icon" style="--d:0s;--x:8%;--y:15%;--s:2.2rem;"><i class="fas fa-graduation-cap"></i></span>
+    <span class="float-icon" style="--d:1.2s;--x:88%;--y:20%;--s:1.6rem;"><i class="fas fa-book-open"></i></span>
+    <span class="float-icon" style="--d:2.4s;--x:15%;--y:70%;--s:1.4rem;"><i class="fas fa-star"></i></span>
+    <span class="float-icon" style="--d:0.6s;--x:75%;--y:65%;--s:2rem;"><i class="fas fa-users"></i></span>
+    <span class="float-icon" style="--d:1.8s;--x:45%;--y:8%;--s:1.3rem;"><i class="fas fa-atom"></i></span>
+    <span class="float-icon" style="--d:3s;--x:92%;--y:50%;--s:1.2rem;"><i class="fas fa-pencil-alt"></i></span>
+    <span class="float-icon" style="--d:0.9s;--x:5%;--y:45%;--s:1.1rem;"><i class="fas fa-trophy"></i></span>
+    <span class="float-icon" style="--d:2s;--x:60%;--y:80%;--s:1.5rem;"><i class="fas fa-school"></i></span>
+  </div>
+  <div class="container" style="position:relative;z-index:2;">
     <div class="row align-items-center g-4">
       <div class="col-lg-7">
-        <span class="d-inline-block mb-3 px-3 py-1 rounded-pill fw-600" style="background:rgba(255,255,255,.15);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;">About Us</span>
-        <h1 style="font-size:2.5rem;font-weight:900;line-height:1.2;margin-bottom:1rem;">Chandramonians<br>Alumni Association</h1>
-        <p style="font-size:1.05rem;opacity:.85;line-height:1.8;max-width:520px;">
-          The official alumni association of Dulalpur Chandramoni High School — connecting generations of graduates, supporting current students, and preserving the legacy of our institution.
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span style="display:inline-block;width:28px;height:3px;background:var(--accent);border-radius:2px;"></span>
+          <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.85;">Est. Since Decades</span>
+        </div>
+        <h1 style="font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.15;margin-bottom:1.25rem;">
+          Chandramonians<br>
+          <span style="color:var(--accent);">Alumni Association</span>
+        </h1>
+        <p style="font-size:1.05rem;opacity:.85;line-height:1.85;max-width:520px;margin-bottom:2rem;">
+          The official alumni association of <strong>Dulalpur Chandramoni High School</strong> — connecting generations of graduates, supporting current students, and preserving the legacy of our institution.
         </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <div class="d-flex align-items-center gap-2 py-2 px-3 rounded-3" style="background:rgba(255,255,255,.12);backdrop-filter:blur(4px);">
+            <i class="fas fa-map-marker-alt" style="color:var(--accent);"></i>
+            <span style="font-size:.85rem;">Homna, Cumilla</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 py-2 px-3 rounded-3" style="background:rgba(255,255,255,.12);backdrop-filter:blur(4px);">
+            <i class="fas fa-users" style="color:var(--accent);"></i>
+            <span style="font-size:.85rem;">{{ total_members|default:"700+" }} Members</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 py-2 px-3 rounded-3" style="background:rgba(255,255,255,.12);backdrop-filter:blur(4px);">
+            <i class="fas fa-calendar-alt" style="color:var(--accent);"></i>
+            <span style="font-size:.85rem;">Active Since 1980s</span>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-5 text-center">
-        <div style="width:200px;height:200px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:5rem;">🎓</div>
+      <div class="col-lg-5 text-center d-none d-lg-block">
+        <div style="position:relative;width:280px;height:280px;margin:0 auto;">
+          <!-- Orbiting rings -->
+          <div style="position:absolute;inset:0;border:2px dashed rgba(255,255,255,.15);border-radius:50%;animation:spinRing 18s linear infinite;"></div>
+          <div style="position:absolute;inset:20px;border:2px dashed rgba(245,158,11,.2);border-radius:50%;animation:spinRing 12s linear infinite reverse;"></div>
+          <!-- Center icon -->
+          <div style="position:absolute;inset:50px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);font-size:3.5rem;">
+            🎓
+          </div>
+          <!-- Orbit dots -->
+          <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:spinRing 18s linear infinite;transform-origin:0 132px;font-size:.9rem;">📚</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+.about-float-icons { position:absolute;inset:0;pointer-events:none;overflow:hidden; }
+.float-icon {
+  position:absolute;
+  left:var(--x);top:var(--y);
+  font-size:var(--s);
+  color:rgba(255,255,255,.1);
+  animation:floatBob 6s ease-in-out infinite;
+  animation-delay:var(--d);
+}
+@keyframes floatBob {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  50%      { transform:translateY(-18px) rotate(8deg); }
+}
+@keyframes spinRing {
+  from { transform:rotate(0deg); }
+  to   { transform:rotate(360deg); }
+}
+</style>
 
 <!-- Mission & Vision -->
 <section class="py-5">
@@ -133,7 +194,7 @@
     </p>
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       {% if user.is_authenticated %}
-      <a href="{% url 'apply_for_membership' %}" class="pub-cta-btn">Apply for Membership</a>
+      <a href="{% url 'membership_apply' %}" class="pub-cta-btn">Apply for Membership</a>
       {% else %}
       <a href="{% url 'register' %}" class="pub-cta-btn">Join the Association</a>
       {% endif %}

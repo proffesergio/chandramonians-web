@@ -17,14 +17,66 @@
 
     <div class="collapse navbar-collapse" id="pubNav">
       <ul class="navbar-nav mx-auto gap-1">
-        <li class="nav-item"><a class="nav-link" href="{% url 'landing' %}">{% trans "Home" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">{% trans "About" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'news_list' %}">{% trans "News" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">{% trans "Events" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">{% trans "Gallery" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'public_directory' %}">{% trans "Alumni" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'public_members' %}">{% trans "Members" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'landing' %}">
+            <i class="fas fa-house-chimney nav-icon"></i>{% trans "Home" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'about' %}">
+            <i class="fas fa-circle-info nav-icon"></i>{% trans "About" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'news_list' %}">
+            <i class="fas fa-newspaper nav-icon"></i>{% trans "News" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'events' %}">
+            <i class="fas fa-calendar-days nav-icon"></i>{% trans "Events" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'gallery' %}">
+            <i class="fas fa-images nav-icon"></i>{% trans "Gallery" %}
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-link-icon dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-people-group nav-icon"></i>{% trans "Community" %}
+          </a>
+          <ul class="dropdown-menu border-0 shadow-sm" style="border-radius:var(--radius-sm);min-width:220px;padding:.5rem;">
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2" href="{% url 'public_directory' %}">
+                <span style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i class="fas fa-user-graduate" style="color:var(--primary);font-size:.8rem;"></i>
+                </span>
+                <div>
+                  <div style="font-size:.84rem;font-weight:600;color:var(--text);">Alumni Directory</div>
+                  <div style="font-size:.71rem;color:var(--text-muted);">Registered graduates</div>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider my-1 mx-2"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2" href="{% url 'public_members' %}">
+                <span style="width:32px;height:32px;background:#fffbeb;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i class="fas fa-id-card" style="color:var(--accent);font-size:.8rem;"></i>
+                </span>
+                <div>
+                  <div style="font-size:.84rem;font-weight:600;color:var(--text);">Member Directory</div>
+                  <div style="font-size:.71rem;color:var(--text-muted);">Life &amp; General members</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-icon" href="{% url 'contact' %}">
+            <i class="fas fa-envelope nav-icon"></i>{% trans "Contact" %}
+          </a>
+        </li>
       </ul>
 
       <div class="d-flex gap-2 align-items-center">

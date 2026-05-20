@@ -1,10 +1,49 @@
+import urllib.request
+import xml.etree.ElementTree as ET
+import logging
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.db.models import Sum, Q
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
+from django.core.cache import cache
 from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember, MembershipPayment
+
+logger = logging.getLogger(__name__)
+
+RSS_SOURCES = [
+    ('The Daily Star', 'https://www.thedailystar.net/frontpage/rss.xml'),
+    ('Prothom Alo Eng', 'https://en.prothomalo.com/rss.xml'),
+]
+
+
+def _fetch_rss_headlines():
+    """Fetch up to 6 headlines per source. Cached for 1 hour. Returns list of dicts."""
+    cached = cache.get('bd_news_headlines')
+    if cached is not None:
+        return cached
+    items = []
+    for source, url in RSS_SOURCES:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                root = ET.fromstring(resp.read())
+            count = 0
+            for item in root.iter('item'):
+                title = (item.findtext('title') or '').strip()
+                link = (item.findtext('link') or '').strip()
+                pub = (item.findtext('pubDate') or '').strip()
+                if title and link:
+                    items.append({'source': source, 'title': title, 'link': link, 'pub': pub})
+                    count += 1
+                    if count >= 6:
+                        break
+        except Exception as exc:
+            logger.warning("RSS fetch failed for %s: %s", source, exc)
+    cache.set('bd_news_headlines', items, 3600)
+    return items
 
 
 def health_check_view(request):
@@ -47,8 +86,19 @@ def home_view(request):
 
 
 def about_view(request):
+    from app.models import Staff, Event
     committee = CommitteeMember.objects.all()
-    context = {'committee': committee}
+    alumni_count = Alumni.objects.count()
+    staff_count = Staff.objects.count()
+    events_count = Event.objects.count()
+    total_members = MembershipPayment.objects.count()
+    context = {
+        'committee': committee,
+        'alumni_count': alumni_count,
+        'staff_count': staff_count,
+        'events_count': events_count,
+        'total_members': total_members,
+    }
     return render(request, 'public/about.html', context)
 
 
@@ -57,10 +107,12 @@ def news_list_view(request):
     qs = NewsArticle.objects.filter(is_published=True)
     if category:
         qs = qs.filter(category=category)
+    external_news = _fetch_rss_headlines()
     context = {
         'articles': qs,
         'categories': NewsArticle.CATEGORY,
         'active_category': category,
+        'external_news': external_news,
     }
     return render(request, 'public/news_list.html', context)
 

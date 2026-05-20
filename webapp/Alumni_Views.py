@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback
+from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback, MembershipPayment
 from django.contrib import messages
 @login_required(login_url='/login')
 def applyForMembership(request):
@@ -27,13 +27,25 @@ def homeView(request):
     alumni_gender_male = Alumni.objects.filter(gender='Male').count()
     alumni_gender_female = Alumni.objects.filter(gender='Female').count()
 
-    # dictionary to use on templates
+    # Check if this alumni has a matching record in the member payment list
+    membership_record = None
+    full_name = f"{request.user.first_name} {request.user.last_name}".strip()
+    if full_name:
+        # Try exact name match first, then first-word match
+        membership_record = (
+            MembershipPayment.objects.filter(member_name__iexact=full_name).first()
+            or MembershipPayment.objects.filter(
+                member_name__icontains=request.user.first_name
+            ).first() if request.user.first_name else None
+        )
+
     context = {
         'alumni_count': alumni_count,
         'staff_count': staff_count,
         'user_count': user_count,
         'alumni_gender_male': alumni_gender_male,
         'alumni_gender_female': alumni_gender_female,
+        'membership_record': membership_record,
     }
     return render(request, 'Alumni/alumni_home.html', context)
 
