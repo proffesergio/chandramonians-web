@@ -14,6 +14,25 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-in-produc
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
+# Vercel domains (auto-injected VERCEL_URL on preview/production)
+ALLOWED_HOSTS += ['.vercel.app']
+
+_vercel_url = env('VERCEL_URL', default='')
+if _vercel_url:
+    ALLOWED_HOSTS.append(_vercel_url)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{_vercel_url}')
+
+# Custom production domain (set in Vercel env vars)
+_site_url = env('SITE_URL', default='')
+if _site_url:
+    from urllib.parse import urlparse
+    parsed = urlparse(_site_url)
+    if parsed.hostname:
+        ALLOWED_HOSTS.append(parsed.hostname)
+        CSRF_TRUSTED_ORIGINS.append(f'{parsed.scheme}://{parsed.hostname}')
+
+        
+
 # Automatically trust Railway domains in any environment
 ALLOWED_HOSTS += ['.railway.app', '.up.railway.app']
 
