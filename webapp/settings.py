@@ -13,6 +13,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-in-production')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+
 
 # Vercel domains (auto-injected VERCEL_URL on preview/production)
 ALLOWED_HOSTS += ['.vercel.app']
@@ -31,21 +33,21 @@ if _site_url:
         ALLOWED_HOSTS.append(parsed.hostname)
         CSRF_TRUSTED_ORIGINS.append(f'{parsed.scheme}://{parsed.hostname}')
 
-        
+
 
 # Automatically trust Railway domains in any environment
-ALLOWED_HOSTS += ['.railway.app', '.up.railway.app']
+# ALLOWED_HOSTS += ['.railway.app', '.up.railway.app']
 
 # Railway injects RAILWAY_PUBLIC_DOMAIN — add it explicitly too
-_railway_domain = env('RAILWAY_PUBLIC_DOMAIN', default='')
-if _railway_domain:
-    ALLOWED_HOSTS.append(_railway_domain)
+# _railway_domain = env('RAILWAY_PUBLIC_DOMAIN', default='')
+# if _railway_domain:
+#     ALLOWED_HOSTS.append(_railway_domain)
 
 # CSRF must trust HTTPS origins on Railway
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
-if _railway_domain:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{_railway_domain}')
-CSRF_TRUSTED_ORIGINS += ['https://*.railway.app', 'https://*.up.railway.app']
+# CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+# if _railway_domain:
+#     CSRF_TRUSTED_ORIGINS.append(f'https://{_railway_domain}')
+# CSRF_TRUSTED_ORIGINS += ['https://*.railway.app', 'https://*.up.railway.app']
 
 INSTALLED_APPS = [
     'jazzmin',  # must be before django.contrib.admin
