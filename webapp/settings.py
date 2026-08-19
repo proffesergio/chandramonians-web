@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse
+
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,40 +16,48 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-in-produc
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+SITE_URL = env('SITE_URL', default='http://localhost:8000')
 
 
-# Vercel domains (auto-injected VERCEL_URL on preview/production)
-ALLOWED_HOSTS += ['.vercel.app']
+def _register_host(hostname):
+    """Add a hostname to ALLOWED_HOSTS and its HTTPS origin to CSRF_TRUSTED_ORIGINS."""
+    if not hostname:
+        return
+    if hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(hostname)
+    if not hostname.startswith('.'):
+        origin = f'https://{hostname}'
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
 
-_vercel_url = env('VERCEL_URL', default='')
-if _vercel_url:
-    ALLOWED_HOSTS.append(_vercel_url)
-    CSRF_TRUSTED_ORIGINS.append(f'https://{_vercel_url}')
 
-# Custom production domain (set in Vercel env vars)
-_site_url = env('SITE_URL', default='')
-if _site_url:
-    from urllib.parse import urlparse
-    parsed = urlparse(_site_url)
+def _register_url(url):
+    """Parse a URL or bare hostname and register it for Django host/CSRF checks."""
+    if not url or url.startswith('http://localhost'):
+        return
+    if '://' not in url:
+        url = f'https://{url}'
+    parsed = urlparse(url)
     if parsed.hostname:
-        ALLOWED_HOSTS.append(parsed.hostname)
-        CSRF_TRUSTED_ORIGINS.append(f'{parsed.scheme}://{parsed.hostname}')
+        _register_host(parsed.hostname)
+        if parsed.scheme == 'http':
+            origin = f'http://{parsed.hostname}'
+            if origin not in CSRF_TRUSTED_ORIGINS:
+                CSRF_TRUSTED_ORIGINS.append(origin)
 
 
+# Vercel: preview/production *.vercel.app deployments
+ALLOWED_HOSTS += ['.vercel.app']
+for _vercel_env in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL_BRANCH_URL'):
+    _register_url(os.environ.get(_vercel_env, ''))
 
-# Automatically trust Railway domains in any environment
-# ALLOWED_HOSTS += ['.railway.app', '.up.railway.app']
-
-# Railway injects RAILWAY_PUBLIC_DOMAIN — add it explicitly too
-# _railway_domain = env('RAILWAY_PUBLIC_DOMAIN', default='')
-# if _railway_domain:
-#     ALLOWED_HOSTS.append(_railway_domain)
-
-# CSRF must trust HTTPS origins on Railway
-# CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
-# if _railway_domain:
-#     CSRF_TRUSTED_ORIGINS.append(f'https://{_railway_domain}')
-# CSRF_TRUSTED_ORIGINS += ['https://*.railway.app', 'https://*.up.railway.app']
+# Custom domain(s) — SITE_URL plus explicit production hosts
+_register_url(SITE_URL)
+for _host in env.list(
+    'PRODUCTION_HOSTS',
+    default=['chandramonians.com', 'www.chandramonians.com', '.chandramonians.com'],
+):
+    _register_host(_host.strip())
 
 INSTALLED_APPS = [
     'jazzmin',  # must be before django.contrib.admin
@@ -151,8 +161,6 @@ GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
 GOOGLE_CREDS_JSON = env('GOOGLE_CREDS_JSON', default='')
 GOOGLE_SHEET_ID = env('GOOGLE_SHEET_ID', default='1X4T058McT6GTnmUyu1OsmLua9BwKPEz03Rr-rbcMRvs')
 
-SITE_URL = env('SITE_URL', default='http://localhost:8000')
-
 # Scheduler (django-apscheduler)
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
@@ -168,7 +176,7 @@ REST_FRAMEWORK = {
 }
 
 # Security headers (active in production when DEBUG=False)
-# Railway terminates SSL at its proxy layer — never redirect HTTP→HTTPS inside Django.
+# Vercel terminates SSL at the edge — never redirect HTTP→HTTPS inside Django.
 SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
