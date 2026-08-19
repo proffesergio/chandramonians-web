@@ -42,3 +42,5 @@ htmlcov/
 # Google credentials (never commit)
 *.json
 !package.json
+# Deploy config must be committed or Vercel never sees it
+!vercel.json
