@@ -3,12 +3,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
+from django.templatetags.static import static as static_url
+from django.views.generic.base import RedirectView
 
 from . import views, Hod_Views, Staff_Views, Alumni_Views
 from . import Public_Views, Education_Views, Member_Views
 
 urlpatterns = [
     path('health/', Public_Views.health_check_view, name='health_check'),
+    path(
+        'favicon.ico',
+        RedirectView.as_view(url=static_url('assets/img/logo/chandramonians.png'), permanent=True),
+    ),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', include('app.urls')),

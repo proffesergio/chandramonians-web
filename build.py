@@ -6,21 +6,33 @@ import sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
 
-    if os.environ.get('VERCEL') and not os.environ.get('DATABASE_URL'):
-        print('ERROR: DATABASE_URL is not set. Add it in Vercel env vars for Production + Build.', file=sys.stderr)
+    # This script only ever runs as a deploy build step, so it must never fall back
+    # to the local SQLite default — doing so silently migrates a throwaway file in
+    # the build sandbox and leaves the real database empty.
+    if not os.environ.get('DATABASE_URL'):
+        print(
+            'ERROR: DATABASE_URL is not set for the build. In Vercel -> Settings -> '
+            'Environment Variables, the variable must have the Build scope ticked, '
+            'not just Production runtime.',
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     import django
     django.setup()
 
     from django.conf import settings
-    engine = settings.DATABASES['default']['ENGINE']
-    print(f'Build migrate target: {engine}')
+    db = settings.DATABASES['default']
+    engine = db['ENGINE']
 
-    if os.environ.get('VERCEL') and 'sqlite' in engine:
+    # Log which database is actually being migrated so the build log can be compared
+    # against the database the running site connects to.
+    print(f'Build migrate target: {engine} db={db.get("NAME")} host={db.get("HOST")}')
+
+    if 'postgresql' not in engine:
         print(
-            'ERROR: Vercel build is using SQLite. DATABASE_URL must be available during build '
-            '(Vercel → Settings → Environment Variables → ensure Production scope includes Build).',
+            f'ERROR: build expected a PostgreSQL target but resolved {engine!r}. '
+            'Refusing to migrate - the deployed site would still see an empty database.',
             file=sys.stderr,
         )
         sys.exit(1)
@@ -29,6 +41,7 @@ def main():
 
     print('Running migrations...')
     call_command('migrate', '--noinput', verbosity=2)
+    call_command('showmigrations', '--list', verbosity=1)
     print('Migrations complete.')
 
 
