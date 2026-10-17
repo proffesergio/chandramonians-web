@@ -82,7 +82,7 @@ def home_view(request):
         'last_sync': last_sync,
         'featured_members': featured_members,
     }
-    return render(request, 'public/home.html', context)
+    return render(request, 'pages/home.html', context)
 
 
 def about_view(request):
@@ -99,7 +99,7 @@ def about_view(request):
         'events_count': events_count,
         'total_members': total_members,
     }
-    return render(request, 'public/about.html', context)
+    return render(request, 'pages/about.html', context)
 
 
 def news_list_view(request):
@@ -114,7 +114,7 @@ def news_list_view(request):
         'active_category': category,
         'external_news': external_news,
     }
-    return render(request, 'public/news_list.html', context)
+    return render(request, 'pages/news_list.html', context)
 
 
 def news_detail_view(request, slug):
@@ -122,14 +122,14 @@ def news_detail_view(request, slug):
     related = NewsArticle.objects.filter(
         is_published=True, category=article.category
     ).exclude(pk=article.pk)[:3]
-    return render(request, 'public/news_detail.html', {'article': article, 'related': related})
+    return render(request, 'pages/news_detail.html', {'article': article, 'related': related})
 
 
 def events_view(request):
     from django.utils import timezone
     upcoming = Event.objects.filter(is_published=True, event_date__gte=timezone.now()).order_by('event_date')
     past = Event.objects.filter(is_published=True, event_date__lt=timezone.now()).order_by('-event_date')[:6]
-    return render(request, 'public/events.html', {'upcoming': upcoming, 'past': past})
+    return render(request, 'pages/events.html', {'upcoming': upcoming, 'past': past})
 
 
 def gallery_view(request):
@@ -138,7 +138,7 @@ def gallery_view(request):
     if category:
         qs = qs.filter(category=category)
     categories = GalleryPhoto.objects.values_list('category', flat=True).distinct().exclude(category='')
-    return render(request, 'public/gallery.html', {
+    return render(request, 'pages/gallery.html', {
         'photos': qs,
         'categories': categories,
         'active_category': category,
@@ -169,7 +169,7 @@ def contact_view(request):
 
         return redirect('contact')
 
-    return render(request, 'public/contact.html')
+    return render(request, 'pages/contact.html')
 
 
 def alumni_public_directory_view(request):
@@ -178,7 +178,7 @@ def alumni_public_directory_view(request):
     if batch:
         alumni = alumni.filter(passing_year=batch)
     batch_years = Alumni.objects.values_list('passing_year', flat=True).distinct().exclude(passing_year=None).order_by('passing_year')
-    return render(request, 'public/alumni_directory.html', {
+    return render(request, 'pages/alumni_directory.html', {
         'alumni': alumni,
         'batch_years': batch_years,
         'active_batch': batch,
@@ -211,7 +211,7 @@ def public_members_view(request):
         'last_synced_at', flat=True
     ).first()
 
-    return render(request, 'public/members.html', {
+    return render(request, 'pages/members.html', {
         'life_members': life_members,
         'general_members': general_members,
         'batch_years': batch_years,
