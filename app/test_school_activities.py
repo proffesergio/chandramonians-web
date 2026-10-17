@@ -65,6 +65,23 @@ class SchoolActivityTests(TestCase):
     def test_new_activities_are_drafts(self):
         self.assertFalse(Event().is_published)
 
+    def test_member_search_selects_the_group_with_results(self):
+        MembershipPayment.objects.create(member_name='General Search Example', member_type='GENERAL', sheet_row_id=3, batch_year='2005')
+        response = self.client.get(reverse('public_members'), {'q': 'General Search', 'batch': '2005'})
+        self.assertContains(response, 'General Search Example')
+        self.assertNotContains(response, 'Actual Example Member')
+        self.assertContains(response, 'id="general-tab" role="tab" aria-controls="generalMembers" aria-selected="true"')
+        self.assertContains(response, 'id="life-tab" role="tab" aria-controls="lifeMembers" aria-selected="false"')
+        # Both groups remain in the document for readers without JavaScript.
+        self.assertContains(response, 'id="lifeMembers" role="tabpanel"')
+        self.assertContains(response, 'id="generalMembers" role="tabpanel"')
+
+    def test_member_tabs_default_to_life_and_handle_no_search_matches(self):
+        for query in ({}, {'q': 'No such member'}):
+            response = self.client.get(reverse('public_members'), query)
+            self.assertContains(response, 'id="life-tab" role="tab" aria-controls="lifeMembers" aria-selected="true"')
+        self.assertContains(response, 'No Life members match your search')
+
 
 class VolunteerFlowTests(TestCase):
     def offer(self, **overrides):

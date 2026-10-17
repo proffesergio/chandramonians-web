@@ -42,10 +42,11 @@ Homna or carry your school community with you somewhere else.
 ### A community you can find
 
 - **Alumni directory** with batch filters, profile details, professions, and organisations.
-- **Association member directory** with Life and General categories, name search, and batch filters.
+- **Association member directory** with Life and General member tabs, colourful profile cards, name search, and batch filters.
 - **Our home in Homna** with a locally served geographic overview, an optional detailed map, and motion that respects reading preferences.
 - **A clearer overview** with real community figures, larger-text controls, Bangla cues, and an accessible programme explorer.
 - **Community identity** rooted in DCMHS, with English and Bangla language support.
+- **A familiar, lively design** with an animated Bengali wordmark, gentle orbital backgrounds, colourful section cards, and a personalised footer; motion can be paused throughout.
 
 ### A school community that stays active
 

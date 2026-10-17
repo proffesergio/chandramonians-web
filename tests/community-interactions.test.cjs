@@ -16,7 +16,7 @@ class Element {
   focus() { this.focused = true; }
 }
 
-function setup({ reduced = false, deniedStorage = false } = {}) {
+function setup({ reduced = false, deniedStorage = false, generalSelected = false } = {}) {
   const root = new Element();
   const elements = Object.fromEntries(['textSizeToggle','motionToggle','primaryNavigation','loadCommunityMap','communityMapDetail','communityHomeMap','communityMapStatus'].map(id => [id, new Element()]));
   const menuButton = new Element({ 'aria-expanded': 'false' });
@@ -24,17 +24,23 @@ function setup({ reduced = false, deniedStorage = false } = {}) {
     const tab = new Element({ 'aria-controls': `${name}Panel`, 'aria-selected': String(i === 0) });
     const panel = new Element(); panel.hidden = i !== 0; elements[`${name}Panel`] = panel; return tab;
   });
+  const memberTabs = ['life', 'general'].map((name, i) => {
+    const tab = new Element({ 'aria-controls': `${name}Members`, 'aria-selected': String(generalSelected ? i === 1 : i === 0) });
+    elements[`${name}Members`] = new Element();
+    return tab;
+  });
+  const groups = [tabs, memberTabs].map(items => ({ querySelectorAll: () => items }));
   elements.communityMapDetail.hidden = true;
   elements.communityHomeMap.dataset.src = 'https://www.openstreetmap.org/export/embed.html?layer=mapnik';
   elements.loadCommunityMap.setAttribute('aria-expanded', 'false');
   const saved = new Map();
   const media = { matches: reduced, addEventListener: () => {} };
   const context = {
-    document: { documentElement: root, getElementById: id => elements[id], querySelector: () => menuButton, querySelectorAll: () => tabs },
+    document: { documentElement: root, getElementById: id => elements[id], querySelector: () => menuButton, querySelectorAll: () => groups },
     localStorage: { getItem: key => { if (deniedStorage) throw Error('Storage disabled'); return saved.get(key); }, setItem: (key, value) => { if (deniedStorage) throw Error('Storage disabled'); saved.set(key, value); } },
     window: { matchMedia: () => media },
   };
-  return { context, root, elements, menuButton, tabs, saved };
+  return { context, root, elements, menuButton, tabs, memberTabs, saved };
 }
 const run = (file, context) => vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/assets/js', file), 'utf8'), context);
 
@@ -60,6 +66,21 @@ test('reading settings persist and mobile menu opens and closes', () => {
   assert.equal(state.elements.primaryNavigation.classes.has('is-open'), true);
   state.elements.primaryNavigation.fire('keydown', { key: 'Escape' });
   assert.equal(state.menuButton.getAttribute('aria-expanded'), 'false');
+});
+
+test('membership tabs honour the matching category and stay independent of programme tabs', () => {
+  const state = setup({ generalSelected: true }); run('community-public.js', state.context);
+  assert.equal(state.elements.generalMembers.hidden, false);
+  assert.equal(state.elements.lifeMembers.hidden, true);
+  state.memberTabs[1].fire('keydown', { key: 'Home', preventDefault() {} });
+  assert.equal(state.elements.lifeMembers.hidden, false);
+  assert.equal(state.memberTabs[0].focused, true);
+  assert.equal(state.memberTabs[1].tabIndex, -1);
+  assert.equal(state.elements.teachingPanel.hidden, false);
+  state.memberTabs[0].fire('keydown', { key: 'ArrowLeft', preventDefault() {} });
+  assert.equal(state.elements.generalMembers.hidden, false);
+  state.tabs[2].fire('click');
+  assert.equal(state.elements.generalMembers.hidden, false);
 });
 
 test('device reduced-motion preference wins and denied storage is tolerated', () => {
