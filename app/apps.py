@@ -14,7 +14,10 @@ class AppConfig(AppConfig):
             return  # Don't start APScheduler on Vercel
 
         # Don't start scheduler during migrations or management commands
-        skip_cmds = {'migrate', 'makemigrations', 'check', 'collectstatic', 'test'}
+        skip_cmds = {
+            'migrate', 'makemigrations', 'check', 'collectstatic', 'test',
+            'createcommunityadmin', 'createsuperuser', 'changepassword', 'restore_community',
+        }
         if not any(cmd in sys.argv for cmd in skip_cmds):
             from webapp import scheduler
             scheduler.start()

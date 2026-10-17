@@ -10,6 +10,7 @@ from . import views, Hod_Views, Staff_Views, Alumni_Views
 from . import Public_Views, Education_Views, Member_Views
 
 urlpatterns = [
+    path('tasks/sync-members/', Member_Views.scheduled_sync_view, name='scheduled_member_sync'),
     path('health/', Public_Views.health_check_view, name='health_check'),
     path(
         'favicon.ico',

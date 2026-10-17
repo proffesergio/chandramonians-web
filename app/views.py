@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.db import transaction
+from app.forms import CommunitySignupForm
+from app.models import Alumni, Student
 
 CustomUser = get_user_model()
 
@@ -16,23 +19,21 @@ class RegisterView(View):
 
 def doRegister(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password1 = request.POST.get("password1")
-        password2 = request.POST.get("password2")
-        user_type = request.POST.get("user_type")
-
-        if password1 != password2:
-            messages.error(request, "Passwords do not match!")
+        data = request.POST.copy()
+        data.setdefault('password1', data.get('password', ''))
+        data.setdefault('password2', data.get('confirm_password', ''))
+        form = CommunitySignupForm(data)
+        if not form.is_valid():
+            for errors in form.errors.values():
+                for error in errors:
+                    messages.error(request, error)
             return redirect('register')
-
-        if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, "Email already taken!")
-            return redirect('register')
-
-        user = CustomUser(username=username, email=email, user_type=user_type)
-        user.set_password(password1)
-        user.save()
+        with transaction.atomic():
+            user = form.save()
+            if user.user_type == '3':
+                Alumni.objects.create(admin=user, gender='')
+            else:
+                Student.objects.create(user=user, gender='')
         login(request, user)
         return redirect("landing")
 

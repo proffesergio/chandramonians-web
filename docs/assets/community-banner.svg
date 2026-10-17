@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">Chandramonians</title>
+  <desc id="desc">Rooted in Homna, connected everywhere. An abstract community network links learning, belonging, and giving back.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#092e2c"/><stop offset="1" stop-color="#145446"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#96c7ac" stroke-opacity=".08"/></pattern>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    .link { stroke-dasharray: 8 9; animation: connect 8s linear 2; }
+    .halo { transform-origin: 1020px 210px; animation: pulse 3s ease-out 3; }
+    @keyframes connect { to { stroke-dashoffset: -68; } }
+    @keyframes pulse { 50% { opacity: .15; transform: scale(1.15); } }
+    @media (prefers-reduced-motion: reduce) { .link, .halo { animation: none; } }
+  </style>
+  <rect width="1280" height="400" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="400" rx="24" fill="url(#grid)"/>
+  <circle cx="1210" cy="20" r="240" fill="#e9bb6509"/>
+  <text x="70" y="100" fill="#e6be73" font-size="17" letter-spacing="4">DULALPUR CHANDRAMONI HIGH SCHOOL</text>
+  <text x="66" y="184" fill="#f7fbf8" font-size="64" font-weight="750">Chandramonians</text>
+  <text x="70" y="235" fill="#cfdfd6" font-size="24">Rooted in Homna. Connected everywhere.</text>
+  <rect x="70" y="283" width="321" height="42" rx="21" fill="#ffffff0d" stroke="#ffffff20"/>
+  <text x="94" y="310" fill="#f5e5c4" font-size="16">HOMNA · CUMILLA · BANGLADESH</text>
+  <g fill="none" stroke="#85b9a0" stroke-width="2" opacity=".65">
+    <path class="link" d="M1020 210Q900 95 855 103M1020 210Q1150 65 1190 102M1020 210Q940 330 873 320M1020 210Q1150 330 1196 293"/>
+    <circle class="halo" cx="1020" cy="210" r="75" opacity=".4"/>
+    <circle cx="1020" cy="210" r="110" opacity=".12"/>
+  </g>
+  <g fill="#e7bd70"><circle cx="1020" cy="210" r="10"/><circle cx="855" cy="103" r="6"/><circle cx="1190" cy="102" r="6"/><circle cx="873" cy="320" r="6"/><circle cx="1196" cy="293" r="6"/></g>
+  <g fill="#e4efe7" font-size="15"><text x="983" y="249">OUR HOME</text><text x="830" y="83">LEARN</text><text x="1158" y="82">BELONG</text><text x="835" y="351">CONNECT</text><text x="1148" y="324">GIVE BACK</text></g>
+</svg>

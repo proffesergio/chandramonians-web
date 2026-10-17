@@ -169,6 +169,9 @@ DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER', default='noreply@chandramonians.org'
 GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
 GOOGLE_CREDS_JSON = env('GOOGLE_CREDS_JSON', default='')
 GOOGLE_SHEET_ID = env('GOOGLE_SHEET_ID', default='1X4T058McT6GTnmUyu1OsmLua9BwKPEz03Rr-rbcMRvs')
+GOOGLE_SHEET_LIFE_TAB = env('GOOGLE_SHEET_LIFE_TAB', default='')
+GOOGLE_SHEET_GENERAL_TAB = env('GOOGLE_SHEET_GENERAL_TAB', default='')
+CRON_SECRET = env('CRON_SECRET', default='')
 
 # Scheduler (django-apscheduler)
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'

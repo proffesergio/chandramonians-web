@@ -1,0 +1,10 @@
+.community-home { background: var(--bg); }
+.community-map-shell { min-height: 360px; overflow: hidden; border-radius: 20px; background: #e9f2ef; border: 1px solid var(--border); }
+.community-map-intro { min-height: 360px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 24px; text-align: center; background: radial-gradient(ellipse at center, #f5fbf7, #dcece8); color: #173c36; }
+.community-map-intro strong { font-size: clamp(1.1rem, 3vw, 1.5rem); }
+.community-map-canvas { height: 360px; z-index: 0; }
+.community-home-dot, .community-map-pin { width: 20px; height: 20px; background: #176b55; border: 4px solid #fff; border-radius: 50%; box-shadow: 0 0 0 12px #176b5520; }
+.community-home-dot { margin: 20px; animation: community-pulse 2s ease-out 3; }
+.community-map-pin { animation: community-pulse 2s ease-out 3; }
+@keyframes community-pulse { 50% { box-shadow: 0 0 0 22px #176b5505; } }
+@media (prefers-reduced-motion: reduce) { .community-home-dot, .community-map-pin { animation: none; } }

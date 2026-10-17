@@ -1,5 +1,6 @@
 {% extends 'public_base.html' %}
 {% load static i18n %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'assets/css/community-map.css' %}">{% endblock %}
 {% block title %}Chandramonians — DCMHS Alumni & Student Portal{% endblock %}
 {% block content %}
 
@@ -1826,4 +1827,5 @@
   </div>
 </section>
 
+{% include 'partials/community_map.html' %}
 {% endblock %}

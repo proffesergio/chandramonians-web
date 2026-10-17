@@ -11,12 +11,15 @@ from app.models import (
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'user_type', 'is_active', 'date_joined')
+    list_display = ('email', 'username', 'user_type', 'is_active', 'is_staff', 'is_superuser', 'date_joined')
     list_filter = ('user_type', 'is_active', 'is_staff')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('-date_joined',)
     fieldsets = UserAdmin.fieldsets + (
         ('Chandramonians', {'fields': ('user_type', 'profile_pic')}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Chandramonians', {'fields': ('email', 'user_type')}),
     )
 
 

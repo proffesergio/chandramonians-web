@@ -44,6 +44,10 @@ def main():
     call_command('showmigrations', '--list', verbosity=1)
     print('Migrations complete.')
 
+    # One deployment only, explicitly enabled with --build-env. No runtime endpoint.
+    if os.environ.get('RESTORE_COMMUNITY_FROM_SQLITE') == '1':
+        call_command('restore_community', source=str(settings.BASE_DIR / 'db.sqlite3'))
+
 
 if __name__ == '__main__':
     main()

@@ -20,6 +20,7 @@ import json
 import logging
 import re
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 
@@ -90,18 +91,16 @@ def _parse_value(field_name: str, raw: str):
         return _parse_date(value)
     if field_name == 'amount':
         try:
-            return float(value.replace(',', '').replace('৳', '').replace('Tk', '').strip())
-        except ValueError:
+            return Decimal(value.replace(',', '').replace('৳', '').replace('Tk', '').strip())
+        except InvalidOperation:
             return None
     if field_name == 'status':
         sl = value.lower()
-        if 'paid' in sl:
-            return 'PAID'
-        if 'pending' in sl:
-            return 'PENDING'
         if 'partial' in sl:
             return 'PARTIAL'
-        return 'PAID'
+        if sl in ('paid', 'fully paid', 'complete', 'completed'):
+            return 'PAID'
+        return 'PENDING'
     return value
 
 
@@ -137,25 +136,35 @@ def _get_credentials():
     return json.loads(creds_json)
 
 
-def sync_sheet_tab(sheet, member_type: str, worksheet_index: int) -> dict:
+def sync_sheet_tab(sheet, member_type: str, worksheet_index: int, worksheet_title='') -> dict:
     """Sync one worksheet tab (Life Members or General Members)."""
     from app.models import MembershipPayment
 
     try:
-        ws = sheet.get_worksheet(worksheet_index)
+        ws = sheet.worksheet(worksheet_title) if worksheet_title else sheet.get_worksheet(worksheet_index)
+        if ws is None:
+            raise ValueError('Worksheet not found')
+        all_rows = ws.get_all_values()
     except Exception as e:
         logger.error(f"Cannot open worksheet {worksheet_index}: {e}")
         return {'added': 0, 'updated': 0, 'skipped': 0, 'errors': 1}
 
-    all_rows = ws.get_all_values()
     if len(all_rows) < 2:
         logger.info(f"Worksheet {worksheet_index} has no data rows.")
         return {'added': 0, 'updated': 0, 'skipped': 0, 'errors': 0}
 
-    headers = [_normalize_header(h) for h in all_rows[0]]
+    # Sheets often have a title above the actual header row.
+    header_index = next((
+        index for index, row in enumerate(all_rows[:10])
+        if any(FIELD_MAP.get(_normalize_header(cell)) == 'member_name' for cell in row)
+    ), None)
+    if header_index is None:
+        logger.error('Worksheet %s has no recognised member-name header.', worksheet_index)
+        return {'added': 0, 'updated': 0, 'skipped': 0, 'errors': 1}
+    headers = [_normalize_header(h) for h in all_rows[header_index]]
     stats = {'added': 0, 'updated': 0, 'skipped': 0, 'errors': 0}
 
-    for row_idx, row in enumerate(all_rows[1:], start=2):
+    for row_idx, row in enumerate(all_rows[header_index + 1:], start=header_index + 2):
         try:
             if not any(cell.strip() for cell in row):
                 continue
@@ -203,18 +212,21 @@ def sync_all() -> dict:
 
     try:
         # gspread.service_account_from_dict() is the correct API for gspread >= 6
-        client = gspread.service_account_from_dict(creds_dict)
+        client = gspread.service_account_from_dict(
+            creds_dict, scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'],
+        )
+        client.set_timeout((5, 15))
         sheet = client.open_by_key(sheet_id)
     except Exception as e:
         logger.error(f"Google Sheets connection error: {e}")
         return {'success': False, 'error': str(e)}
 
     # Tab 0 = Life Members Data, Tab 1 = General Members
-    life_stats = sync_sheet_tab(sheet, 'LIFE', worksheet_index=0)
-    general_stats = sync_sheet_tab(sheet, 'GENERAL', worksheet_index=1)
+    life_stats = sync_sheet_tab(sheet, 'LIFE', worksheet_index=0, worksheet_title=settings.GOOGLE_SHEET_LIFE_TAB)
+    general_stats = sync_sheet_tab(sheet, 'GENERAL', worksheet_index=1, worksheet_title=settings.GOOGLE_SHEET_GENERAL_TAB)
 
     summary = {
-        'success': True,
+        'success': life_stats['errors'] + general_stats['errors'] == 0,
         'synced_at': datetime.now().isoformat(),
         'life_members': life_stats,
         'general_members': general_stats,
@@ -222,6 +234,9 @@ def sync_all() -> dict:
         'total_updated': life_stats['updated'] + general_stats['updated'],
         'total_errors': life_stats['errors'] + general_stats['errors'],
     }
+
+    if not summary['success']:
+        summary['error'] = 'Some sheet rows or tabs could not be synced. Check the tab names, column headers, and server logs.'
 
     logger.info(f"Sheets sync complete: {summary}")
     return summary

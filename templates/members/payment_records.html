@@ -10,6 +10,14 @@
 
 {% block content %}
 
+{% if not sheets_sync_configured %}
+<div class="alert alert-warning" role="status">
+  <strong>Google Sheets is not connected.</strong>
+  Existing records remain available. Ask the site maintainer to configure the Google service account,
+  or use Upload Excel / Upload CSV below to import the current membership list.
+</div>
+{% endif %}
+
 <!-- Stats Row -->
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-lg-3">

@@ -1,9 +1,14 @@
 import csv
 import io
 import logging
+import secrets
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+from django.db.models import Q
+from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -56,10 +61,12 @@ def payment_records_view(request):
         'filter_batch': batch,
         'filter_status': status,
         'search': search,
+        'sheets_sync_configured': bool(settings.GOOGLE_CREDS_JSON),
     })
 
 
 @login_required(login_url='/login')
+@require_POST
 def trigger_sync_view(request):
     """HOD only: manually trigger Google Sheets sync."""
     if request.user.user_type != '1':
@@ -77,6 +84,23 @@ def trigger_sync_view(request):
         messages.error(request, f"Sync failed: {result.get('error', 'Unknown error')}")
 
     return redirect('payment_records')
+
+
+@csrf_exempt
+@require_http_methods(['GET', 'POST'])
+def scheduled_sync_view(request):
+    """Token-authenticated entry point for n8n or Vercel Cron; no member data returned."""
+    if not settings.CRON_SECRET:
+        return JsonResponse({'success': False, 'error': 'Scheduled sync is not configured.'}, status=503)
+    expected = f'Bearer {settings.CRON_SECRET}'
+    if not secrets.compare_digest(request.headers.get('Authorization', ''), expected):
+        return JsonResponse({'success': False, 'error': 'Unauthorized.'}, status=403)
+    result = sync_all()
+    if not result.get('success'):
+        # Keep upstream credential and API error details in server logs only.
+        logger.warning('Scheduled membership sync did not complete successfully.')
+        return JsonResponse({'success': False, 'error': 'Sync failed. Check the connection and server logs.'}, status=502)
+    return JsonResponse(result)
 
 
 @login_required(login_url='/login')
@@ -287,7 +311,7 @@ def alumni_directory_view(request):
     """Full alumni directory for logged-in alumni."""
     batch = request.GET.get('batch', '')
     profession = request.GET.get('profession', '')
-    search = request.GET.get('search', '')
+    search = request.GET.get('q', request.GET.get('search', '')).strip()
 
     qs = Alumni.objects.select_related('admin').all()
     if batch:
@@ -295,7 +319,10 @@ def alumni_directory_view(request):
     if profession:
         qs = qs.filter(profession__icontains=profession)
     if search:
-        qs = qs.filter(admin__first_name__icontains=search) | qs.filter(admin__last_name__icontains=search)
+        qs = qs.filter(
+            Q(admin__first_name__icontains=search) | Q(admin__last_name__icontains=search)
+            | Q(profession__icontains=search) | Q(company__icontains=search)
+        )
 
     batch_years = (
         Alumni.objects.values_list('passing_year', flat=True)
@@ -303,7 +330,7 @@ def alumni_directory_view(request):
     )
 
     return render(request, 'members/directory.html', {
-        'alumni': qs,
+        'alumni_list': qs,
         'batch_years': batch_years,
         'filter_batch': batch,
         'search': search,

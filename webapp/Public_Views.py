@@ -174,12 +174,15 @@ def contact_view(request):
 
 def alumni_public_directory_view(request):
     batch = request.GET.get('batch', '')
+    search = request.GET.get('q', '').strip()
     alumni = Alumni.objects.select_related('admin').all()
     if batch:
         alumni = alumni.filter(passing_year=batch)
+    if search:
+        alumni = alumni.filter(Q(admin__first_name__icontains=search) | Q(admin__last_name__icontains=search))
     batch_years = Alumni.objects.values_list('passing_year', flat=True).distinct().exclude(passing_year=None).order_by('passing_year')
     return render(request, 'pages/alumni_directory.html', {
-        'alumni': alumni,
+        'alumni_list': alumni,
         'batch_years': batch_years,
         'active_batch': batch,
     })
