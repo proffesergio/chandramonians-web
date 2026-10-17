@@ -1,5 +1,12 @@
 # Chandramonians live administration
 
+## Can I register at /admin/?
+
+`/admin/` is a sign-in page, not a public account-registration page. Create the
+first administrator using the command below against production PostgreSQL. Once
+signed in, an existing superuser can create further accounts under **Custom users → Add**.
+Public signup intentionally cannot grant admin or HOD access.
+
 This guide is separate from the public, feature-focused README. The application
 runs on Vercel; live records are in PostgreSQL. Creating an account in local
 SQLite does **not** create it on the live site.
@@ -23,6 +30,10 @@ parameters. [Neon's connection guide](https://neon.com/docs/connect/connect-from
    ```dotenv
    DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
    ```
+
+   The helper also accepts `.env.local.production`, the filename already in this
+   checkout. Both filenames are excluded from Git. If both exist,
+   `.env.production.local` takes precedence.
 
 3. Activate the environment and run:
 
@@ -172,6 +183,42 @@ GET is also accepted for Vercel Cron's bearer authentication. No cron schedule
 is activated by default; check your Vercel plan's current scheduling limits.
 
 ## Manage community content
+
+### Seminars, guest teaching, and school projects
+
+1. Open **Events** in `/admin/` (direct link: `/admin/app/event/`). Click **Add**.
+2. Choose **Guest teaching**, **Seminar & career talk**, **School improvement**,
+   **Community gathering**, or **Alumni reunion**. Add a clear title, description,
+   and audience such as Classes 9–10.
+3. Enter the date/time, optional end time, location, confirmed guest faculty or
+   speaker, and a coordinating user. Add an external registration URL if needed.
+4. Leave the activity as a draft while planning. Set **Scheduled** and tick
+   **Is published** only when the details are confirmed. Published scheduled
+   activities appear on the home page and in the activity calendar. Cancelled
+   activities are removed from the public activity lists.
+5. After the activity, set **Completed**, record actual student attendance if
+   available, and enter a verified outcome. Published completed outcomes appear
+   in the home-page impact section. Attendance is a session count, not a count
+   of unique students across the year.
+
+The public form at `/volunteer/` saves guest-teaching offers, seminar offers,
+school-project support, and general volunteering applications. It does not
+create teaching appointments automatically or send emails. Applications are
+private and available only to users with the model's admin permissions.
+
+Open **Volunteer applications** (`/admin/app/volunteerapplication/`) to review
+contact details, subject experience, and availability. Move a new application
+through **Contacted**, **Approved**, **Declined**, or **Completed** as appropriate.
+Assign a team member, link the application to an Event, and keep follow-up notes.
+Applicants' original details and consent are read-only in this workspace.
+
+Give coordinators the relevant Event and Volunteer application view/change
+permissions through a Django group. Public users and staff without these
+permissions cannot see applications. The first version has no automatic
+notification or volunteer login tracking; use the application's saved contact
+information to coordinate through your established process.
+
+### Other content
 
 - **News:** review a title, category, excerpt, body, and slug before publishing.
   Publish/Unpublish actions are available. Current external RSS headlines still

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-labelledby="learningTitle learningDesc">
+<title id="learningTitle">Knowledge grows when we share it</title><desc id="learningDesc">An open book, a growing tree, and three people represent learning supported by the community.</desc>
+<ellipse cx="320" cy="337" rx="252" ry="24" fill="#d7e0c8"/>
+<circle cx="320" cy="162" r="135" fill="#f4f1d9"/>
+<circle cx="466" cy="84" r="27" fill="#dfbd6c"/>
+<path d="M125 322Q225 294 319 324Q420 295 519 321L505 342Q411 317 319 346Q221 320 138 340Z" fill="#355a3d"/>
+<path d="M319 164Q252 138 151 160L129 316Q232 288 319 323Z" fill="#fffdf1" stroke="#c9ccab" stroke-width="2"/>
+<path d="M319 164Q407 139 489 160L514 316Q413 288 319 323Z" fill="#f3eed5" stroke="#c9ccab" stroke-width="2"/>
+<path d="M319 164V322" fill="none" stroke="#a9b494" stroke-width="3"/>
+<g fill="none" stroke="#c9c9a3" stroke-width="3" stroke-linecap="round"><path d="M173 206Q219 195 258 209M166 229Q220 218 270 235M161 254Q206 244 249 258M372 208Q415 198 461 209M364 234Q415 221 469 233M385 256Q424 248 475 260"/></g>
+<path d="M322 277V88M322 181L283 145M322 155L359 115" fill="none" stroke="#4e6d3f" stroke-width="9" stroke-linecap="round"/>
+<path d="M322 123C259 113 262 55 274 42C313 56 341 78 322 123Z" fill="#7b9558"/>
+<path d="M325 156C367 164 402 130 399 100C359 92 329 110 325 156Z" fill="#4a7046"/>
+<path d="M290 151C248 154 220 127 228 102C264 99 287 116 290 151Z" fill="#a5b17a"/>
+<path d="M337 110C375 102 379 64 364 51C336 62 325 80 337 110Z" fill="#96ab6d"/>
+<g fill="#59774d"><circle cx="103" cy="239" r="17"/><path d="M75 306Q71 264 103 264Q138 264 135 308Z"/><circle cx="540" cy="231" r="17"/><path d="M511 304Q508 256 540 256Q576 256 572 307Z"/></g>
+<g fill="#cca55e"><circle cx="568" cy="278" r="13"/><path d="M548 330Q546 296 568 296Q594 296 591 330Z"/></g>
+<g fill="none" stroke="#819b61" stroke-width="3" stroke-linecap="round"><path d="M73 205v-12m-6 6h12M542 129v-12m-6 6h12M185 107v-10m-5 5h10"/></g>
+<path d="M449 51q10-10 20 0M169 83q12-11 24 0" fill="none" stroke="#a1ad7c" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.git/
+.vercel/
+.venv/
+venv/
+env/
+.idea/
+**/__pycache__/
+**/*.pyc
+tests/
+docs/

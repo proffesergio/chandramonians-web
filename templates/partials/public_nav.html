@@ -1,128 +1,33 @@
-{% load static i18n %}
-{% get_current_language as current_lang %}
-<nav class="pub-nav navbar navbar-expand-lg">
-  <div class="container">
-
-    <a class="navbar-brand" href="{% url 'landing' %}">
-      <img src="{% static 'assets/img/logo/chandramonians.png' %}" alt="Chandramonians" style="height:36px;width:auto;object-fit:contain;margin-right:.1rem;">
-      <div>
-        <div class="brand-shimmer" style="line-height:1.1;font-weight:800;">দি চন্দ্রমণিয়ান্স</div>
-        <div style="font-size:.65rem;font-weight:400;opacity:.75;letter-spacing:.04em;">দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়</div>
-      </div>
-    </a>
-
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#pubNav" style="color:var(--text-muted);">
-      <i class="fas fa-bars"></i>
-    </button>
-
-    <div class="collapse navbar-collapse" id="pubNav">
-      <ul class="navbar-nav mx-auto gap-1">
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'landing' %}">
-            <i class="fas fa-house-chimney nav-icon"></i>{% trans "Home" %}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'about' %}">
-            <i class="fas fa-circle-info nav-icon"></i>{% trans "About" %}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'news_list' %}">
-            <i class="fas fa-newspaper nav-icon"></i>{% trans "News" %}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'events' %}">
-            <i class="fas fa-calendar-days nav-icon"></i>{% trans "Events" %}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'gallery' %}">
-            <i class="fas fa-images nav-icon"></i>{% trans "Gallery" %}
-          </a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link nav-link-icon dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-people-group nav-icon"></i>{% trans "Community" %}
-          </a>
-          <ul class="dropdown-menu border-0 shadow-sm" style="border-radius:var(--radius-sm);min-width:220px;padding:.5rem;">
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2" href="{% url 'public_directory' %}">
-                <span style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i class="fas fa-user-graduate" style="color:var(--primary);font-size:.8rem;"></i>
-                </span>
-                <div>
-                  <div style="font-size:.84rem;font-weight:600;color:var(--text);">Alumni Directory</div>
-                  <div style="font-size:.71rem;color:var(--text-muted);">Registered graduates</div>
-                </div>
-              </a>
-            </li>
-            <li><hr class="dropdown-divider my-1 mx-2"></li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2" href="{% url 'public_members' %}">
-                <span style="width:32px;height:32px;background:#fffbeb;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i class="fas fa-id-card" style="color:var(--accent);font-size:.8rem;"></i>
-                </span>
-                <div>
-                  <div style="font-size:.84rem;font-weight:600;color:var(--text);">Member Directory</div>
-                  <div style="font-size:.71rem;color:var(--text-muted);">Life &amp; General members</div>
-                </div>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link nav-link-icon" href="{% url 'contact' %}">
-            <i class="fas fa-envelope nav-icon"></i>{% trans "Contact" %}
-          </a>
-        </li>
-      </ul>
-
-      <div class="d-flex gap-2 align-items-center">
-        {% if user.is_authenticated %}
-          {% if user.user_type == '4' %}
-            <a href="{% url 'edu_home' %}" class="nav-link btn-login">
-              <i class="fas fa-graduation-cap me-1"></i> {% trans "Study Hub" %}
-            </a>
-          {% elif user.user_type == '3' %}
-            <a href="{% url 'alumni_home' %}" class="nav-link btn-login">
-              <i class="fas fa-user-graduate me-1"></i> {% trans "My Portal" %}
-            </a>
-          {% elif user.user_type == '1' %}
-            <a href="{% url 'hod_home' %}" class="nav-link btn-login">
-              <i class="fas fa-th-large me-1"></i> {% trans "Dashboard" %}
-            </a>
-          {% else %}
-            <a href="{% url 'staff_home' %}" class="nav-link btn-login">
-              <i class="fas fa-th-large me-1"></i> {% trans "Dashboard" %}
-            </a>
-          {% endif %}
-        {% else %}
-          <a href="{% url 'login' %}" class="nav-link">{% trans "Sign In" %}</a>
-          <a href="{% url 'register' %}" class="nav-link btn-login">
-            <i class="fas fa-user-plus me-1"></i> {% trans "Join Now" %}
-          </a>
-        {% endif %}
-
-        <!-- Language Switcher -->
-        <form action="{% url 'set_language' %}" method="post" class="d-inline ms-1">
-          {% csrf_token %}
-          <input name="next" type="hidden" value="{{ request.path }}">
-          {% if current_lang == 'bn' %}
-            <button type="submit" name="language" value="en"
-              style="background:var(--primary-pale);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;">
-              🇬🇧 EN
-            </button>
-          {% else %}
-            <button type="submit" name="language" value="bn"
-              style="background:var(--primary-pale);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:.28rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;">
-              🇧🇩 বাংলা
-            </button>
-          {% endif %}
-        </form>
-      </div>
+{% load static i18n %}{% get_current_language as current_lang %}
+<div class="site-utility">
+  <div class="site-container utility-inner">
+    <span>Dulalpur Chandramoni High School <span class="utility-location">· Homna, Cumilla</span></span>
+    <div class="reading-controls" aria-label="Reading preferences">
+      <button type="button" id="textSizeToggle" aria-pressed="false"><span aria-hidden="true">A+</span> Larger text</button>
+      <button type="button" id="motionToggle" aria-pressed="false">Pause motion</button>
+      <a href="{% url 'admin:index' %}">Admin sign in <span aria-hidden="true">↗</span></a>
     </div>
-
   </div>
-</nav>
+</div>
+<header class="site-header">
+  <div class="site-container header-inner">
+    <a class="site-brand" href="{% url 'landing' %}" aria-label="Chandramonians home">
+      <img src="{% static 'assets/img/chandramonians.png' %}" width="180" height="61" alt="Chandramonians" fetchpriority="high">
+      <span class="brand-caption">Our school. Our people.</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-controls="primaryNavigation" aria-expanded="false">Menu <span aria-hidden="true">☰</span></button>
+    <nav class="primary-navigation" id="primaryNavigation" aria-label="Main navigation">
+      <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About us</a>
+      <a href="{% url 'events' %}" {% if request.resolver_match.url_name == 'events' %}aria-current="page"{% endif %}>School activities</a>
+      <a href="{% url 'public_members' %}" {% if request.resolver_match.url_name == 'public_members' %}aria-current="page"{% endif %}>Our members</a>
+      <a href="{% url 'news_list' %}" {% if request.resolver_match.url_name == 'news_list' %}aria-current="page"{% endif %}>News</a>
+      {% if user.is_authenticated %}
+        {% if user.user_type == '1' %}<a href="{% url 'hod_home' %}">My dashboard</a>
+        {% elif user.user_type == '3' %}<a href="{% url 'alumni_home' %}">My portal</a>
+        {% elif user.user_type == '4' %}<a href="{% url 'edu_home' %}">Study hub</a>
+        {% else %}<a href="{% url 'staff_home' %}">My dashboard</a>{% endif %}
+      {% else %}<a href="{% url 'login' %}">Sign in</a>{% endif %}
+      <a class="site-button button-primary header-cta" href="{% url 'volunteer' %}">Get involved <span aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+</header>

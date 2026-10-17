@@ -5,7 +5,7 @@ from app.models import (
     StaffNotification, ApplyForMembership, AlumniFeedback,
     MembershipPayment, Subject, ExamSuggestion, DailyChallenge,
     StudentProgress, NewsArticle, Event, GalleryPhoto, AIChat,
-    CommitteeMember,
+    CommitteeMember, VolunteerApplication,
 )
 
 
@@ -140,10 +140,38 @@ class NewsArticleAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event_date', 'location', 'is_published')
-    list_filter = ('is_published',)
-    search_fields = ('title', 'location')
+    list_display = ('title', 'activity_type', 'event_date', 'guest_faculty', 'status', 'is_published')
+    list_filter = ('activity_type', 'status', 'is_published')
+    search_fields = ('title', 'location', 'guest_faculty', 'audience')
     ordering = ('-event_date',)
+    date_hierarchy = 'event_date'
+    fieldsets = (
+        ('Programme', {'fields': ('title', 'activity_type', 'description', 'audience')}),
+        ('Schedule & people', {'fields': ('event_date', 'end_date', 'location', 'guest_faculty', 'coordinator', 'registration_link')}),
+        ('Progress & publication', {'fields': ('status', 'students_reached', 'outcome', 'cover_image', 'is_published')}),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not obj.created_by_id:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(VolunteerApplication)
+class VolunteerApplicationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'interest', 'expertise', 'status', 'assigned_to', 'created_at')
+    list_filter = ('interest', 'status', 'created_at')
+    search_fields = ('name', 'email', 'phone', 'expertise')
+    readonly_fields = ('name', 'email', 'phone', 'interest', 'expertise', 'availability', 'message', 'consent_to_contact', 'created_at', 'updated_at')
+    autocomplete_fields = ('assigned_to', 'activity')
+    fieldsets = (
+        ('Application (private)', {'fields': ('name', 'email', 'phone', 'interest', 'expertise', 'availability', 'message', 'consent_to_contact')}),
+        ('Coordinate & follow up', {'fields': ('status', 'assigned_to', 'activity', 'admin_notes')}),
+        ('Dates', {'fields': ('created_at', 'updated_at')}),
+    )
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(GalleryPhoto)

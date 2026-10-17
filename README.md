@@ -43,13 +43,16 @@ Homna or carry your school community with you somewhere else.
 
 - **Alumni directory** with batch filters, profile details, professions, and organisations.
 - **Association member directory** with Life and General categories, name search, and batch filters.
-- **Our home in Homna** with an interactive map that loads on request and a location pulse that respects reduced-motion settings.
+- **Our home in Homna** with a locally served geographic overview, an optional detailed map, and motion that respects reading preferences.
+- **A clearer overview** with real community figures, larger-text controls, Bangla cues, and an accessible programme explorer.
 - **Community identity** rooted in DCMHS, with English and Bangla language support.
 
 ### A school community that stays active
 
 - **News and notices** with categories and publication controls.
-- **Events** with upcoming and past activities, locations, and registration links.
+- **School activities** with seminars, guest lessons, reunions, and school projects; schedules, speakers, audiences, and publication controls.
+- **Volunteer offers** saved privately for the association team to review, assign to a coordinator, and link to an activity.
+- **Recorded outcomes** for completed activities, including student attendance when the team enters it.
 - **Photo gallery** for school memories, reunions, and association activities.
 - **Committee profiles** introducing the people helping the association grow.
 
@@ -80,7 +83,7 @@ These are planned improvements, rather than completed features:
 | **Mentorship that follows through** | Applications, matching, meeting reminders, and feedback |
 | **Opportunities close to home** | Reviewed jobs, internships, skills sessions, and scholarship notices |
 | **Useful news, chosen by people** | An editorial inbox with sources, local relevance, expiry dates, and manual approval |
-| **Community impact** | Scholarship campaigns, volunteer coordination, attendance, and impact reporting |
+| **Community impact** | Scholarship campaigns and deeper impact reporting across school programmes |
 | **Thoughtful automation** | n8n workflows for imports, review queues, reminders, and committee reports |
 
 The existing job-board page is a placeholder, and the mentorship form does not yet
@@ -90,7 +93,7 @@ priorities tailored to rural Homna.
 
 ## Built with
 
-**Django · PostgreSQL · Bootstrap · HTMX · Alpine.js · Jazzmin · Leaflet · Google Sheets**
+**Django · PostgreSQL · Bootstrap · HTMX · Alpine.js · Jazzmin · Natural Earth · OpenStreetMap · Google Sheets**
 
 The project uses a responsive, server-rendered interface, with interactive elements
 where they help people find information and take part.

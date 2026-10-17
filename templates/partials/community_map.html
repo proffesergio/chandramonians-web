@@ -1,34 +1,5 @@
-{% load static i18n %}
-<section class="section community-home" aria-labelledby="communityHomeTitle">
-  <div class="container">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-5">
-        <span class="hero-badge">{% trans "Our roots. Our connections." %}</span>
-        <h2 class="fw-800 mt-3" id="communityHomeTitle">{% trans "From Homna, connected everywhere." %}</h2>
-        <p class="text-muted">Dulalpur Chandramoni High School brings us together.
-          Our community starts in Homna, Cumilla, and grows wherever our alumni go.</p>
-        <div class="d-flex gap-4 my-4">
-          <div><strong class="fs-3">{{ total_members }}</strong><br><span>Association members</span></div>
-          <div><strong class="fs-3">{{ alumni_count }}</strong><br><span>Alumni profiles</span></div>
-        </div>
-        <p class="small text-muted">The map shows the Homna home area. Alumni city connections
-          can be added later, when members choose to share them.</p>
-        <a href="{% url 'public_directory' %}" class="btn btn-outline-primary">{% trans "Meet our alumni" %}</a>
-      </div>
-      <div class="col-lg-7">
-        <div class="community-map-shell">
-          <div class="community-map-intro" id="communityMapIntro">
-            <div class="community-home-dot" aria-hidden="true"></div>
-            <strong>Homna · Cumilla · Bangladesh</strong>
-            <span>One school. A lifetime of belonging.</span>
-            <button id="loadCommunityMap" type="button" class="btn btn-primary mt-2">{% trans "Explore our home" %}</button>
-          </div>
-          <div id="communityHomeMap" class="community-map-canvas" aria-label="Map of the Homna community home area" hidden></div>
-        </div>
-        <p id="communityMapStatus" class="small text-muted mt-2" role="status">The map loads when you choose to explore it.</p>
-        <a class="small" href="https://www.openstreetmap.org/#map=11/23.66/90.79" target="_blank" rel="noopener noreferrer">Open Homna on OpenStreetMap</a>
-      </div>
-    </div>
-  </div>
-</section>
-<script src="{% static 'assets/js/community-map.js' %}" defer></script>
+{% load static %}
+<section class="home-section home-map-section" aria-labelledby="communityHomeTitle"><div class="site-container map-layout">
+  <div class="map-story"><p class="eyebrow">WHERE OUR STORY BEGINS</p><h2 id="communityHomeTitle">Many journeys.<br><em>One place called home.</em></h2><p>Our roots are in Dulalpur Chandramoni High School, in Homna, Cumilla. Wherever life takes us, this is the community we carry with us.</p><p class="map-address"><span class="address-dot" aria-hidden="true"></span><strong>Homna, Cumilla<br><span>Bangladesh</span></strong></p><div class="button-row"><a class="site-button button-outline" href="https://www.google.com/maps/search/?api=1&amp;query=Dulalpur+Chandramoni+High+School+Homna+Cumilla" target="_blank" rel="noopener">Find the school on Maps <span aria-hidden="true">↗</span></a></div><p class="summary-note">The pin marks the Homna area. Alumni locations are not displayed.</p></div>
+  <div class="home-map"><div class="local-map-art">{% include 'partials/home_map_art.svg' %}<span class="map-home-label">Our home, in Bangladesh</span></div><div class="map-actions"><button class="site-button button-primary" id="loadCommunityMap" type="button" aria-controls="communityMapDetail" aria-expanded="false">Explore the local map <span aria-hidden="true">↗</span></button><a href="https://www.openstreetmap.org/#map=12/23.66/90.79" target="_blank" rel="noopener">OpenStreetMap ↗</a></div><div id="communityMapDetail" hidden><iframe id="communityHomeMap" title="Interactive OpenStreetMap of the Homna area" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" data-src="https://www.openstreetmap.org/export/embed.html?bbox=90.60%2C23.53%2C90.98%2C23.80&amp;layer=mapnik&amp;marker=23.66%2C90.79"></iframe></div><p id="communityMapStatus" class="map-source" role="status">Country outline: Natural Earth. Home area: GeoNames. Detailed map: OpenStreetMap.</p></div>
+</div></section><script src="{% static 'assets/js/community-map.js' %}" defer></script>

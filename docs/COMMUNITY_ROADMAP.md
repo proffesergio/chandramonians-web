@@ -8,8 +8,11 @@ Priority should follow member interviews, available volunteers, and operating co
 
 Directories, membership imports, news, events, gallery, committee profiles,
 student resources, learning challenges, and role-based dashboards already exist.
-This update adds a home-area map, safer account creation/login, a protected
-scheduled-sync endpoint, and a controlled restoration path.
+The project now includes a home-area map, safer account creation/login, a protected
+scheduled-sync endpoint, and a controlled restoration path. The public redesign
+adds larger-text and motion controls, real member previews, and a working guest
+teaching/seminar/volunteer management flow with private applications and recorded
+activity outcomes.
 
 The job board is a placeholder. The mentorship form currently displays a success
 message without saving an application. RSS headlines currently appear without

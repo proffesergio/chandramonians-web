@@ -215,6 +215,8 @@ JAZZMIN_SETTINGS = {
     'search_model': ['app.CustomUser', 'app.Alumni'],
     'topmenu_links': [
         {'name': 'View Site', 'url': '/', 'new_window': True},
+        {'name': 'School activities', 'model': 'app.Event', 'permissions': ['app.view_event']},
+        {'name': 'Volunteer applications', 'model': 'app.VolunteerApplication', 'permissions': ['app.view_volunteerapplication']},
     ],
     'usermenu_links': [
         {'model': 'auth.user'},
@@ -230,6 +232,7 @@ JAZZMIN_SETTINGS = {
         'app.MembershipPayment': 'fas fa-money-bill-wave',
         'app.NewsArticle': 'fas fa-newspaper',
         'app.Event': 'fas fa-calendar-alt',
+        'app.VolunteerApplication': 'fas fa-hands-helping',
         'app.GalleryPhoto': 'fas fa-images',
         'app.ExamSuggestion': 'fas fa-file-alt',
         'app.DailyChallenge': 'fas fa-question-circle',

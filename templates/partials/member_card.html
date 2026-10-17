@@ -1,0 +1,1 @@
+<article class="member-profile-card"><span class="member-initial" aria-hidden="true">{{ member.member_name|first|upper }}</span><div><h3>{{ member.member_name }}</h3><p>{% if member.batch_year %}Batch {{ member.batch_year }}{% else %}Chandramonians member{% endif %}</p><span class="label-tag">{{ member.get_member_type_display }}</span></div></article>

@@ -4,12 +4,16 @@ import logging
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from django.db.models import Sum, Q
+from django.db.models import Q
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
 from django.core.cache import cache
-from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember, MembershipPayment
+from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember, MembershipPayment, VolunteerApplication
+from app.forms import VolunteerApplicationForm
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -52,35 +56,25 @@ def health_check_view(request):
 
 def home_view(request):
     news = NewsArticle.objects.filter(is_published=True)[:6]
-    events = Event.objects.filter(is_published=True).order_by('event_date')[:4]
-    gallery = GalleryPhoto.objects.all()[:8]
+    events = Event.objects.filter(is_published=True, status='SCHEDULED', event_date__gte=timezone.now()).order_by('event_date')[:3]
     alumni_count = Alumni.objects.count()
-    committee = CommitteeMember.objects.all()[:6]
 
     life_count = MembershipPayment.objects.filter(member_type='LIFE').count()
     general_count = MembershipPayment.objects.filter(member_type='GENERAL').count()
-    total_raised = MembershipPayment.objects.filter(status='PAID').aggregate(
-        total=Sum('amount')
-    )['total'] or 0
-    last_sync = MembershipPayment.objects.order_by('-last_synced_at').values_list(
-        'last_synced_at', flat=True
-    ).first()
-    featured_members = MembershipPayment.objects.filter(
-        status='PAID'
-    ).order_by('member_name')[:18]
+    featured_members = MembershipPayment.objects.all().order_by('member_name')[:8]
+    completed = Event.objects.filter(is_published=True, status='COMPLETED')
 
     context = {
         'news': news,
         'events': events,
-        'gallery': gallery,
         'alumni_count': alumni_count,
-        'committee': committee,
         'life_count': life_count,
         'general_count': general_count,
         'total_members': life_count + general_count,
-        'total_raised': total_raised,
-        'last_sync': last_sync,
         'featured_members': featured_members,
+        'completed_activities': completed.count(),
+        'recent_outcomes': completed.exclude(outcome='').order_by('-event_date')[:3],
+        'upcoming_count': Event.objects.filter(is_published=True, status='SCHEDULED', event_date__gte=timezone.now()).count(),
     }
     return render(request, 'pages/home.html', context)
 
@@ -127,9 +121,39 @@ def news_detail_view(request, slug):
 
 def events_view(request):
     from django.utils import timezone
-    upcoming = Event.objects.filter(is_published=True, event_date__gte=timezone.now()).order_by('event_date')
-    past = Event.objects.filter(is_published=True, event_date__lt=timezone.now()).order_by('-event_date')[:6]
-    return render(request, 'pages/events.html', {'upcoming': upcoming, 'past': past})
+    qs = Event.objects.filter(is_published=True).exclude(status='CANCELLED')
+    kind = request.GET.get('type', '')
+    if kind in dict(Event.ACTIVITY_TYPES):
+        qs = qs.filter(activity_type=kind)
+    upcoming = qs.filter(event_date__gte=timezone.now(), status='SCHEDULED').order_by('event_date')
+    past = qs.filter(Q(event_date__lt=timezone.now()) | Q(status='COMPLETED')).order_by('-event_date')[:12]
+    return render(request, 'pages/events.html', {
+        'upcoming_events': upcoming, 'past_events': past,
+        'activity_types': Event.ACTIVITY_TYPES, 'active_type': kind,
+    })
+
+
+@require_http_methods(['GET', 'POST'])
+def volunteer_view(request):
+    initial = {'interest': request.GET.get('interest', 'GUEST_CLASS')}
+    form = VolunteerApplicationForm(request.POST if request.method == 'POST' else None, initial=initial)
+    if request.method == 'POST' and form.is_valid():
+        contact = Q()
+        if form.cleaned_data.get('email'):
+            contact |= Q(email__iexact=form.cleaned_data['email'])
+        if form.cleaned_data.get('phone'):
+            contact |= Q(phone=form.cleaned_data['phone'])
+        recent = VolunteerApplication.objects.filter(contact, created_at__gte=timezone.now() - timedelta(minutes=10)).exists()
+        if recent:
+            form.add_error(None, 'An application with this contact information was received recently. Please give the team time to review it.')
+        else:
+            form.save()
+            return redirect('volunteer_received')
+    return render(request, 'pages/volunteer.html', {'form': form})
+
+
+def volunteer_received_view(request):
+    return render(request, 'pages/volunteer_received.html')
 
 
 def gallery_view(request):

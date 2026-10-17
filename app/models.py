@@ -220,13 +220,27 @@ class NewsArticle(models.Model):
 
 
 class Event(models.Model):
+    ACTIVITY_TYPES = [
+        ('COMMUNITY', 'Community gathering'), ('SEMINAR', 'Seminar & career talk'),
+        ('GUEST_CLASS', 'Guest teaching'), ('SCHOOL_PROJECT', 'School improvement'),
+        ('REUNION', 'Alumni reunion'),
+    ]
+    STATUS_CHOICES = [('SCHEDULED', 'Scheduled'), ('COMPLETED', 'Completed'), ('CANCELLED', 'Cancelled')]
     title = models.CharField(max_length=200)
+    activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES, default='COMMUNITY')
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='SCHEDULED')
     description = models.TextField()
     event_date = models.DateTimeField()
+    end_date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=200)
+    audience = models.CharField(max_length=200, blank=True, help_text='For example: Classes 9–10 or all alumni.')
+    guest_faculty = models.CharField(max_length=200, blank=True, help_text='Name of the confirmed teacher or speaker, if any.')
+    coordinator = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='coordinated_activities')
+    students_reached = models.PositiveIntegerField(null=True, blank=True, help_text='Actual student attendance after a completed activity; leave blank until recorded.')
+    outcome = models.TextField(blank=True, help_text='A short, verified account of what the activity achieved.')
     cover_image = models.ImageField(upload_to='events/', null=True, blank=True)
     registration_link = models.URLField(blank=True)
-    is_published = models.BooleanField(default=True)
+    is_published = models.BooleanField(default=False)
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -235,6 +249,43 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        super().clean()
+        if self.end_date and self.event_date and self.end_date < self.event_date:
+            raise ValidationError({'end_date': 'The end time must be after the start time.'})
+
+
+class VolunteerApplication(models.Model):
+    INTERESTS = [
+        ('GUEST_CLASS', 'Teach a guest class'), ('SEMINAR', 'Lead a seminar or career talk'),
+        ('SCHOOL_PROJECT', 'Support a school project'), ('COMMUNITY', 'Volunteer with the association'),
+    ]
+    STATUS_CHOICES = [
+        ('NEW', 'New'), ('CONTACTED', 'Contacted'), ('APPROVED', 'Approved'),
+        ('DECLINED', 'Declined'), ('COMPLETED', 'Completed'),
+    ]
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=30, blank=True)
+    interest = models.CharField(max_length=20, choices=INTERESTS)
+    expertise = models.CharField(max_length=200)
+    availability = models.CharField(max_length=200)
+    message = models.TextField(max_length=2000, blank=True)
+    consent_to_contact = models.BooleanField(default=False)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='NEW')
+    assigned_to = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_volunteers')
+    activity = models.ForeignKey(Event, null=True, blank=True, on_delete=models.SET_NULL, related_name='volunteer_applications')
+    admin_notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.name} — {self.get_interest_display()}'
 
 
 class GalleryPhoto(models.Model):
