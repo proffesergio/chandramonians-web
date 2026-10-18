@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
+from app.profile_storage import ProfilePictureStorage
 
 
 class CustomUser(AbstractUser):
@@ -11,7 +13,7 @@ class CustomUser(AbstractUser):
     )
     email = models.EmailField(unique=True)
     user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=10, default='4')
-    profile_pic = models.ImageField(upload_to='media/profile_pic', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pic', storage=ProfilePictureStorage(), blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -53,11 +55,24 @@ class Alumni(models.Model):
     company = models.CharField(max_length=200, blank=True)
     linkedin_url = models.URLField(blank=True)
     bio = models.TextField(blank=True)
+    map_country = models.CharField(max_length=3, blank=True, help_text='Optional country code for the Alumni Map.')
+    map_visible = models.BooleanField(default=False, help_text='Show my selected country on the public Alumni Map.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.admin.first_name} {self.admin.last_name}"
+
+    @property
+    def public_map_country(self):
+        from app.map_data import countries
+        return countries().get(self.map_country, {}).get('name', '') if self.map_visible else ''
+
+
+class ProfilePicture(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.BinaryField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Staff(models.Model):

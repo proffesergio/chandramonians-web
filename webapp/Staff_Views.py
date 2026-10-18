@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+from app.permissions import role_required
 from django.contrib.auth.decorators import login_required
 from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification
 from django.contrib import messages
 
-@login_required(login_url='/login')
+@role_required('2')
 def homeView(request):
     alumni_count = Alumni.objects.all().count()
     staff_count = Staff.objects.all().count()
@@ -23,22 +25,16 @@ def homeView(request):
     return render(request, 'Staff/staff_home.html', context)
 
 
+@role_required('2')
 def notification(request):
-    staff = Staff.objects.filter(admin = request.user.id)
-    for i in staff:
-        print(i.id)
-        staff_id = i.id
-
-        notification = StaffNotification.objects.filter(staff_id = staff_id)
-
-        context = {
-            'notification': notification,
-        }
-        return render(request, 'Staff/notifications.html', context)
+    notifications = StaffNotification.objects.filter(staff_id__admin=request.user)
+    return render(request, 'Staff/notifications.html', {'notification': notifications})
 
 
+@role_required('2')
+@require_POST
 def markAsDone(request, status):
-    notification = StaffNotification.objects.get(id = status)
+    notification = get_object_or_404(StaffNotification, id=status, staff_id__admin=request.user)
     notification.status = 1
     notification.save()
     return redirect('notifications')

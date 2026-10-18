@@ -1,4 +1,12 @@
 # CLAUDE.md — Chandramonians Web
+
+> Current operations and development status: see
+> [the 18 October 2026 production audit](docs/PRODUCTION_AUDIT_2026-10-18.md).
+> The older Railway, feature-status, and known-issues notes below are historical;
+> the live site runs on Vercel/PostgreSQL and now has regression tests.
+> Current release flow, Alumni Map, and durable avatar storage:
+> [deployment guide](docs/DEPLOYMENT.md). GitHub Actions deploys successful pushes
+> to `main` using encrypted repository secrets; the owner performs the push.
 ## Dulalpur Chandramoni High School (DCMHS) Alumni & Student Portal
 
 > **Read this file at the start of every session.** It gives you the full context needed to work on this codebase effectively without re-exploring from scratch.
@@ -13,6 +21,7 @@
 | **Abbreviation** | DCMHS (use this everywhere — NOT DPCMHS) |
 | **Association** | Chandramonians Alumni Association |
 | **Owner** | proffesergio (bhnbids@gmail.com) |
+| **Association admin inbox** | thechandramonians@gmail.com |
 | **Mission** | A single gateway for students, alumni, staff, and the Association Committee |
 | **Primary Language** | English (Bengali strings are acceptable in content, not in code) |
 | **Timezone** | Asia/Dhaka (configured in settings.py) |
@@ -222,8 +231,10 @@ GOOGLE_CREDS_JSON=      # Base64-encoded service account JSON
 GOOGLE_SHEET_ID=1X4T058McT6GTnmUyu1OsmLua9BwKPEz03Rr-rbcMRvs
 
 # Optional (for email/contact form)
+ADMIN_EMAIL=thechandramonians@gmail.com # Contact recipient and admin notifications
 EMAIL_HOST_USER=        # Gmail address
 EMAIL_HOST_PASSWORD=    # Gmail App Password (not your main password)
+DEFAULT_FROM_EMAIL=     # Authenticated SMTP sender; defaults to EMAIL_HOST_USER
 
 # Development defaults (safe for local use only)
 DEBUG=True

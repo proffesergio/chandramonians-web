@@ -12,6 +12,8 @@ from . import Public_Views, Education_Views, Member_Views
 urlpatterns = [
     path('tasks/sync-members/', Member_Views.scheduled_sync_view, name='scheduled_member_sync'),
     path('health/', Public_Views.health_check_view, name='health_check'),
+    path('media/avatars/<uuid:picture_id>.webp', Public_Views.profile_picture_view, name='profile_picture'),
+    path('alumni-map/', Public_Views.alumni_map_view, name='alumni_map'),
     path(
         'favicon.ico',
         RedirectView.as_view(url=static_url('assets/img/logo/chandramonians.png'), permanent=True),

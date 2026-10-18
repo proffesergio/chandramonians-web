@@ -1,0 +1,37 @@
+/* Footer preferences and the invitation to contribute. */
+.footer-preferences{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:24px;border-top:1px solid #ffffff26;margin-top:28px}
+.footer-preferences-label{font-weight:650;font-size:.9rem;color:#fff4da}
+.footer-preferences p{font-size:.76rem;color:#c1d0ce;margin:6px 0 0}
+.footer-preferences .reading-controls{gap:10px;flex-shrink:0}
+.footer-preferences .reading-controls button{padding:10px 14px;min-height:44px;border:1px solid #ffffff30;border-radius:999px;background:#ffffff08;color:#eaf1ed;font-size:.76rem;transition:background .2s,border-color .2s}
+.footer-preferences .reading-controls button:hover,.footer-preferences .reading-controls button[aria-pressed="true"]{background:#ffffff17;border-color:#d8bd7d}
+.public-site .get-involved-link{position:relative;isolation:isolate;overflow:hidden;box-shadow:0 5px 16px #153c3220;transition:box-shadow .25s,transform .25s}
+.get-involved-link::before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(110deg,transparent 25%,#fff4d447 50%,transparent 75%);transform:translateX(-110%);transition:transform .6s ease}
+.get-involved-link:hover::before,.get-involved-link:focus-visible::before{transform:translateX(110%)}
+.public-site .get-involved-link:hover{box-shadow:0 9px 22px #153c3230;transform:translateY(-2px)}
+.involvement-arrow{display:inline-block;transition:transform .25s}
+.get-involved-link:hover .involvement-arrow,.get-involved-link:focus-visible .involvement-arrow{transform:translate(3px,-3px)}
+.get-involved-link:focus-visible,.footer-preferences button:focus-visible{outline:3px solid #d1a757;outline-offset:4px}
+.participation-heading .eyebrow{color:#946627}
+.participation-heading h1{max-width:900px}
+.volunteer-intro,.volunteer-form{animation:participation-arrive .55s ease both}
+.volunteer-form{animation-delay:.08s;position:relative;box-shadow:0 14px 45px #284e3410;border-top:4px solid #b49c60}
+.offer-emblem{display:grid;place-items:center;width:60px;height:60px;border-radius:20px;background:linear-gradient(145deg,#e4ecdb,#f9e7bf);color:#41664d;font-size:1.9rem;margin-bottom:24px;transform:rotate(-7deg)}
+.offer-context{border-left:3px solid #c7a967;background:#f3f5eb;padding:12px 15px;border-radius:0 9px 9px 0;margin:20px 0 0;font-size:.85rem;color:#405c44;line-height:1.6}
+.volunteer-form .form-field input,.volunteer-form .form-field select,.volunteer-form .form-field textarea{transition:border-color .2s,box-shadow .2s,background .2s}
+.volunteer-form .form-field:focus-within label{color:#285941}
+.volunteer-form .form-field input:focus,.volunteer-form .form-field select:focus,.volunteer-form .form-field textarea:focus{outline:none;border-color:#507f5c;box-shadow:0 0 0 4px #739f6b22;background:#fffffc}
+.volunteer-form [aria-invalid="true"]{border-color:#a44b35}
+.volunteer-form .consent-field{flex-wrap:wrap}
+.volunteer-form .consent-field label{flex:1;min-width:180px}
+.volunteer-form .consent-field .errorlist{flex-basis:100%}
+.offer-submit{min-width:190px;min-height:52px}
+.offer-submit:disabled{opacity:.8;cursor:wait}
+.offer-submit[aria-busy="true"] .involvement-arrow{animation:offer-sending 1s linear infinite}
+.offer-status{min-height:1.5em;font-size:.85rem;color:#405c44;margin:12px 0 0}
+.confirmation-mark{animation:confirmation-arrive .55s ease both}
+@keyframes participation-arrive{from{opacity:.5;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes confirmation-arrive{from{transform:scale(.85)}to{transform:scale(1)}}
+@keyframes offer-sending{to{transform:rotate(360deg)}}
+@media(max-width:720px){.footer-preferences{align-items:flex-start;flex-direction:column;gap:16px}.footer-preferences .reading-controls{justify-content:flex-start;flex-wrap:wrap}.footer-preferences p{line-height:1.6}.offer-submit{width:100%}}
+@media(prefers-reduced-motion:reduce){.get-involved-link,.get-involved-link::before,.involvement-arrow,.volunteer-intro,.volunteer-form,.confirmation-mark,.offer-submit .involvement-arrow{animation:none!important;transition:none!important}}

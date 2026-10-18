@@ -42,6 +42,7 @@ Homna or carry your school community with you somewhere else.
 ### A community you can find
 
 - **Alumni directory** with batch filters, profile details, professions, and organisations.
+- **Alumni Map** listing registered alumni, with optional country sharing, country markers, and batch/name filters.
 - **Association member directory** with Life and General member tabs, colourful profile cards, name search, and batch filters.
 - **Our home in Homna** with a locally served geographic overview, an optional detailed map, and motion that respects reading preferences.
 - **A clearer overview** with real community figures, larger-text controls, Bangla cues, and an accessible programme explorer.
@@ -80,7 +81,7 @@ These are planned improvements, rather than completed features:
 
 | Direction | What it could bring to Chandramonians |
 | :--- | :--- |
-| **Alumni connections on the map** | Voluntary city-level connections from Homna to Bangladesh and the wider diaspora |
+| **More alumni connections on the map** | Extend the optional country map with voluntary city-level connections from Homna to the wider diaspora |
 | **Mentorship that follows through** | Applications, matching, meeting reminders, and feedback |
 | **Opportunities close to home** | Reviewed jobs, internships, skills sessions, and scholarship notices |
 | **Useful news, chosen by people** | An editorial inbox with sources, local relevance, expiry dates, and manual approval |
@@ -91,6 +92,9 @@ The existing job-board page is a placeholder, and the mentorship form does not y
 save applications. The [community roadmap](docs/COMMUNITY_ROADMAP.md) sets out how
 to turn these starting points into working programmes, with research sources and
 priorities tailored to rural Homna.
+
+For production deployment from manual pushes to `main`, see the
+[deployment guide](docs/DEPLOYMENT.md).
 
 ## Built with
 

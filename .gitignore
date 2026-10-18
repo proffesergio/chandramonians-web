@@ -48,3 +48,4 @@ htmlcov/
 !package.json
 # Deploy config must be committed or Vercel never sees it
 !vercel.json
+!app/data/map_countries.json

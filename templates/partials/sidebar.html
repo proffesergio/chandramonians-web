@@ -103,6 +103,7 @@
     </a>
 
     <div class="nav-section-label">{% trans "Network" %}</div>
+    <a href="{% url 'alumni_map' %}" class="nav-link"><i class="fas fa-globe"></i> Alumni Map</a>
     <a href="{% url 'alumni_directory' %}" class="nav-link {% if request.resolver_match.url_name == 'alumni_directory' %}active{% endif %}">
       <i class="fas fa-address-book"></i> {% trans "Alumni Directory" %}
     </a>

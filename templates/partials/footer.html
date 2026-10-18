@@ -1,6 +1,6 @@
 {% load i18n %}
 <footer class="site-footer">
-  <div class="site-container footer-welcome"><div><p class="eyebrow">OUR ROOTS. OUR NEXT CHAPTER.</p><h2>Many generations.<br>One Chandramonians family.</h2></div><a class="site-button button-light" href="{% url 'volunteer' %}">Give a little time <span aria-hidden="true">↗</span></a></div>
+  <div class="site-container footer-welcome"><div><p class="eyebrow">OUR ROOTS. OUR NEXT CHAPTER.</p><h2>Many generations.<br>One Chandramonians family.</h2></div><a class="site-button button-light get-involved-link" href="{% url 'volunteer' %}"><span>Get involved</span><span class="involvement-arrow" aria-hidden="true">↗</span></a></div>
   <div class="site-container footer-grid">
     <div class="footer-about">
       <a class="footer-wordmark" href="{% url 'landing' %}">Chandramonians<span>.</span></a>
@@ -10,6 +10,13 @@
     <div><h2>Our community</h2><a href="{% url 'about' %}">About the association</a><a href="{% url 'public_members' %}">Life &amp; General members</a><a href="{% url 'public_directory' %}">Alumni directory</a><a href="{% url 'gallery' %}">Our memories</a></div>
     <div><h2>Build a stronger school</h2><a href="{% url 'events' %}">Activities &amp; seminars</a><a href="{% url 'volunteer' %}?interest=GUEST_CLASS">Offer a guest class</a><a href="{% url 'volunteer' %}">Become a volunteer</a><a href="{% url 'suggestions' %}">Student resources</a></div>
     <div><h2>Stay connected</h2><p class="footer-location"><span aria-hidden="true">◎</span> Homna, Cumilla<br>Bangladesh</p><a href="{% url 'contact' %}">Contact the association ↗</a><a href="{% url 'register' %}">Create a member account</a><a href="{% url 'admin:index' %}">Admin sign in</a></div>
+  </div>
+  <div class="site-container footer-preferences">
+    <div><span class="footer-preferences-label">Make yourself at home</span><p>Dulalpur Chandramoni High School · Homna, Cumilla</p></div>
+    <div class="reading-controls" aria-label="Reading preferences">
+      <button type="button" id="textSizeToggle" aria-pressed="false"><span aria-hidden="true">A+</span> Larger text</button>
+      <button type="button" id="motionToggle" aria-pressed="false">Pause motion</button>
+    </div>
   </div>
   <div class="site-container footer-bottom"><span>© {% now 'Y' %} Chandramonians. Together, for our school.</span><span class="developer-credit">Made with <span class="credit-heart" aria-hidden="true">♥</span><span class="visually-hidden">care</span> by <a class="developer-name" href="https://next-portfolio-ruby-nine.vercel.app/" rel="noopener" target="_blank">Hossain Billal<span class="developer-arrow" aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a></span></div>
 </footer>

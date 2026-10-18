@@ -1,81 +1,19 @@
 {% extends 'base.html' %}
-
+{% block title %}Your profile ? Chandramonians{% endblock %}
 {% block content %}
-
-  <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-
-                            <form method="post" action="{% url 'profile_update' %}" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <div class="col-12">
-                                        <h5 class="form-title"><span>Update Profile</span></h5>
-                                    </div>
-                                {% if messages %}
-                                    {% for message in messages %}
-                                         {% if message.tags == 'error' %}
-                                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                                  <strong>Error!</strong> {{ message }}
-                                                  <button type="button" class="cancel-link" data-bs-dismiss="alert" aria-label="Close"></button>
-                                             </div>
-                                         {% endif %}
-                                    {% endfor %}
-                                  {% endif %}
-                                {% if messages %}
-                                    {% for message in messages %}
-                                         {% if message.tags == 'success' %}
-                                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                                  <strong>Done!</strong> {{ message }}
-                                                  <button type="button" class="cancel-link" data-bs-dismiss="alert" aria-label="Close"></button>
-                                             </div>
-                                         {% endif %}
-                                    {% endfor %}
-                                  {% endif %}
-                                    <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>Profile Picture</label>
-                                            <input type="file" class="form-control" name="profile_pic">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>First Name</label>
-                                            <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>Last Name</label>
-                                            <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
-                                        </div>
-                                    </div>
-                                <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>Email Address</label>
-                                            <input type="text" class="form-control" readonly name="email" value="{{ user.email }}">
-                                        </div>
-                                    </div>
-                                <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>Username</label>
-                                            <input type="text" class="form-control" readonly name="username" value="{{ user.username }}">
-                                        </div>
-                                    </div>
-                                <div class="col-12 col-sm-11">
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" default= "blank" class="form-control" placeholder="Change Your Password?" name="password">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Update Profile</button>
-                                    </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+<div class="row justify-content-center"><div class="col-lg-8"><div class="card"><div class="card-body p-4">
+<h1 class="h3 mb-2">Your profile</h1><p class="text-muted">Keep your name and photo up to date.</p>
+{% include 'partials/messages.html' %}
+<form method="post" action="{% url 'profile_update' %}" enctype="multipart/form-data">
+{% csrf_token %}
+{% if form.errors %}<div class="alert alert-danger" role="alert">Please check the details below.{{ form.non_field_errors }}</div>{% endif %}
+{% if user.profile_pic %}<img src="{{ user.profile_pic.url }}" width="96" height="96" class="rounded-circle mb-3" style="object-fit:cover" alt="Your current profile photo">{% endif %}
+<div class="mb-3"><label for="{{ form.profile_pic.id_for_label }}" class="form-label">Profile picture</label>{{ form.profile_pic }}{{ form.profile_pic.errors }}<div class="form-text">JPEG, PNG, WebP, or GIF. Maximum 3 MB. Your photo will be resized for a clear, fast-loading avatar.</div></div>
+<div class="row"><div class="col-sm-6 mb-3"><label for="{{ form.first_name.id_for_label }}" class="form-label">First name</label>{{ form.first_name }}{{ form.first_name.errors }}</div><div class="col-sm-6 mb-3"><label for="{{ form.last_name.id_for_label }}" class="form-label">Last name</label>{{ form.last_name }}{{ form.last_name.errors }}</div></div>
+<div class="mb-3"><label class="form-label" for="accountEmail">Email address</label><input id="accountEmail" class="form-control" type="email" value="{{ user.email }}" readonly></div>
+<div class="mb-3"><label class="form-label" for="accountUsername">Username</label><input id="accountUsername" class="form-control" value="{{ user.username }}" readonly></div>
+{% if is_alumni %}<fieldset class="border rounded p-3 mb-3"><legend class="float-none w-auto px-2 h5">Alumni Map</legend><p class="text-muted small">You appear in the registered alumni list. Share a country if you would also like to appear on the map. Your address, phone, and email are not shown.</p><div class="mb-3"><label for="{{ form.map_country.id_for_label }}" class="form-label">Current country</label>{{ form.map_country }}{{ form.map_country.errors }}</div><div class="form-check">{{ form.map_visible }}<label for="{{ form.map_visible.id_for_label }}" class="form-check-label">Share my country on the public Alumni Map</label></div>{{ form.map_visible.errors }}<a class="small d-inline-block mt-3" href="{% url 'alumni_map' %}">View the Alumni Map ?</a></fieldset>{% endif %}
+<div class="mb-4"><label for="{{ form.password.id_for_label }}" class="form-label">New password (optional)</label>{{ form.password }}{{ form.password.errors }}<div class="form-text">Leave blank to keep your current password.</div></div>
+<button type="submit" class="btn btn-primary">Save profile</button>
+</form></div></div></div></div>
 {% endblock %}

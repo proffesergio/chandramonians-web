@@ -21,6 +21,14 @@ def main():
     import django
     django.setup()
 
+    # Recheck before migrations as well: deploy hooks and dashboard rebuilds must
+    # never publish an untested Git commit even if an ignore step is bypassed.
+    if os.environ.get('VERCEL_GIT_COMMIT_SHA'):
+        from scripts.vercel_build_gate import main as regression_gate
+        if regression_gate() != 1:
+            print('ERROR: this Git commit has not passed production CI. Refusing migrations/deployment.', file=sys.stderr)
+            sys.exit(1)
+
     from django.conf import settings
     db = settings.DATABASES['default']
     engine = db['ENGINE']

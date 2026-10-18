@@ -36,7 +36,7 @@
                                         <td class="text-right">
                                             <div class="actions">
                                                 {% if i.status == 0 %}
-                                                <a href="{% url 'mark_as_done' status=i.id %}" class="btn btn-danger">Mark as Read</a>
+                                                <form method="post" action="{% url 'mark_as_done' status=i.id %}">{% csrf_token %}<button type="submit" class="btn btn-danger">Mark as Read</button></form>
                                                 {% else %}
                                                 <button class="btn btn-danger" disabled="disabled">Mark as Read</button>
 

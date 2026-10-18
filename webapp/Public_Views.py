@@ -1,11 +1,12 @@
 import urllib.request
 import xml.etree.ElementTree as ET
 import logging
+import os
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.db.models import Q
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.conf import settings
 from django.core.cache import cache
@@ -13,6 +14,11 @@ from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember
 from app.forms import VolunteerApplicationForm
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_safe
+from django.http import HttpResponse, HttpResponseNotModified
+from app.models import ProfilePicture
+from app.map_data import countries, country_choices
+from django.db.models import Count
 from datetime import timedelta
 
 logger = logging.getLogger(__name__)
@@ -51,7 +57,50 @@ def _fetch_rss_headlines():
 
 
 def health_check_view(request):
-    return JsonResponse({'status': 'ok'})
+    response = JsonResponse({'status': 'ok', 'revision': os.environ.get('VERCEL_GIT_COMMIT_SHA', '')})
+    response['Cache-Control'] = 'no-store'
+    return response
+
+
+@require_safe
+def profile_picture_view(request, picture_id):
+    picture = get_object_or_404(ProfilePicture, pk=picture_id)
+    etag = f'"{picture_id}"'
+    if request.headers.get('If-None-Match') == etag:
+        response = HttpResponseNotModified()
+    else:
+        response = HttpResponse(bytes(picture.content), content_type='image/webp')
+        response['X-Content-Type-Options'] = 'nosniff'
+    response['ETag'] = etag
+    response['Cache-Control'] = 'public, max-age=86400, immutable'
+    return response
+
+
+@require_safe
+def alumni_map_view(request):
+    all_alumni = Alumni.objects.select_related('admin').filter(admin__is_active=True, admin__user_type='3')
+    alumni = all_alumni
+    query = request.GET.get('q', '').strip()
+    batch = request.GET.get('batch', '').strip()
+    country = request.GET.get('country', '').strip()
+    if query:
+        alumni = alumni.filter(Q(admin__first_name__icontains=query) | Q(admin__last_name__icontains=query) |
+                               Q(admin__username__icontains=query) | Q(profession__icontains=query))
+    if batch:
+        alumni = alumni.filter(passing_year=batch)
+    shared = alumni.filter(map_visible=True, map_country__in=countries())
+    markers = []
+    for row in shared.values('map_country').annotate(count=Count('id')):
+        markers.append(dict(countries()[row['map_country']], code=row['map_country'], count=row['count']))
+    if country:
+        alumni = alumni.filter(map_visible=True, map_country=country) if country in countries() else alumni.none()
+    return render(request, 'pages/alumni_map.html', {
+        'alumni_list': alumni.order_by('admin__first_name', 'admin__last_name', 'pk'),
+        'registered_count': all_alumni.count(), 'shared_count': shared.count(),
+        'markers': sorted(markers, key=lambda row: row['name']), 'countries': country_choices()[1:],
+        'batch_years': all_alumni.exclude(passing_year__isnull=True).exclude(passing_year='').values_list('passing_year', flat=True).distinct().order_by('passing_year'),
+        'filter_country': country, 'filter_batch': batch, 'search': query,
+    })
 
 
 def home_view(request):
@@ -68,6 +117,7 @@ def home_view(request):
         'news': news,
         'events': events,
         'alumni_count': alumni_count,
+        'mapped_alumni_count': Alumni.objects.filter(admin__is_active=True, admin__user_type='3', map_visible=True, map_country__in=countries()).count(),
         'life_count': life_count,
         'general_count': general_count,
         'total_members': life_count + general_count,
@@ -170,30 +220,32 @@ def gallery_view(request):
 
 
 def contact_view(request):
-    if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        email = request.POST.get('email', '').strip()
-        subject = request.POST.get('subject', '').strip()
-        message = request.POST.get('message', '').strip()
+    from app.forms import ContactForm
 
-        if name and email and message:
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
             try:
-                send_mail(
+                EmailMessage(
                     subject=f"[Chandramonians Contact] {subject}",
-                    message=f"From: {name} <{email}>\n\n{message}",
+                    body=f"From: {name} <{email}>\n\n{message}",
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.DEFAULT_FROM_EMAIL],
-                    fail_silently=False,
-                )
+                    to=[settings.ADMIN_EMAIL],
+                    reply_to=[email],
+                ).send(fail_silently=False)
                 messages.success(request, 'Your message has been sent! We will get back to you soon.')
             except Exception:
                 messages.error(request, 'Message could not be sent. Please try again or contact us directly.')
         else:
-            messages.error(request, 'Please fill in all required fields.')
+            messages.error(request, 'Please enter a valid email address and complete the required fields within their length limits.')
 
         return redirect('contact')
 
-    return render(request, 'pages/contact.html')
+    return render(request, 'pages/contact.html', {'admin_email': settings.ADMIN_EMAIL})
 
 
 def alumni_public_directory_view(request):

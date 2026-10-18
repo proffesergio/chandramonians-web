@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+from app.permissions import role_required
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count
 from app.models import (
@@ -11,7 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 
 
-@login_required(login_url='/')
+@role_required('1')
 def homeView(request):
     if request.user.user_type != '1':
         messages.error(request, 'Access denied.')
@@ -86,7 +88,7 @@ def homeView(request):
     return render(request, 'hod/home.html', context)
 
 
-@login_required(login_url='/')
+@role_required('1')
 def addAlumni(request):
     if request.method == 'POST':
         profile_pic = request.FILES.get('profile_pic')
@@ -104,7 +106,7 @@ def addAlumni(request):
             messages.warning(request, 'Email already exists!')
             return redirect('add_alumni')
         if CustomUser.objects.filter(username=username).exists():
-            messages.warning((request, 'Username already exists!'))
+            messages.warning(request, 'Username already exists!')
             return redirect('add_alumni')
         else:
             user = CustomUser(
@@ -134,6 +136,7 @@ def addAlumni(request):
     return render(request, 'hod/add_alumni.html')
 
 
+@role_required('1')
 def alumniView(request):
     alumni = Alumni.objects.all()
 
@@ -143,6 +146,7 @@ def alumniView(request):
     return render(request, 'hod/view_alumni.html', context)
 
 
+@role_required('1')
 def alumniEdit(request, id):
     alumni = Alumni.objects.filter(id=id)
 
@@ -152,6 +156,8 @@ def alumniEdit(request, id):
     return render(request, 'hod/edit_alumni.html', context)
 
 
+@role_required('1')
+@require_POST
 def alumniUpdate(request):
     if request.method == "POST":
         alumni_id = request.POST.get('alumni_id')
@@ -165,7 +171,7 @@ def alumniUpdate(request):
         address = request.POST.get('address')
         gender = request.POST.get('gender')
 
-        user = CustomUser.objects.get(id=alumni_id)
+        user = get_object_or_404(CustomUser, id=alumni_id, user_type='3')
         user.first_name = first_name
         user.last_name = last_name
         user.email = email
@@ -190,8 +196,10 @@ def alumniUpdate(request):
     return render(request, 'hod/update_alumni.html')
 
 
+@role_required('1')
+@require_POST
 def alumniDelete(request, admin):
-    alumni = CustomUser.objects.get(id=admin)
+    alumni = get_object_or_404(CustomUser, id=admin, user_type='3')
     alumni.delete()
     messages.success(request, 'Record Deleted Successfully!')
     return redirect('view_alumni')
@@ -199,6 +207,7 @@ def alumniDelete(request, admin):
     return render(request, 'hod/delete_alumni.html')
 
 
+@role_required('1')
 def addStaff(request):
     if request.method == 'POST':
         profile_pic = request.FILES.get('profile_pic')
@@ -243,6 +252,7 @@ def addStaff(request):
     return render(request, 'hod/add_staff.html')
 
 
+@role_required('1')
 def viewStaff(request):
     staff = Staff.objects.all()
 
@@ -252,6 +262,7 @@ def viewStaff(request):
     return render(request, 'hod/view_staff.html', context)
 
 
+@role_required('1')
 def editStaff(request, id):
     staff = Staff.objects.filter(id=id)
 
@@ -261,8 +272,10 @@ def editStaff(request, id):
     return render(request, 'hod/edit_staff.html', context)
 
 
+@role_required('1')
+@require_POST
 def deleteStaff(request, admin):
-    staff = CustomUser.objects.get(id=admin)
+    staff = get_object_or_404(CustomUser, id=admin, user_type='2')
     staff.delete()
     messages.success(request, 'Record Deleted Successfully!')
     return redirect('view_staff')
@@ -270,6 +283,8 @@ def deleteStaff(request, admin):
     return render(request, 'hod/delete_staff.html')
 
 
+@role_required('1')
+@require_POST
 def updateStaff(request):
     if request.method == "POST":
         staff_id = request.POST.get('staff_id')
@@ -283,7 +298,7 @@ def updateStaff(request):
         address = request.POST.get('address')
         gender = request.POST.get('gender')
 
-        user = CustomUser.objects.get(id=staff_id)
+        user = get_object_or_404(CustomUser, id=staff_id, user_type='2')
         user.first_name = first_name
         user.last_name = last_name
         user.email = email
@@ -308,6 +323,7 @@ def updateStaff(request):
     return render(request, 'hod/update_staff.html')
 
 
+@role_required('1')
 def sendNotification(request):
     staff = Staff.objects.all()
     see_message = StaffNotification.objects.all()
@@ -319,6 +335,8 @@ def sendNotification(request):
     return render(request, 'hod/notify_staff.html', context)
 
 
+@role_required('1')
+@require_POST
 def saveNotification(request):
     if request.method == "POST":
         staff_id = request.POST.get('staff_id')
@@ -337,6 +355,7 @@ def saveNotification(request):
     return render(request, 'hod/notify_staff.html')
 
 
+@role_required('1')
 def membershipApplications(request):
     membership_apps = ApplyForMembership.objects.all()
 
@@ -346,6 +365,8 @@ def membershipApplications(request):
     return render(request, 'hod/membership_applications.html', context)
 
 
+@role_required('1')
+@require_POST
 def membershipApproved(request, id):
     application = ApplyForMembership.objects.get(id = id)
     application.status = 1
@@ -353,6 +374,8 @@ def membershipApproved(request, id):
     return redirect('membership_applications')
 
 
+@role_required('1')
+@require_POST
 def membershipDenied(request, id):
     application = ApplyForMembership.objects.get(id=id)
     application.status = 2
@@ -360,6 +383,7 @@ def membershipDenied(request, id):
     return redirect('membership_applications')
 
 
+@role_required('1')
 def alumFeedback(request):
     feedback = AlumniFeedback.objects.all()
 
@@ -369,23 +393,23 @@ def alumFeedback(request):
     return render(request, 'hod/alum_feedback.html', context)
 
 
+@role_required('1')
+@require_POST
 def replyFeedback(request):
     if request.method == "POST":
         feedback_id = request.POST.get('feedback_id')
         feedback_reply = request.POST.get('feedback_reply')
 
-        print('Feedback ID: ', feedback_id)
 
-        feedback = AlumniFeedback.objects.get(feedback_id)
+        feedback = get_object_or_404(AlumniFeedback, id=feedback_id)
 
-        print('Feedback: ', feedback)
 
         feedback.feedback_reply = feedback_reply
         feedback.save()
 
         messages.success(request, 'Sent')
 
-        return redirect('reply_feedback')
+        return redirect('alum_feedback')
     else:
         messages.warning(request, 'Request Failed!')
         return redirect('alumni_feedback')

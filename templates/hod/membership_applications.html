@@ -37,8 +37,8 @@
                                         <td class="text-right">
                                             <div class="actions">
                                                 {% if j.status == 0 %}
-                                                <a href="{% url 'membership_approved' j.id %}" class="btn btn-outline-success">Approve</a>
-                                                <a href="{% url 'membership_denied' j.id %}" class="btn btn-outline-danger">Deny</a>
+                                                <form method="post" action="{% url 'membership_approved' j.id %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-outline-success">Approve</button></form>
+                                                <form method="post" action="{% url 'membership_denied' j.id %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-outline-danger">Deny</button></form>
                                                 {% elif j.status == 1 %}
                                                 <button class="btn btn-success" disabled="disabled">Approved</button>
                                                 {% else %}

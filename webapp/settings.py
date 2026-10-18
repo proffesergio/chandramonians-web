@@ -163,7 +163,13 @@ EMAIL_PORT = env.int('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER', default='noreply@chandramonians.org')
+# The association inbox is independent of the account used to send SMTP mail.
+ADMIN_EMAIL = env('ADMIN_EMAIL', default='thechandramonians@gmail.com').strip() or 'thechandramonians@gmail.com'
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or ADMIN_EMAIL)
+SERVER_EMAIL = env('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
+ADMINS = [('Chandramonians Admin', ADMIN_EMAIL)]
+MANAGERS = ADMINS
+EMAIL_TIMEOUT = env.int('EMAIL_TIMEOUT', default=15)
 
 # AI & External APIs
 GEMINI_API_KEY = env('GEMINI_API_KEY', default='')

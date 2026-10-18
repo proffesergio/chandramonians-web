@@ -1,5 +1,74 @@
 # Chandramonians live administration
 
+For the current production checks, local fixes awaiting deployment, and remaining
+development phases, see the [18 October 2026 audit](PRODUCTION_AUDIT_2026-10-18.md).
+
+## Association inbox and additional administrator
+
+The official administration/contact address is **thechandramonians@gmail.com**.
+The additional production super admin uses that email with username
+`chandramonians_official_admin`. Its generated website password is stored locally
+in `.vercel/association-admin-credentials.json`, excluded from Git and deployment.
+Sign in with the **email** at `/admin/` or `/login`. This website password does
+not grant access to the Gmail mailbox. The earlier administrator account remains.
+
+`ADMIN_EMAIL` controls the public contact email link, contact-form recipient, and
+Django's `ADMINS`/`MANAGERS` notification recipients. The authenticated SMTP sender
+is configured independently, so the association receives messages even when an
+approved sending service uses another address. Contact messages set the visitor's
+validated address as Reply-To. Volunteers and membership applications continue
+to be stored for review; this change does not add automatic notifications to
+those workflows.
+
+To send using the association's Gmail account, set these **Production** variables
+in the Vercel project that owns `www.chandramonians.com`, then redeploy:
+
+```dotenv
+ADMIN_EMAIL=thechandramonians@gmail.com
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=thechandramonians@gmail.com
+EMAIL_HOST_PASSWORD=YOUR_GMAIL_APP_PASSWORD
+DEFAULT_FROM_EMAIL=thechandramonians@gmail.com
+SERVER_EMAIL=thechandramonians@gmail.com
+EMAIL_TIMEOUT=15
+```
+
+Store the app password as a secret. Gmail requires 2-Step Verification to create
+an App Password; generate it from the Google account's security settings. Use it
+for SMTP, rather than the normal Gmail or website password.
+[Google's App Password instructions](https://support.google.com/mail/answer/185833?hl=en)
+
+No SMTP credential was present in either local environment file at the time of
+this update. Vercel access has since been restored and encrypted GitHub deployment
+secrets are configured; see [push-to-production deployment](DEPLOYMENT.md).
+The email code/settings changes still need deployment and a real delivery check
+after SMTP is configured. The regression tests use an in-memory mail backend
+and send no real messages.
+
+## Google and other social sign-in
+
+Public registration already exists at `/register/` and `/signup/` for Student
+and Alumni accounts. Creating a super admin above fulfills the account request;
+Google/Facebook/GitHub sign-in has **not** been activated by this update.
+
+Adding social login requires a provider application and its OAuth Client ID and
+Client Secret. A suitable Django integration is `django-allauth`, with a dedicated
+provider, a verified-email/account-linking policy, and role-preserving adapters.
+Google's production callback would be
+`https://www.chandramonians.com/accounts/google/login/callback/` once that
+integration is implemented. Register the exact callback in the provider's console;
+do not expect the callback URL to work before implementation.
+[Provider configuration](https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html),
+[Google provider](https://docs.allauth.org/en/latest/socialaccount/providers/google.html)
+
+New social signups should receive an ordinary Student/Alumni role. Administrator
+access is granted by an existing administrator, rather than from an email string
+or a role selected on a public registration form. To add another administrator
+online today, use **Custom users → Add**, save the new account, then edit it to
+set **User type: HOD**, **Staff status**, **Superuser status**, and **Active**.
+
 ## Can I register at /admin/?
 
 `/admin/` is a sign-in page, not a public account-registration page. Create the

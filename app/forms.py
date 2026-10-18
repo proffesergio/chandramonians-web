@@ -2,6 +2,51 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
 from app.models import CustomUser, VolunteerApplication
+from app.map_data import country_choices
+from app.profile_storage import MAX_AVATAR_BYTES
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    password = forms.CharField(required=False, strip=False, widget=forms.PasswordInput)
+    map_country = forms.ChoiceField(required=False, choices=country_choices)
+    map_visible = forms.BooleanField(required=False, label='Share my country on the public Alumni Map')
+
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'profile_pic')
+        widgets = {'profile_pic': forms.FileInput(attrs={'accept': 'image/jpeg,image/png,image/webp,image/gif'})}
+
+    def clean_profile_pic(self):
+        picture = self.cleaned_data.get('profile_pic')
+        if picture and hasattr(picture, 'content_type') and picture.size > MAX_AVATAR_BYTES:
+            raise forms.ValidationError('Choose an image smaller than 3 MB.')
+        return picture
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-check-input' if name == 'map_visible' else 'form-select' if name == 'map_country' else 'form-control'
+        self.fields['password'].widget.attrs['autocomplete'] = 'new-password'
+
+    def clean_password(self):
+        from django.contrib.auth.password_validation import validate_password
+        password = self.cleaned_data.get('password')
+        if password:
+            validate_password(password, user=self.instance)
+        return password
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('map_visible') and not cleaned.get('map_country'):
+            self.add_error('map_country', 'Choose a country before sharing it on the map.')
+        return cleaned
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    subject = forms.CharField(max_length=200, required=False)
+    message = forms.CharField(max_length=10000)
 
 
 class CommunitySignupForm(UserCreationForm):

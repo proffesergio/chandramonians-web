@@ -46,6 +46,11 @@ are not performance targets for a rural high school.
 
 ## Map direction: home first, connections over time
 
+The country-level Alumni Map is now implemented at `/alumni-map/`. Every active
+registered alumnus is listed; country markers appear only with profile consent.
+The finer city-level connections below remain a future extension. Small profile
+avatars now use durable PostgreSQL storage; larger media still needs object storage.
+
 The first version shows the **Homna home area**, with an optional interactive
 basemap and a restrained pulse. It loads on request to reduce the initial mobile
 download. The administrative location is approximately `23.66, 90.79` from

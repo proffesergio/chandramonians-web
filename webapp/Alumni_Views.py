@@ -1,24 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from app.permissions import role_required
 from django.contrib.auth.decorators import login_required
 from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback, MembershipPayment
 from django.contrib import messages
-@login_required(login_url='/login')
+@role_required('3')
 def applyForMembership(request):
-    # get logged in user
-    alumni = Alumni.objects.filter(admin = request.user.id)
-    for i in alumni:
-        alum_id = i.id
-        print('Current logged in user:', alum_id, ' ', i.admin.first_name)
+    alumni = get_object_or_404(Alumni, admin=request.user)
+    applications = ApplyForMembership.objects.filter(alum_id=alumni)
+    return render(request, 'Alumni/membership_apply.html', {'logged_application': applications})
 
-        logged_application = ApplyForMembership.objects.filter(alum_id = alum_id)
-
-        context = {
-            'logged_application':logged_application,
-        }
-
-        return render(request, 'Alumni/membership_apply.html', context)
-
-@login_required(login_url='/login')
+@role_required('3')
 def homeView(request):
     alumni_count = Alumni.objects.all().count()
     staff_count = Staff.objects.all().count()
@@ -49,13 +40,13 @@ def homeView(request):
     }
     return render(request, 'Alumni/alumni_home.html', context)
 
-@login_required(login_url='/login')
+@role_required('3')
 def saveApplication(request):
     if request.method == "POST":
         date = request.POST.get('date')
         note = request.POST.get('note')
 
-        alumni = Alumni.objects.get(admin = request.user.id)
+        alumni = get_object_or_404(Alumni, admin=request.user)
 
         membership_apps = ApplyForMembership(
             alum_id = alumni,
@@ -68,12 +59,12 @@ def saveApplication(request):
         return redirect('save_membership')
 
     return render(request, 'Alumni/save_membership.html')
-@login_required(login_url='/login')
+@role_required('3')
 def saveFeedback(request):
     if request.method == "POST":
         feedback = request.POST.get('feedback')
 
-        alumni_feedback = Alumni.objects.get(admin = request.user.id)
+        alumni_feedback = get_object_or_404(Alumni, admin=request.user)
 
         feedback = AlumniFeedback(
             alum_id = alumni_feedback,
@@ -88,8 +79,9 @@ def saveFeedback(request):
     return render(request, 'Alumni/save_feedback.html')
 
 
+@role_required('3')
 def alumniFeedback(request):
-    alum_id = Alumni.objects.get(admin = request.user.id)
+    alum_id = get_object_or_404(Alumni, admin=request.user)
 
     feedback_history = AlumniFeedback.objects.filter(alum_id = alum_id)
 

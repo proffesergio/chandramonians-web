@@ -1,14 +1,4 @@
 {% load static i18n %}{% get_current_language as current_lang %}
-<div class="site-utility">
-  <div class="site-container utility-inner">
-    <span>Dulalpur Chandramoni High School <span class="utility-location">· Homna, Cumilla</span></span>
-    <div class="reading-controls" aria-label="Reading preferences">
-      <button type="button" id="textSizeToggle" aria-pressed="false"><span aria-hidden="true">A+</span> Larger text</button>
-      <button type="button" id="motionToggle" aria-pressed="false">Pause motion</button>
-      <a href="{% url 'admin:index' %}">Admin sign in <span aria-hidden="true">↗</span></a>
-    </div>
-  </div>
-</div>
 <header class="site-header">
   <div class="site-container header-inner">
     <a class="site-brand" href="{% url 'landing' %}" aria-label="Chandramonians home">
@@ -20,6 +10,7 @@
       <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About us</a>
       <a href="{% url 'events' %}" {% if request.resolver_match.url_name == 'events' %}aria-current="page"{% endif %}>School activities</a>
       <a href="{% url 'public_members' %}" {% if request.resolver_match.url_name == 'public_members' %}aria-current="page"{% endif %}>Our members</a>
+      <a href="{% url 'alumni_map' %}" {% if request.resolver_match.url_name == 'alumni_map' %}aria-current="page"{% endif %}>Alumni Map</a>
       <a href="{% url 'news_list' %}" {% if request.resolver_match.url_name == 'news_list' %}aria-current="page"{% endif %}>News</a>
       {% if user.is_authenticated %}
         {% if user.user_type == '1' %}<a href="{% url 'hod_home' %}">My dashboard</a>
@@ -27,7 +18,7 @@
         {% elif user.user_type == '4' %}<a href="{% url 'edu_home' %}">Study hub</a>
         {% else %}<a href="{% url 'staff_home' %}">My dashboard</a>{% endif %}
       {% else %}<a href="{% url 'login' %}">Sign in</a>{% endif %}
-      <a class="site-button button-primary header-cta" href="{% url 'volunteer' %}">Get involved <span aria-hidden="true">↗</span></a>
+      <a class="site-button button-primary header-cta get-involved-link" href="{% url 'volunteer' %}"><span>Get involved</span><span class="involvement-arrow" aria-hidden="true">↗</span></a>
     </nav>
   </div>
 </header>
