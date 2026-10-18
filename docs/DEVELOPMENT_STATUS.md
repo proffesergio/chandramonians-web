@@ -14,6 +14,9 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Public header displays the round logo emblem beside the Bangla brand, with the association's full Bangla tagline and responsive text wrapping.
 - Alumni Map country clusters now animate into a selected region and open public profile cards, with keyboard-accessible close/reset controls, reduced-motion support, and a working link fallback without JavaScript.
 - Registration rejects email duplicates regardless of capitalization, normalizes new email addresses, and handles concurrent username/email conflicts without creating orphaned profiles. Legacy ambiguous emails fail authentication safely.
+- Alumni can edit parents' names, current/permanent addresses, phone, blood group, education, profession, workplace, and SSC batch. Each field has an independently revocable public visibility switch; new sensitive fields are private by default. Existing public batch/profession/workplace settings are preserved until changed.
+- Public profiles, directories, map payloads, and search filters respect visibility. Alumni profile writes are owner-scoped and validated separately from account/password/photo updates.
+- Private, revocable donor-programme interest and blood-group fields are available for administrators to filter; no live donor matching or emergency notification service is enabled.
 
 ## Open work
 
@@ -21,6 +24,7 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Job Board is a reviewed-content placeholder; it needs moderation and expiry fields before launch.
 - Payment records still come from the official sheet and should gain a durable user link after the association defines a stable member identifier.
 - Membership pricing and payment confirmation are not yet automated; approval remains an admin-reviewed workflow.
+- Blood donation roadmap: review donor consent and eligibility workflow, voluntary current availability, region-based requests, verified request moderation, and private contact delivery before enabling emergency matching. Never infer donor availability from a stored blood group.
 - Optional direct support chats and group chats are displayed as coming soon on the map. Before activation they need participant opt-in, membership authorization, persistent messages, moderation, blocking/reporting, and delivery controls. Current location consent supports country-level grouping; finer regional clustering requires optional city/region data and explicit sharing consent.
 
 ## Delivery rule

@@ -337,19 +337,19 @@ def alumni_directory_view(request):
     profession = request.GET.get('profession', '')
     search = request.GET.get('q', request.GET.get('search', '')).strip()
 
-    qs = Alumni.objects.select_related('admin').all()
+    qs = Alumni.objects.select_related('admin').filter(admin__is_active=True, admin__user_type='3')
     if batch:
-        qs = qs.filter(passing_year=batch)
+        qs = qs.filter(passing_year=batch, show_passing_year=True)
     if profession:
-        qs = qs.filter(profession__icontains=profession)
+        qs = qs.filter(profession__icontains=profession, show_profession=True)
     if search:
         qs = qs.filter(
             Q(admin__first_name__icontains=search) | Q(admin__last_name__icontains=search)
-            | Q(profession__icontains=search) | Q(company__icontains=search)
+            | Q(profession__icontains=search, show_profession=True) | Q(company__icontains=search, show_company=True)
         )
 
     batch_years = (
-        Alumni.objects.values_list('passing_year', flat=True)
+        Alumni.objects.filter(show_passing_year=True, admin__is_active=True, admin__user_type='3').values_list('passing_year', flat=True)
         .distinct().exclude(passing_year=None).order_by('passing_year')
     )
 

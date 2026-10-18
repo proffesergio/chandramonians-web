@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.conf import settings
+from django.urls import reverse
 from django.core.cache import cache
 from app.models import NewsArticle, Event, GalleryPhoto, Alumni, CommitteeMember, MembershipPayment, VolunteerApplication
 from app.forms import VolunteerApplicationForm
@@ -85,9 +86,9 @@ def alumni_map_view(request):
     country = request.GET.get('country', '').strip()
     if query:
         alumni = alumni.filter(Q(admin__first_name__icontains=query) | Q(admin__last_name__icontains=query) |
-                               Q(admin__username__icontains=query) | Q(profession__icontains=query))
+                               Q(admin__username__icontains=query) | Q(profession__icontains=query, show_profession=True))
     if batch:
-        alumni = alumni.filter(passing_year=batch)
+        alumni = alumni.filter(passing_year=batch, show_passing_year=True)
     shared = alumni.filter(map_visible=True, map_country__in=countries())
     markers = []
     for row in shared.values('map_country').annotate(count=Count('id')):
@@ -96,8 +97,9 @@ def alumni_map_view(request):
     for profile in shared.order_by('admin__first_name', 'pk'):
         map_profiles.setdefault(profile.map_country, []).append({
             'name': profile.admin.get_full_name() or profile.admin.username,
-            'batch': profile.passing_year or '', 'profession': profile.profession,
+            'batch': profile.public_passing_year or '', 'profession': profile.public_profession,
             'photo': profile.admin.profile_pic.url if profile.admin.profile_pic else '',
+            'profile_url': reverse('alumni_public_profile', args=[profile.pk]),
         })
     if country:
         alumni = alumni.filter(map_visible=True, map_country=country) if country in countries() else alumni.none()
@@ -105,10 +107,17 @@ def alumni_map_view(request):
         'alumni_list': alumni.order_by('admin__first_name', 'admin__last_name', 'pk'),
         'registered_count': all_alumni.count(), 'shared_count': shared.count(),
         'markers': sorted(markers, key=lambda row: row['name']), 'countries': country_choices()[1:],
-        'batch_years': all_alumni.exclude(passing_year__isnull=True).exclude(passing_year='').values_list('passing_year', flat=True).distinct().order_by('passing_year'),
+        'batch_years': all_alumni.filter(show_passing_year=True).exclude(passing_year__isnull=True).exclude(passing_year='').values_list('passing_year', flat=True).distinct().order_by('passing_year'),
         'filter_country': country, 'filter_batch': batch, 'search': query,
         'map_profiles': map_profiles,
     })
+
+
+@require_safe
+def alumni_public_profile_view(request, pk):
+    profile = get_object_or_404(Alumni.objects.select_related('admin'), pk=pk,
+                               admin__is_active=True, admin__user_type='3')
+    return render(request, 'pages/alumni_profile.html', {'alumni': profile})
 
 
 def home_view(request):
@@ -259,12 +268,12 @@ def contact_view(request):
 def alumni_public_directory_view(request):
     batch = request.GET.get('batch', '')
     search = request.GET.get('q', '').strip()
-    alumni = Alumni.objects.select_related('admin').all()
+    alumni = Alumni.objects.select_related('admin').filter(admin__is_active=True, admin__user_type='3')
     if batch:
-        alumni = alumni.filter(passing_year=batch)
+        alumni = alumni.filter(passing_year=batch, show_passing_year=True)
     if search:
         alumni = alumni.filter(Q(admin__first_name__icontains=search) | Q(admin__last_name__icontains=search))
-    batch_years = Alumni.objects.values_list('passing_year', flat=True).distinct().exclude(passing_year=None).order_by('passing_year')
+    batch_years = alumni.filter(show_passing_year=True).values_list('passing_year', flat=True).distinct().exclude(passing_year=None).order_by('passing_year')
     return render(request, 'pages/alumni_directory.html', {
         'alumni_list': alumni,
         'batch_years': batch_years,

@@ -7,7 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db import IntegrityError
-from app.forms import CommunitySignupForm, ProfileUpdateForm
+from app.forms import AlumniProfileForm, CommunitySignupForm, ProfileUpdateForm
+from app.permissions import role_required
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
 import logging
 from app.models import Alumni, Student
@@ -98,7 +101,8 @@ def profileView(request):
     alumni = Alumni.objects.filter(admin=request.user).first() if request.user.user_type == '3' else None
     initial = {'map_country': alumni.map_country, 'map_visible': alumni.map_visible} if alumni else {}
     form = ProfileUpdateForm(instance=request.user, initial=initial)
-    return render(request, 'profile.html', {'form': form, 'is_alumni': request.user.user_type == '3'})
+    return render(request, 'profile.html', {'form': form, 'is_alumni': request.user.user_type == '3',
+                                          'alumni_form': AlumniProfileForm(instance=alumni) if alumni else None})
 
 
 @login_required(login_url='/login')
@@ -128,4 +132,21 @@ def profileUpdate(request):
         except Exception:
             logger.exception('Profile update failed for user %s', request.user.pk)
             form.add_error(None, 'Your profile could not be saved. Please try again.')
-    return render(request, 'profile.html', {'form': form, 'is_alumni': request.user.user_type == '3'})
+    alumni = Alumni.objects.filter(admin=request.user).first() if request.user.user_type == '3' else None
+    return render(request, 'profile.html', {'form': form, 'is_alumni': request.user.user_type == '3',
+                                          'alumni_form': AlumniProfileForm(instance=alumni) if alumni else None})
+
+
+@role_required('3')
+@require_POST
+def alumniProfileUpdate(request):
+    alumni = get_object_or_404(Alumni, admin=request.user)
+    form = AlumniProfileForm(request.POST, instance=alumni)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Alumni details and privacy settings saved.')
+        return redirect('profile')
+    return render(request, 'profile.html', {
+        'form': ProfileUpdateForm(instance=request.user, initial={'map_country': alumni.map_country, 'map_visible': alumni.map_visible}),
+        'alumni_form': form, 'is_alumni': True,
+    })

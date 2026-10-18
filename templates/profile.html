@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Your profile ? Chandramonians{% endblock %}
+{% block title %}Your profile — Chandramonians{% endblock %}
+{% block page_title %}My Profile & Privacy{% endblock %}
+{% block extra_css %}<style>
+  .profile-field { transition:border-color .2s,box-shadow .2s; }
+  .profile-field:focus-within { border-color:#7ba2d9!important;box-shadow:0 0 0 3px #2952a310; }
+  .profile-intro { animation:profile-intro .4s ease both; }
+  @keyframes profile-intro { from {opacity:0;transform:translateY(8px)} to {opacity:1;transform:none} }
+  @media(prefers-reduced-motion:reduce) { .profile-field {transition:none} .profile-intro {animation:none} }
+</style>{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-lg-8"><div class="card"><div class="card-body p-4">
 <h1 class="h3 mb-2">Your profile</h1><p class="text-muted">Keep your name and photo up to date.</p>
@@ -15,5 +23,17 @@
 {% if is_alumni %}<fieldset class="border rounded p-3 mb-3"><legend class="float-none w-auto px-2 h5">Alumni Map</legend><p class="text-muted small">You appear in the registered alumni list. Share a country if you would also like to appear on the map. Your address, phone, and email are not shown.</p><div class="mb-3"><label for="{{ form.map_country.id_for_label }}" class="form-label">Current country</label>{{ form.map_country }}{{ form.map_country.errors }}</div><div class="form-check">{{ form.map_visible }}<label for="{{ form.map_visible.id_for_label }}" class="form-check-label">Share my country on the public Alumni Map</label></div>{{ form.map_visible.errors }}<a class="small d-inline-block mt-3" href="{% url 'alumni_map' %}">View the Alumni Map ?</a></fieldset>{% endif %}
 <div class="mb-4"><label for="{{ form.password.id_for_label }}" class="form-label">New password (optional)</label>{{ form.password }}{{ form.password.errors }}<div class="form-text">Leave blank to keep your current password.</div></div>
 <button type="submit" class="btn btn-primary">Save profile</button>
-</form></div></div></div></div>
+</form>
+{% if alumni_form %}
+<section class="mt-5" aria-labelledby="alumniDetailsTitle">
+<div class="profile-intro p-4 rounded-3 mb-4" style="background:linear-gradient(135deg,#123a70,#2952a3);color:white"><h2 id="alumniDetailsTitle" class="h4">আপনার পরিচয়, আপনার নিয়ন্ত্রণ</h2><p class="mb-0">Add your alumni details and choose which fields anyone can see. Unchecked fields remain private to you and authorized administrators.</p></div>
+<form method="post" action="{% url 'alumni_profile_update' %}">{% csrf_token %}
+{% if alumni_form.errors %}<div class="alert alert-danger" role="alert">Please correct the highlighted alumni details.{{ alumni_form.non_field_errors }}</div>{% endif %}
+{% for field, visibility in alumni_form.profile_rows %}
+<div class="profile-field border rounded-3 p-3 mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}<div class="form-check mt-2">{{ visibility }}<label for="{{ visibility.id_for_label }}" class="form-check-label small">সবার জন্য দৃশ্যমান / Anyone can view this field</label></div>{{ visibility.errors }}</div>
+{% endfor %}
+<fieldset class="border rounded-3 p-4 mb-4" style="background:#fff5f5"><legend class="float-none w-auto px-2 h5">রক্তদান / Future blood donation</legend><div class="form-check">{{ alumni_form.donor_opt_in }}<label for="{{ alumni_form.donor_opt_in.id_for_label }}" class="form-check-label">{{ alumni_form.donor_opt_in.label }}</label></div>{{ alumni_form.donor_opt_in.errors }}<p class="small text-muted mt-3 mb-0">This preference is private to the association team. You can withdraw it at any time. Emergency matching is planned; this is not a live emergency service or a confirmation of donation eligibility. Blood group is public only if you enable its visibility above.</p></fieldset>
+<div class="d-flex gap-3 align-items-center flex-wrap"><button type="submit" class="btn btn-primary">Save details & privacy</button><a href="{% url 'alumni_public_profile' user.alumni.pk %}" class="btn btn-outline-primary">Preview public profile</a></div>
+</form></section>{% endif %}
+</div></div></div></div>
 {% endblock %}

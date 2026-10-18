@@ -1,0 +1,6 @@
+{% extends 'public_base.html' %}
+{% block title %}{{ alumni.admin.get_full_name|default:alumni.admin.username }} — Alumni profile{% endblock %}
+{% block content %}
+<section class="public-page-heading"><div class="site-container"><p class="eyebrow">OUR ALUMNI COMMUNITY</p>{% if alumni.admin.profile_pic %}<img src="{{ alumni.admin.profile_pic.url }}" width="96" height="96" alt="" class="rounded-circle mb-3" style="object-fit:cover">{% endif %}<h1>{{ alumni.admin.get_full_name|default:alumni.admin.username }}</h1><p>Only information this alumnus chooses to share publicly appears here.</p></div></section>
+<section class="home-section"><div class="site-container"><div class="row g-3">{% for label,value in alumni.public_details %}<div class="col-md-6"><div class="p-4 border rounded-3 h-100"><h2 class="h6" lang="bn">{{ label }}</h2><div style="white-space:pre-wrap;overflow-wrap:anywhere">{{ value }}</div></div></div>{% empty %}<p>This alumnus has chosen to keep additional details private.</p>{% endfor %}{% if alumni.public_map_country %}<div class="col-md-6"><div class="p-4 border rounded-3"><h2 class="h6">Shared country</h2><p class="mb-0">{{ alumni.public_map_country }}</p></div></div>{% endif %}</div><a class="text-link d-inline-block mt-4" href="{% url 'alumni_map' %}">Explore the Alumni Map →</a></div></section>
+{% endblock %}

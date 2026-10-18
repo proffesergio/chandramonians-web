@@ -18,4 +18,5 @@ urlpatterns = [
     # Profile
     path('profile', views.profileView, name='profile'),
     path('profile/update', views.profileUpdate, name='profile_update'),
+    path('profile/alumni/update', views.alumniProfileUpdate, name='alumni_profile_update'),
 ]

@@ -46,6 +46,7 @@ class SessionYear(models.Model):
 
 
 class Alumni(models.Model):
+    BLOOD_GROUPS = [(group, group) for group in ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-')]
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     address = models.TextField(default='')
     gender = models.CharField(max_length=100)
@@ -55,6 +56,23 @@ class Alumni(models.Model):
     company = models.CharField(max_length=200, blank=True)
     linkedin_url = models.URLField(blank=True)
     bio = models.TextField(blank=True)
+    father_name = models.CharField(max_length=150, blank=True)
+    mother_name = models.CharField(max_length=150, blank=True)
+    current_address = models.TextField(max_length=1000, blank=True)
+    permanent_address = models.TextField(max_length=1000, blank=True)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUPS, blank=True)
+    education = models.CharField(max_length=300, blank=True)
+    donor_opt_in = models.BooleanField(default=False, help_text='Allow the association team to consider contacting me about a future blood donation programme. This does not confirm medical eligibility or current availability.')
+    show_father_name = models.BooleanField(default=False)
+    show_mother_name = models.BooleanField(default=False)
+    show_current_address = models.BooleanField(default=False)
+    show_permanent_address = models.BooleanField(default=False)
+    show_phone = models.BooleanField(default=False)
+    show_blood_group = models.BooleanField(default=False)
+    show_education = models.BooleanField(default=False)
+    show_profession = models.BooleanField(default=True)
+    show_company = models.BooleanField(default=True)
+    show_passing_year = models.BooleanField(default=True)
     map_country = models.CharField(max_length=3, blank=True, help_text='Optional country code for the Alumni Map.')
     map_visible = models.BooleanField(default=False, help_text='Show my selected country on the public Alumni Map.')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,6 +85,28 @@ class Alumni(models.Model):
     def public_map_country(self):
         from app.map_data import countries
         return countries().get(self.map_country, {}).get('name', '') if self.map_visible else ''
+
+    @property
+    def public_profession(self):
+        return self.profession if self.show_profession else ''
+
+    @property
+    def public_company(self):
+        return self.company if self.show_company else ''
+
+    @property
+    def public_passing_year(self):
+        return self.passing_year if self.show_passing_year else ''
+
+    @property
+    def public_details(self):
+        labels = [('father_name', 'পিতার নাম'), ('mother_name', 'মাতার নাম'),
+                  ('current_address', 'বর্তমান ঠিকানা'), ('permanent_address', 'স্থায়ী ঠিকানা'),
+                  ('phone', 'যোগাযোগের নম্বর'), ('blood_group', 'ব্লাড গ্রুপ'),
+                  ('education', 'শিক্ষাগত যোগ্যতা'), ('profession', 'পেশা'),
+                  ('company', 'কর্মক্ষেত্র'), ('passing_year', 'এসএসসি ব্যাচ')]
+        return [(label, getattr(self, field)) for field, label in labels
+                if getattr(self, f'show_{field}') and getattr(self, field)]
 
 
 class ProfilePicture(models.Model):

@@ -74,6 +74,15 @@
       chat.type = 'button'; chat.disabled = true;
       chat.textContent = 'Chat for help or support · Coming soon';
       card.append(heading, details, chat);
+      if (person.profile_url) {
+        const link = document.createElement('a');
+        const url = new URL(person.profile_url, window.location.href);
+        if (url.origin === window.location.origin) {
+          link.href = url.href;
+          link.textContent = 'View public profile →';
+          card.append(link);
+        }
+      }
       people.append(card);
     }
     panel.hidden = false;

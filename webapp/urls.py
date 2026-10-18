@@ -14,6 +14,7 @@ urlpatterns = [
     path('health/', Public_Views.health_check_view, name='health_check'),
     path('media/avatars/<uuid:picture_id>.webp', Public_Views.profile_picture_view, name='profile_picture'),
     path('alumni-map/', Public_Views.alumni_map_view, name='alumni_map'),
+    path('alumni/<int:pk>/', Public_Views.alumni_public_profile_view, name='alumni_public_profile'),
     path(
         'favicon.ico',
         RedirectView.as_view(url=static_url('assets/img/logo/chandramonians.png'), permanent=True),

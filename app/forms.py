@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
-from app.models import ApplyForMembership, CustomUser, VolunteerApplication
+from app.models import Alumni, ApplyForMembership, CustomUser, VolunteerApplication
 from django.utils import timezone
 from app.map_data import country_choices
 from app.profile_storage import MAX_AVATAR_BYTES
@@ -41,6 +41,58 @@ class ProfileUpdateForm(forms.ModelForm):
         if cleaned.get('map_visible') and not cleaned.get('map_country'):
             self.add_error('map_country', 'Choose a country before sharing it on the map.')
         return cleaned
+
+
+class AlumniProfileForm(forms.ModelForm):
+    PROFILE_LABELS = {
+        'father_name': 'পিতার নাম / Father’s name', 'mother_name': 'মাতার নাম / Mother’s name',
+        'current_address': 'বর্তমান ঠিকানা / Current address',
+        'permanent_address': 'স্থায়ী ঠিকানা / Permanent address',
+        'phone': 'যোগাযোগের নম্বর / Contact number', 'blood_group': 'ব্লাড গ্রুপ / Blood group',
+        'education': 'শিক্ষাগত যোগ্যতা / Education', 'profession': 'পেশা / Profession',
+        'company': 'কর্মক্ষেত্র / Workplace', 'passing_year': 'এসএসসি ব্যাচ / SSC batch',
+    }
+
+    class Meta:
+        model = Alumni
+        fields = tuple(['father_name', 'mother_name', 'current_address', 'permanent_address',
+                        'phone', 'blood_group', 'education', 'profession', 'company', 'passing_year',
+                        'donor_opt_in'] + [f'show_{field}' for field in (
+                            'father_name', 'mother_name', 'current_address', 'permanent_address',
+                            'phone', 'blood_group', 'education', 'profession', 'company', 'passing_year')])
+        widgets = {'current_address': forms.Textarea(attrs={'rows': 3}),
+                   'permanent_address': forms.Textarea(attrs={'rows': 3})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-check-input' if isinstance(field, forms.BooleanField) else 'form-select' if isinstance(field, forms.ChoiceField) else 'form-control'
+            if name in self.PROFILE_LABELS:
+                field.label = self.PROFILE_LABELS[name]
+        self.fields['phone'].widget.attrs.update({'autocomplete': 'tel', 'inputmode': 'tel'})
+        self.fields['donor_opt_in'].label = 'ভবিষ্যৎ রক্তদান কর্মসূচিতে যোগাযোগের সম্মতি / Allow future donor programme contact'
+
+    def clean_passing_year(self):
+        year = self.cleaned_data['passing_year']
+        if year and (not year.isascii() or not year.isdigit() or len(year) != 4 or not 1900 <= int(year) <= timezone.localdate().year):
+            raise forms.ValidationError('Enter a valid four-digit SSC batch year.')
+        return year
+
+    def clean_phone(self):
+        import re
+        phone = self.cleaned_data['phone'] or ''
+        if phone and (not re.fullmatch(r'\+?[0-9 ()-]+', phone) or not 7 <= len(re.sub(r'\D', '', phone)) <= 15):
+            raise forms.ValidationError('Enter a valid contact number with 7–15 digits.')
+        return phone
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('donor_opt_in') and not cleaned.get('blood_group'):
+            self.add_error('blood_group', 'Choose your blood group before opting in.')
+        return cleaned
+
+    def profile_rows(self):
+        return [(self[field], self[f'show_{field}']) for field in self.PROFILE_LABELS]
 
 
 class ContactForm(forms.Form):

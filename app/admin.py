@@ -25,8 +25,8 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Alumni)
 class AlumniAdmin(admin.ModelAdmin):
-    list_display = ('admin', 'passing_year', 'gender', 'phone', 'profession', 'company', 'map_country', 'map_visible')
-    list_filter = ('passing_year', 'gender', 'map_visible', 'map_country')
+    list_display = ('admin', 'passing_year', 'gender', 'phone', 'profession', 'company', 'blood_group', 'donor_opt_in', 'map_country', 'map_visible')
+    list_filter = ('passing_year', 'gender', 'blood_group', 'donor_opt_in', 'map_visible', 'map_country')
     search_fields = ('admin__first_name', 'admin__last_name', 'admin__email', 'profession')
 
 
