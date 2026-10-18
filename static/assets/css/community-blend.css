@@ -22,9 +22,14 @@
 .site-brand .brand-emblem img { display:block; width:180px; height:60px; max-width:none; max-height:none; object-fit:initial; }
 .brand-copy { display:flex; flex-direction:column; gap:5px; min-width:0; max-width:230px; }
 .site-brand .brand-shimmer { font-family:'Nirmala UI','Segoe UI',sans-serif; font-size:1.36rem; font-weight:800; line-height:1.4; }
-.brand-caption { display:block; max-width:230px; font-size:.62rem; line-height:1.6; margin:0; letter-spacing:0; }
+.brand-caption { display:block; max-width:230px; font-size:.62rem; line-height:1.6; margin:0; letter-spacing:0; white-space:nowrap; }
 .primary-navigation { gap:20px; }
 .primary-navigation>a:not(.site-button):hover { color:#2e61a2; }
+.primary-navigation>a:not(.site-button) { position:relative; text-decoration:none; transition:color .2s ease,transform .2s ease; }
+.primary-navigation>a:not(.site-button)::after { content:''; position:absolute; height:2px; left:0; right:0; bottom:7px; border-radius:2px; background:linear-gradient(90deg,#2e61a2,#d8a94d); transform:scaleX(0); transform-origin:left; transition:transform .22s ease; }
+.primary-navigation>a:not(.site-button):hover::after,.primary-navigation>a:not(.site-button):focus-visible::after,.primary-navigation>a[aria-current="page"]::after { transform:scaleX(1); }
+@media(prefers-reduced-motion:reduce) { .primary-navigation>a:not(.site-button),.primary-navigation>a:not(.site-button)::after { transition:none; } }
+html[data-motion="paused"] .primary-navigation>a:not(.site-button),html[data-motion="paused"] .primary-navigation>a:not(.site-button)::after { transition:none; }
 .home-hero { background:radial-gradient(ellipse at 92% 12%,#e2eafa,transparent 48%),radial-gradient(ellipse at 0 90%,#fff0d4,transparent 44%),#fcfaf7; }
 .hero-community { background:linear-gradient(145deg,#e8effa,#e7f0e5 55%,#fff0d7); border-color:#d6dfeb; box-shadow:0 20px 60px #21487012; }
 .hero-overview { border-color:#d5e0e9; box-shadow:0 5px 18px #284d5910; }

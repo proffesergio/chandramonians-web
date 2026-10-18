@@ -17,6 +17,8 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Alumni can edit parents' names, current/permanent addresses, phone, blood group, education, profession, workplace, and SSC batch. Each field has an independently revocable public visibility switch; new sensitive fields are private by default. Existing public batch/profession/workplace settings are preserved until changed.
 - Public profiles, directories, map payloads, and search filters respect visibility. Alumni profile writes are owner-scoped and validated separately from account/password/photo updates.
 - Private, revocable donor-programme interest and blood-group fields are available for administrators to filter; no live donor matching or emergency notification service is enabled.
+- Public alumni profiles now group shared details into icon-led family, education/career, and contact cards with compact Bangla labels. Privacy switches still control every displayed field.
+- A scalable book-and-sun favicon is shared by public, dashboard, and authentication layouts. Header tagline is the single-line school name, with keyboard-friendly navigation hover/focus effects and reduced-motion support.
 
 ## Open work
 

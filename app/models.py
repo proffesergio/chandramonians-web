@@ -108,6 +108,26 @@ class Alumni(models.Model):
         return [(label, getattr(self, field)) for field, label in labels
                 if getattr(self, f'show_{field}') and getattr(self, field)]
 
+    @property
+    def public_detail_groups(self):
+        definitions = [
+            ('পরিচিতি ও পরিবার', 'Identity & family', 'fa-user', [
+                ('father_name', 'পিতার নাম', 'fa-user-tie'), ('mother_name', 'মাতার নাম', 'fa-user')]),
+            ('শিক্ষা ও কর্মজীবন', 'Education & career', 'fa-graduation-cap', [
+                ('passing_year', 'এসএসসি ব্যাচ', 'fa-graduation-cap'), ('education', 'শিক্ষাগত যোগ্যতা', 'fa-book-open'),
+                ('profession', 'পেশা', 'fa-briefcase'), ('company', 'কর্মক্ষেত্র', 'fa-building')]),
+            ('যোগাযোগ ও অন্যান্য', 'Contact & details', 'fa-address-card', [
+                ('phone', 'যোগাযোগের নম্বর', 'fa-phone'), ('current_address', 'বর্তমান ঠিকানা', 'fa-location-dot'),
+                ('permanent_address', 'স্থায়ী ঠিকানা', 'fa-house'), ('blood_group', 'ব্লাড গ্রুপ', 'fa-droplet')]),
+        ]
+        groups = []
+        for title, subtitle, icon, fields in definitions:
+            rows = [{'label': label, 'value': getattr(self, field), 'icon': symbol}
+                    for field, label, symbol in fields if getattr(self, f'show_{field}') and getattr(self, field)]
+            if rows:
+                groups.append({'title': title, 'subtitle': subtitle, 'icon': icon, 'rows': rows})
+        return groups
+
 
 class ProfilePicture(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

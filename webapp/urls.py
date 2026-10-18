@@ -17,7 +17,7 @@ urlpatterns = [
     path('alumni/<int:pk>/', Public_Views.alumni_public_profile_view, name='alumni_public_profile'),
     path(
         'favicon.ico',
-        RedirectView.as_view(url=static_url('assets/img/logo/chandramonians.png'), permanent=True),
+        RedirectView.as_view(url=static_url('assets/img/logo/favicon.svg'), permanent=False),
     ),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
