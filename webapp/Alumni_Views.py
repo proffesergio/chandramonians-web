@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from app.permissions import role_required
 from app.models import Alumni, ApplyForMembership, AlumniFeedback
+from app.forms import MembershipApplicationForm
 from webapp.Member_Views import resolve_membership_record
 from django.contrib import messages
 @role_required('3')
 def applyForMembership(request):
     alumni = get_object_or_404(Alumni, admin=request.user)
-    applications = ApplyForMembership.objects.filter(alum_id=alumni)
-    return render(request, 'Alumni/membership_apply.html', {'logged_application': applications})
+    applications = ApplyForMembership.objects.filter(alum_id=alumni).order_by('-created_at')
+    form = MembershipApplicationForm()
+    return render(request, 'Alumni/membership_apply.html', {'logged_application': applications, 'form': form})
 
 @role_required('3')
 def homeView(request):
@@ -32,23 +34,22 @@ def homeView(request):
 
 @role_required('3')
 def saveApplication(request):
-    if request.method == "POST":
-        date = request.POST.get('date')
-        note = request.POST.get('note')
-
-        alumni = get_object_or_404(Alumni, admin=request.user)
-
-        membership_apps = ApplyForMembership(
-            alum_id = alumni,
-            date = date,
-            note = note
-        )
-        membership_apps.save()
-        messages.success(request, 'Successfully Applied for Membership. Pending for approval!')
-
-        return redirect('save_membership')
-
-    return render(request, 'Alumni/save_membership.html')
+    if request.method != 'POST':
+        return redirect('membership_apply')
+    alumni = get_object_or_404(Alumni, admin=request.user)
+    form = MembershipApplicationForm(request.POST)
+    membership_type = request.POST.get('membership_type', '')
+    if form.is_valid():
+        if ApplyForMembership.objects.filter(alum_id=alumni, membership_type=membership_type, status=0).exists():
+            form.add_error(None, 'You already have a pending application for this membership type.')
+        else:
+            application = form.save(commit=False)
+            application.alum_id = alumni
+            application.save()
+            messages.success(request, f'{application.get_membership_type_display()} application submitted for review.')
+            return redirect('membership_apply')
+    applications = ApplyForMembership.objects.filter(alum_id=alumni).order_by('-created_at')
+    return render(request, 'Alumni/membership_apply.html', {'logged_application': applications, 'form': form})
 @role_required('3')
 def saveFeedback(request):
     if request.method == "POST":

@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
-from app.models import CustomUser, VolunteerApplication
+from app.models import ApplyForMembership, CustomUser, VolunteerApplication
+from django.utils import timezone
 from app.map_data import country_choices
 from app.profile_storage import MAX_AVATAR_BYTES
 
@@ -90,3 +91,27 @@ class VolunteerApplicationForm(forms.ModelForm):
         if not cleaned.get('email') and not cleaned.get('phone'):
             raise ValidationError('Please provide an email address or phone number so the team can contact you.')
         return cleaned
+
+
+class MembershipApplicationForm(forms.ModelForm):
+    date = forms.DateField(
+        input_formats=['%Y-%m-%d'],
+        widget=forms.DateInput(attrs={'type': 'date', 'autocomplete': 'off'}),
+    )
+
+    class Meta:
+        model = ApplyForMembership
+        fields = ('membership_type', 'payment_method', 'date', 'note')
+        widgets = {'note': forms.Textarea(attrs={'rows': 4, 'maxlength': 500})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['payment_method'].widget.attrs.update({'class': 'form-select'})
+        self.fields['date'].widget.attrs.update({'class': 'form-control'})
+        self.fields['note'].widget.attrs.update({'class': 'form-control'})
+
+    def clean_date(self):
+        value = self.cleaned_data['date']
+        if value > timezone.localdate():
+            raise forms.ValidationError('The application date cannot be in the future.')
+        return value

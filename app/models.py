@@ -98,8 +98,19 @@ class StaffNotification(models.Model):
 
 
 class ApplyForMembership(models.Model):
+    MEMBERSHIP_TYPES = [
+        ('GENERAL', 'General Membership'),
+        ('LIFE', 'Life Membership'),
+        ('TRUSTEE', 'Board of Trustee Membership'),
+    ]
+    PAYMENT_METHODS = [
+        ('BKASH', 'bKash'), ('ROCKET', 'Rocket'), ('BANK', 'Bank deposit'),
+        ('CARD', 'Mastercard / VISA'), ('OTHER', 'Other'),
+    ]
     STATUS_CHOICES = [(0, 'Pending'), (1, 'Approved'), (2, 'Denied')]
     alum_id = models.ForeignKey(Alumni, on_delete=models.CASCADE)
+    membership_type = models.CharField(max_length=10, choices=MEMBERSHIP_TYPES, default='GENERAL')
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default='BKASH')
     date = models.CharField(max_length=100)
     note = models.TextField(max_length=500, blank=True)
     status = models.IntegerField(default=0, choices=STATUS_CHOICES)

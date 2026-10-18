@@ -1,59 +1,17 @@
 {% extends 'base.html' %}
-
+{% load static %}
+{% block title %}Membership Review{% endblock %}
+{% block page_title %}Membership Review{% endblock %}
+{% block extra_css %}<style>
+  .review-hero { background:linear-gradient(135deg,#123a70,#2952a3); color:#fff; border-radius:18px; padding:1.5rem; }
+  .review-row { animation:reviewIn .4s ease both; border:1px solid var(--border); border-radius:14px; background:#fff; transition:transform .2s ease,box-shadow .2s ease; }
+  .review-row:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(20,45,90,.09); }
+  @keyframes reviewIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion:reduce) { .review-row { animation:none; transition:none; } }
+</style>{% endblock %}
 {% block content %}
-    <div class="content container-fluid">
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h3 class="page-title">Membership Applications</h3>
-                    <ul class="breadcrumb">
-                    </ul>
-                </div>
-            </div>
-        </div>
-    <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-table">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="table_id" class="table table-hover table-center mb-0">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Alumni Name</th>
-                                    <th>Message</th>
-                                    <th>Date</th>
-
-                                    <th class="text-right">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for j in membership_apps %}
-                                    <tr>
-                                        <td>{{ j.id }}</td>
-                                        <td>{{ j.alum_id.admin.first_name }}</td>
-                                        <td>{{ j.note }}</td>
-                                        <td>{{ j.date }}</td>
-                                        <td class="text-right">
-                                            <div class="actions">
-                                                {% if j.status == 0 %}
-                                                <form method="post" action="{% url 'membership_approved' j.id %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-outline-success">Approve</button></form>
-                                                <form method="post" action="{% url 'membership_denied' j.id %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-outline-danger">Deny</button></form>
-                                                {% elif j.status == 1 %}
-                                                <button class="btn btn-success" disabled="disabled">Approved</button>
-                                                {% else %}
-                                                <button class="btn btn-danger" disabled="disabled">Denied</button>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="review-hero mb-4 d-flex justify-content-between align-items-center gap-3 flex-wrap"><div><div class="small text-uppercase fw-bold" style="opacity:.7;letter-spacing:.1em;">Admin workflow</div><h2 class="fw-800 mb-1">Membership review queue</h2><div class="small" style="opacity:.82;">Review General, Life, and Board of Trustee applications securely.</div></div><a href="{% url 'hod_home' %}" class="btn btn-light btn-sm fw-bold"><i class="fas fa-chart-line me-1"></i>Dashboard</a></div>
+{% include 'partials/messages.html' %}
+<div class="d-flex gap-2 flex-wrap mb-4"><a href="{% url 'membership_applications' %}" class="btn btn-sm {% if not membership_type %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a><a href="?type=GENERAL" class="btn btn-sm {% if membership_type == 'GENERAL' %}btn-primary{% else %}btn-outline-primary{% endif %}">General <span class="badge rounded-pill bg-light text-dark ms-1">{{ type_counts.GENERAL }}</span></a><a href="?type=LIFE" class="btn btn-sm {% if membership_type == 'LIFE' %}btn-primary{% else %}btn-outline-primary{% endif %}">Life <span class="badge rounded-pill bg-light text-dark ms-1">{{ type_counts.LIFE }}</span></a><a href="?type=TRUSTEE" class="btn btn-sm {% if membership_type == 'TRUSTEE' %}btn-primary{% else %}btn-outline-primary{% endif %}">Board of Trustee <span class="badge rounded-pill bg-light text-dark ms-1">{{ type_counts.TRUSTEE }}</span></a></div>
+<div class="row g-3">{% for application in membership_apps %}<div class="col-12"><article class="review-row p-3 p-md-4" style="animation-delay:{{ forloop.counter0 }}0ms;"><div class="row align-items-center g-3"><div class="col-lg-3"><div class="d-flex align-items-center gap-3"><div class="rounded-circle d-grid place-items-center" style="width:44px;height:44px;background:#eaf2ff;color:var(--primary);font-weight:800;text-align:center;padding-top:11px;">{{ application.alum_id.admin.first_name|first|upper }}</div><div><div class="fw-800">{{ application.alum_id.admin.first_name }} {{ application.alum_id.admin.last_name }}</div><div class="small text-muted">{{ application.alum_id.admin.email }}</div></div></div></div><div class="col-sm-6 col-lg-2"><div class="small text-muted">Membership</div><div class="fw-bold">{{ application.get_membership_type_display }}</div></div><div class="col-sm-6 col-lg-2"><div class="small text-muted">Payment method</div><div class="fw-bold">{{ application.get_payment_method_display }}</div></div><div class="col-sm-6 col-lg-2"><div class="small text-muted">Applied</div><div class="fw-bold">{{ application.date }}</div><div class="small text-muted">{{ application.created_at|date:'d M Y, H:i' }}</div></div><div class="col-lg-3 text-lg-end">{% if application.note %}<div class="small text-muted mb-2 text-lg-start">{{ application.note }}</div>{% endif %}{% if application.status == 0 %}<form method="post" action="{% url 'membership_approved' application.id %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i>Approve</button></form><form method="post" action="{% url 'membership_denied' application.id %}" class="d-inline ms-1">{% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-times me-1"></i>Deny</button></form>{% elif application.status == 1 %}<span class="badge text-bg-success px-3 py-2">Approved</span>{% else %}<span class="badge text-bg-danger px-3 py-2">Denied</span>{% endif %}</div></div></article></div>{% empty %}<div class="col-12"><div class="card-custom p-5 text-center"><i class="fas fa-inbox fa-2x text-muted mb-3"></i><h5 class="fw-800">No applications waiting</h5><p class="text-muted mb-0">New applications will appear here for review.</p></div></div>{% endfor %}</div>
 {% endblock %}

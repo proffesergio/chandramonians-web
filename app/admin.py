@@ -45,8 +45,8 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(ApplyForMembership)
 class MembershipApplicationAdmin(admin.ModelAdmin):
-    list_display = ('alum_id', 'date', 'status', 'created_at')
-    list_filter = ('status',)
+    list_display = ('alum_id', 'membership_type', 'payment_method', 'date', 'status', 'created_at')
+    list_filter = ('membership_type', 'payment_method', 'status')
     search_fields = ('alum_id__admin__first_name', 'alum_id__admin__last_name')
     actions = ['approve', 'deny']
 

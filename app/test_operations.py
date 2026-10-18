@@ -17,6 +17,37 @@ from webapp.sheets_sync import _parse_value, sync_all, sync_sheet_tab
 
 
 class CommunityAccessTests(TestCase):
+    def test_membership_application_supports_three_types_and_blocks_duplicate_pending(self):
+        user = CustomUser.objects.create_user(username='member-types', email='types@example.com', first_name='Type', last_name='Member', user_type='3')
+        Alumni.objects.create(admin=user, gender='')
+        self.client.force_login(user)
+        for membership_type in ('GENERAL', 'LIFE', 'TRUSTEE'):
+            response = self.client.post(reverse('save_membership'), {
+                'membership_type': membership_type, 'payment_method': 'BKASH',
+                'date': '2026-10-18', 'note': f'{membership_type} request',
+            })
+            self.assertRedirects(response, reverse('membership_apply'))
+        self.assertEqual(ApplyForMembership.objects.count(), 3)
+        response = self.client.post(reverse('save_membership'), {
+            'membership_type': 'LIFE', 'payment_method': 'BKASH',
+            'date': '2026-10-18', 'note': 'duplicate',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'already have a pending application')
+        self.assertEqual(ApplyForMembership.objects.count(), 3)
+
+    def test_membership_application_rejects_future_date(self):
+        user = CustomUser.objects.create_user(username='future-member', email='future@example.com', user_type='3')
+        Alumni.objects.create(admin=user, gender='')
+        self.client.force_login(user)
+        response = self.client.post(reverse('save_membership'), {
+            'membership_type': 'GENERAL', 'payment_method': 'BKASH',
+            'date': '2999-01-01', 'note': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'cannot be in the future')
+        self.assertFalse(ApplyForMembership.objects.exists())
+
     def test_alumni_payment_matching_never_falls_back_to_first_name(self):
         user = CustomUser.objects.create_user(username='first-one', email='one@example.com', first_name='Rahim', last_name='Khan', user_type='3')
         alumni = Alumni.objects.create(admin=user, gender='', phone='01700000001')

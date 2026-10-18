@@ -1,152 +1,40 @@
 {% extends 'base.html' %}
-
-
+{% load static %}
+{% block title %}Membership Application{% endblock %}
+{% block page_title %}Membership Application{% endblock %}
+{% block extra_css %}
+<style>
+  .membership-hero { background:linear-gradient(135deg,#123a70,#2952a3 60%,#3c78d8); color:#fff; border-radius:18px; padding:1.7rem; overflow:hidden; position:relative; }
+  .membership-hero::after { content:""; position:absolute; width:230px; height:230px; border:1px solid rgba(255,255,255,.18); border-radius:50%; right:-70px; top:-100px; box-shadow:0 0 0 26px rgba(255,255,255,.04),0 0 0 52px rgba(255,255,255,.03); }
+  .membership-option { border:1px solid var(--border); border-radius:15px; padding:1.1rem; cursor:pointer; transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease; height:100%; }
+  .membership-option:hover { transform:translateY(-3px); border-color:#75a5e7; box-shadow:0 10px 24px rgba(30,64,120,.1); }
+  .membership-option input:checked + .membership-option-body { border-color:var(--primary-light); }
+  .membership-option-body { border:2px solid transparent; border-radius:12px; padding:.1rem; }
+  .membership-icon { width:42px; height:42px; border-radius:12px; display:grid; place-items:center; color:#fff; font-size:1.1rem; }
+  .status-timeline { border-left:2px solid #dbe5f3; margin-left:.65rem; padding-left:1.2rem; }
+  .status-item { position:relative; padding-bottom:1rem; }
+  .status-item::before { content:""; position:absolute; width:11px; height:11px; border-radius:50%; background:#9ab1d3; left:-1.62rem; top:.25rem; box-shadow:0 0 0 4px #fff; }
+  .status-item.pending::before { background:#e6a700; animation:statusGlow 2s infinite; }
+  .status-item.approved::before { background:#22a06b; }
+  .status-item.denied::before { background:#d14343; }
+  @keyframes statusGlow { 50% { box-shadow:0 0 0 7px rgba(230,167,0,.12); } }
+  @media (prefers-reduced-motion:reduce) { .membership-option,.status-item.pending::before { animation:none; transition:none; } }
+</style>
+{% endblock %}
 {% block content %}
-
-    <div class="content container-fluid">
-
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h3 class="page-title">Join the Alumni Association Today</h3>
-                    <ul class="breadcrumb">
-                        {#                            <li class="breadcrumb-item"><a href="{% url 'alumni_home' %}"><i class="fas fa-home"> Home</i></a></li>#}
-                        <li class="breadcrumb-item active">Establish your lifelong connection to Dulalpur C.M High
-                            School Alumni Association.
-                            As an Alumni Association member, you're keeping alumnus connected virtually, locally &
-                            globally through our programs, as well as furthering the future of a place
-                            we all cherish— Our 'Old School'.
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-
-        {% include 'partials/messages.html' %}
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post" action="{% url 'save_membership' %}">
-
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="form-title"><span>Being an Alumni is forever!</span></h5>
-                                </div>
-
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label>Note to admin(if any)</label>
-                                        <textarea name="note" class="form-control"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label>Choose Payment Options</label>
-                                        <select class="form-control">
-                                            <option>Select Type</option>
-                                            <option>bKash</option>
-                                            <option>Rocket</option>
-                                            <option>Bank Deposit</option>
-                                            <option>Mastercard/VISA</option>
-                                            <option>Others</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label>Date</label>
-                                        <input type="date" name="date" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label>Membership Type</label>
-                                        <select class="form-control">
-                                            <option>Select Class</option>
-                                            <option>Board Member</option>
-                                            <option>Staff Member</option>
-                                            <option>Alumni Member</option>
-                                            <option>Elite Alumni</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">Apply</button>
-                                </div>
-                                <div class="col-12">
-                                    <div class="col-auto text-right float-right ml-auto">
-                                        <a href="#" class="btn btn-dark mr-2" data-bs-toggle="modal"
-                                           data-bs-target="#viewAppModal"><i
-                                                class="fas fa-check-double"></i> View Application Status</a>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- View Notifications Modal -->
-    <div class="modal fade" id="viewAppModal" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle1">All Notifications</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="card card-table">
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table id="table_id" class="table table-hover table-center mb-0">
-                                            <thead>
-                                            <tr>
-                                                <th>Message</th>
-                                                <th>Date</th>
-                                                <th class="text-right">Status</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for j in logged_application %}
-                                                <tr>
-                                                    <td>{{ j.note }}</td>
-                                                    <td>{{ j.date }}</td>
-                                                    {% if j.status == 0 %}
-                                                        <td><span class="badge badge-info">Pending</span></td>
-                                                    {% elif j.status == 1 %}
-                                                        <td><span class="badge bg-success">Approved</span></td>
-                                                    {% else %}
-                                                        <td><span class="badge bg-danger">Denied</span></td>
-                                                    {% endif %}
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="membership-hero mb-4"><div style="position:relative;z-index:1;max-width:680px;"><div class="small text-uppercase fw-bold" style="letter-spacing:.1em;opacity:.75;">Join the association</div><h2 class="fw-800 mb-2">Choose your membership path</h2><p class="mb-0" style="opacity:.86;">Submit one application for General, Life, or Board of Trustee Membership. The association team will review it and update your status here.</p></div></div>
+{% include 'partials/messages.html' %}
+<div class="row g-4">
+  <div class="col-lg-7"><div class="card-custom p-4 p-md-5"><h5 class="fw-800 mb-1">Application details</h5><p class="small text-muted mb-4">All fields are validated before your request is saved.</p>
+    <form method="post" action="{% url 'save_membership' %}" novalidate>{% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      <fieldset><legend class="small fw-bold text-uppercase text-muted mb-3">Membership type</legend><div class="row g-3">
+        {% for value,label in form.membership_type.field.choices %}<div class="col-md-4"><label class="membership-option d-block"><input class="visually-hidden" type="radio" name="membership_type" value="{{ value }}" {% if form.membership_type.value == value %}checked{% endif %} required><span class="membership-option-body d-block"><span class="membership-icon mb-2" style="background:{% if value == 'GENERAL' %}#3c78d8{% elif value == 'LIFE' %}#d28b00{% else %}#7c4ac7{% endif %};"><i class="fas {% if value == 'GENERAL' %}fa-users{% elif value == 'LIFE' %}fa-infinity{% else %}fa-landmark{% endif %}"></i></span><strong class="d-block">{{ label }}</strong><span class="small text-muted">{% if value == 'GENERAL' %}Community participation{% elif value == 'LIFE' %}Long-term association support{% else %}Governance and stewardship{% endif %}</span></span></label></div>{% endfor %}</div>{% if form.membership_type.errors %}<div class="text-danger small mt-2">{{ form.membership_type.errors|striptags }}</div>{% endif %}</fieldset>
+      <div class="row g-3 mt-2"><div class="col-md-6"><label class="form-label" for="id_payment_method">Preferred payment method</label>{{ form.payment_method }}{% if form.payment_method.errors %}<div class="text-danger small">{{ form.payment_method.errors|striptags }}</div>{% endif %}</div><div class="col-md-6"><label class="form-label" for="id_date">Application date</label>{{ form.date }}{% if form.date.errors %}<div class="text-danger small">{{ form.date.errors|striptags }}</div>{% endif %}</div></div>
+      <div class="mt-3"><label class="form-label" for="id_note">Note to the association <span class="text-muted fw-normal">(optional)</span></label>{{ form.note }}{% if form.note.errors %}<div class="text-danger small">{{ form.note.errors|striptags }}</div>{% endif %}</div>
+      <button class="btn btn-primary mt-4 px-4" type="submit"><i class="fas fa-paper-plane me-2"></i>Submit application</button>
+    </form>
+  </div></div>
+  <div class="col-lg-5"><div class="card-custom p-4"><h5 class="fw-800 mb-1">Your application history</h5><p class="small text-muted mb-4">Only your own applications are shown.</p><div class="status-timeline">{% for application in logged_application %}<div class="status-item {% if application.status == 0 %}pending{% elif application.status == 1 %}approved{% else %}denied{% endif %}"><div class="d-flex justify-content-between gap-2"><strong>{{ application.get_membership_type_display }}</strong><span class="badge {% if application.status == 0 %}text-bg-warning{% elif application.status == 1 %}text-bg-success{% else %}text-bg-danger{% endif %}">{{ application.get_status_display }}</span></div><div class="small text-muted mt-1">{{ application.get_payment_method_display }} · {{ application.date }}</div>{% if application.note %}<div class="small mt-1">{{ application.note }}</div>{% endif %}</div>{% empty %}<div class="small text-muted">No applications yet. Choose a membership type to begin.</div>{% endfor %}</div></div></div>
+</div>
 {% endblock %}

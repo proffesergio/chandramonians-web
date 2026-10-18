@@ -364,10 +364,19 @@ def saveNotification(request):
 
 @role_required('1')
 def membershipApplications(request):
-    membership_apps = ApplyForMembership.objects.all()
+    membership_type = request.GET.get('type', '').upper()
+    membership_apps = ApplyForMembership.objects.select_related('alum_id__admin').all().order_by('status', '-created_at')
+    if membership_type in {'GENERAL', 'LIFE', 'TRUSTEE'}:
+        membership_apps = membership_apps.filter(membership_type=membership_type)
+    type_counts = {
+        value: ApplyForMembership.objects.filter(membership_type=value, status=0).count()
+        for value, _ in ApplyForMembership.MEMBERSHIP_TYPES
+    }
 
     context = {
         'membership_apps': membership_apps,
+        'membership_type': membership_type,
+        'type_counts': type_counts,
     }
     return render(request, 'hod/membership_applications.html', context)
 
@@ -375,7 +384,7 @@ def membershipApplications(request):
 @role_required('1')
 @require_POST
 def membershipApproved(request, id):
-    application = ApplyForMembership.objects.get(id = id)
+    application = get_object_or_404(ApplyForMembership, id=id)
     application.status = 1
     application.save()
     return redirect('membership_applications')
@@ -384,7 +393,7 @@ def membershipApproved(request, id):
 @role_required('1')
 @require_POST
 def membershipDenied(request, id):
-    application = ApplyForMembership.objects.get(id=id)
+    application = get_object_or_404(ApplyForMembership, id=id)
     application.status = 2
     application.save()
     return redirect('membership_applications')
