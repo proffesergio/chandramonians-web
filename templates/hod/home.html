@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
-{% block title %}HOD Dashboard{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 {% block page_title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .admin-analytics { animation: adminRise .55s ease both; }
+  .admin-analytics .dash-stat { transition: transform .2s ease, box-shadow .2s ease; }
+  .admin-analytics .dash-stat:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(20,45,90,.12); }
+  .admin-meter { height:8px; border-radius:999px; overflow:hidden; background:#e8eef7; }
+  .admin-meter > span { display:block; height:100%; border-radius:inherit; transform-origin:left; animation: meterIn 1s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes adminRise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  @keyframes meterIn { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  @media (prefers-reduced-motion: reduce) { .admin-analytics,.admin-meter > span { animation:none; } .admin-analytics .dash-stat { transition:none; } }
+</style>
+{% endblock %}
 
 {% block content %}
 
@@ -108,6 +121,18 @@
     </div>
   </div>
 </div>
+
+<section class="admin-analytics mb-4" aria-labelledby="analytics-title">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div><h5 id="analytics-title" class="fw-800 mb-1">Community analytics</h5><div class="small text-muted">A live operational view for the association team</div></div>
+    <span class="badge rounded-pill" style="background:#eaf2ff;color:var(--primary);"><i class="fas fa-shield-alt me-1"></i>Admin only</span>
+  </div>
+  <div class="row g-3">
+    <div class="col-md-4"><div class="dash-stat h-100"><div class="dash-stat-icon green"><i class="fas fa-chart-pie"></i></div><div class="flex-grow-1"><div class="dash-stat-label">Payment completion</div><div class="dash-stat-val">{{ payment_rate }}%</div><div class="admin-meter mt-2"><span style="width:{{ payment_rate }}%;background:#22a06b;"></span></div></div></div></div>
+    <div class="col-md-4"><div class="dash-stat h-100"><div class="dash-stat-icon blue"><i class="fas fa-bolt"></i></div><div class="flex-grow-1"><div class="dash-stat-label">Student engagement</div><div class="dash-stat-val">{{ engagement_rate }}%</div><div class="admin-meter mt-2"><span style="width:{{ engagement_rate }}%;background:#3c78d8;"></span></div></div></div></div>
+    <div class="col-md-4"><div class="dash-stat h-100"><div class="dash-stat-icon purple"><i class="fas fa-layer-group"></i></div><div class="flex-grow-1"><div class="dash-stat-label">Content readiness</div><div class="dash-stat-val">{{ content_readiness }}%</div><div class="admin-meter mt-2"><span style="width:{{ content_readiness }}%;background:#8b5cf6;"></span></div></div></div></div>
+  </div>
+</section>
 
 <div class="row g-4">
 

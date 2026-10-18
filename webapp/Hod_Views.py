@@ -35,6 +35,8 @@ def homeView(request):
     general_members = MembershipPayment.objects.filter(member_type='GENERAL').count()
     paid_payments = MembershipPayment.objects.filter(status='PAID').count()
     pending_payments = MembershipPayment.objects.filter(status='PENDING').count()
+    payment_total = life_members + general_members
+    payment_rate = round((paid_payments / payment_total) * 100) if payment_total else 0
     total_collected = MembershipPayment.objects.filter(
         status='PAID'
     ).aggregate(total=Sum('amount'))['total'] or 0
@@ -52,6 +54,8 @@ def homeView(request):
     total_xp = StudentProgress.objects.aggregate(total=Sum('total_xp'))['total'] or 0
     active_students = StudentProgress.objects.filter(current_streak__gte=1).count()
     ai_queries = AIChat.objects.count()
+    engagement_rate = round((active_students / student_count) * 100) if student_count else 0
+    content_readiness = round(sum(bool(value) for value in (published_articles, upcoming_events, total_suggestions, today_challenge)) / 4 * 100)
 
     # Chart: gender split
     alumni_gender_male = Alumni.objects.filter(gender='Male').count()
@@ -72,6 +76,7 @@ def homeView(request):
         'general_members': general_members,
         'paid_payments': paid_payments,
         'pending_payments': pending_payments,
+        'payment_rate': payment_rate,
         'total_collected': total_collected,
         'last_sync': last_sync,
         'published_articles': published_articles,
@@ -81,6 +86,8 @@ def homeView(request):
         'total_xp': total_xp,
         'active_students': active_students,
         'ai_queries': ai_queries,
+        'engagement_rate': engagement_rate,
+        'content_readiness': content_readiness,
         'alumni_gender_male': alumni_gender_male,
         'alumni_gender_female': alumni_gender_female,
         'recent_feedback': recent_feedback,
