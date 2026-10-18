@@ -18,10 +18,11 @@
 @keyframes ambient-rise { 0% { transform:translate3d(0,0,0); opacity:0; } 10%,85% { opacity:.4; } 100% { transform:translate3d(45px,-120vh,0); opacity:0; } }
 .site-header { background:#fffefa; border-top:3px solid #d8a94d; }
 .site-brand { flex-direction:row; align-items:center; gap:12px; }
-.site-brand img { width:96px; height:auto; max-height:46px; }
-.brand-copy { display:flex; flex-direction:column; gap:5px; }
+.site-brand .brand-emblem { display:block; width:60px; height:60px; flex:0 0 60px; overflow:hidden; }
+.site-brand .brand-emblem img { display:block; width:180px; height:60px; max-width:none; max-height:none; object-fit:initial; }
+.brand-copy { display:flex; flex-direction:column; gap:5px; min-width:0; max-width:230px; }
 .site-brand .brand-shimmer { font-family:'Nirmala UI','Segoe UI',sans-serif; font-size:1.36rem; font-weight:800; line-height:1.4; }
-.brand-caption { display:block; font-size:.62rem; margin:0; letter-spacing:0; }
+.brand-caption { display:block; max-width:230px; font-size:.62rem; line-height:1.6; margin:0; letter-spacing:0; }
 .primary-navigation { gap:20px; }
 .primary-navigation>a:not(.site-button):hover { color:#2e61a2; }
 .home-hero { background:radial-gradient(ellipse at 92% 12%,#e2eafa,transparent 48%),radial-gradient(ellipse at 0 90%,#fff0d4,transparent 44%),#fcfaf7; }
@@ -130,7 +131,9 @@
 }
 @media(max-width:480px) {
   .site-brand { gap:9px; }
-  .site-brand img { width:62px; }
+  .site-brand .brand-emblem { width:48px; height:48px; flex-basis:48px; }
+  .site-brand .brand-emblem img { width:144px; height:48px; }
+  .brand-copy { max-width:45vw; }
   .site-brand .brand-shimmer { font-size:1.12rem; }
   .brand-caption { font-size:.52rem; }
   .menu-toggle { padding:10px 12px; font-size:.8rem; }

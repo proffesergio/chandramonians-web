@@ -11,6 +11,7 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Vercel Web Analytics is wired into both Django root layouts through the official HTML bootstrap and `/_vercel/insights/script.js`; enable Web Analytics once in the Vercel project settings.
 - The Super Admin area is titled `Admin Dashboard`, with animated operational metrics and grouped People, Membership, Payments, Content, and Communication navigation.
 - Membership applications support General, Life, and Board of Trustee Membership, with validated payment method/date, duplicate-pending protection, applicant history, and animated admin review cards.
+- Public header displays the round logo emblem beside the Bangla brand, with the association's full Bangla tagline and responsive text wrapping.
 
 ## Open work
 
@@ -18,6 +19,7 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Job Board is a reviewed-content placeholder; it needs moderation and expiry fields before launch.
 - Payment records still come from the official sheet and should gain a durable user link after the association defines a stable member identifier.
 - Membership pricing and payment confirmation are not yet automated; approval remains an admin-reviewed workflow.
+- Map enhancement proposal: animated country clusters, click-to-zoom, and public alumni summaries. Current location consent supports country-level grouping; more precise regional clustering requires optional city/region data and explicit sharing consent.
 
 ## Delivery rule
 
