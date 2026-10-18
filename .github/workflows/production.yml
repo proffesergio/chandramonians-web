@@ -47,6 +47,8 @@ jobs:
         run: node --test tests/*.test.cjs
 
   deploy:
+    permissions:
+      contents: write # Record the tested commit's immutable ci-passed/<SHA> tag.
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: test
     runs-on: ubuntu-latest

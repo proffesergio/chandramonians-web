@@ -6,6 +6,8 @@
 .footer-preferences .reading-controls button{padding:10px 14px;min-height:44px;border:1px solid #ffffff30;border-radius:999px;background:#ffffff08;color:#eaf1ed;font-size:.76rem;transition:background .2s,border-color .2s}
 .footer-preferences .reading-controls button:hover,.footer-preferences .reading-controls button[aria-pressed="true"]{background:#ffffff17;border-color:#d8bd7d}
 .public-site .get-involved-link{position:relative;isolation:isolate;overflow:hidden;box-shadow:0 5px 16px #153c3220;transition:box-shadow .25s,transform .25s}
+.public-site .header-cta.get-involved-link,.public-site .footer-welcome .get-involved-link{animation:involvement-highlight 4s ease-in-out infinite}
+@keyframes involvement-highlight{0%,65%,100%{box-shadow:0 5px 16px #153c3220,0 0 0 0 #d8b46c00}25%,40%{box-shadow:0 6px 22px #153c3230,0 0 0 4px #d8b46c65,0 0 24px #e7c88455}}
 .get-involved-link::before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(110deg,transparent 25%,#fff4d447 50%,transparent 75%);transform:translateX(-110%);transition:transform .6s ease}
 .get-involved-link:hover::before,.get-involved-link:focus-visible::before{transform:translateX(110%)}
 .public-site .get-involved-link:hover{box-shadow:0 9px 22px #153c3230;transform:translateY(-2px)}

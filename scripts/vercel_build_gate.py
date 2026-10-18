@@ -1,25 +1,20 @@
-"""Vercel ignored-build step: proceed only after this commit passes CI.
+"""Verify the exact commit's CI proof tag using Git transport, without API quotas.
 
-Vercel uses exit 0 to skip a build and exit 1 to proceed. The repository is
-public, so no GitHub or Vercel credential is required for this read-only check.
+Vercel uses exit 0 to skip a build and exit 1 to proceed. GitHub Actions creates
+the immutable ci-passed/<SHA> ref only after the regression job succeeds.
 """
-import json
 import os
 import re
+import subprocess
 import sys
-from urllib.request import Request, urlopen
+import time
 
-CHECK_NAME = 'Production regression tests'
+REPOSITORY = 'https://github.com/proffesergio/chandramonians-web.git'
 
 
-def passed(checks, revision):
-    candidates = [check for check in checks if check.get('name') == CHECK_NAME
-                  and check.get('head_sha') == revision
-                  and check.get('app', {}).get('slug') == 'github-actions']
-    if not candidates:
-        return False
-    latest = max(candidates, key=lambda check: check.get('id', 0))
-    return latest.get('status') == 'completed' and latest.get('conclusion') == 'success'
+def passed(references, revision):
+    expected = f'refs/tags/ci-passed/{revision}'
+    return any(line.split() == [revision, expected] for line in references.splitlines())
 
 
 def main():
@@ -27,19 +22,23 @@ def main():
     if os.environ.get('VERCEL_GIT_COMMIT_REF') != 'main' or not re.fullmatch(r'[a-fA-F0-9]{40}', revision):
         print('Skipping: production requires the main branch and a Git commit revision.')
         return 0
-    url = f'https://api.github.com/repos/proffesergio/chandramonians-web/commits/{revision}/check-runs?per_page=100'
-    try:
-        request = Request(url, headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'ChandramoniansBuildGate/1.0',
-                                        'X-GitHub-Api-Version': '2022-11-28'})
-        with urlopen(request, timeout=20) as response:
-            checks = json.load(response).get('check_runs', [])
-    except Exception:
-        print('Skipping: could not verify GitHub regression checks. Retry after checking GitHub Actions.')
-        return 0
-    if passed(checks, revision):
-        print('Verified: this commit passed the production regression tests. Proceeding with build.')
-        return 1
-    print('Skipping: this commit has not passed the production regression tests yet. CI will trigger the deployment hook after success.')
+    reference = f'refs/tags/ci-passed/{revision}'
+    for attempt in range(3):
+        try:
+            result = subprocess.run(['git', 'ls-remote', '--exit-code', '--refs', REPOSITORY, reference],
+                                    capture_output=True, text=True, timeout=20,
+                                    env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'})
+            if result.returncode == 0 and passed(result.stdout, revision):
+                print('Verified: exact commit has a CI pass tag. Proceeding with build.')
+                return 1
+            if result.returncode in (0, 2):
+                print('Skipping: CI pass tag is missing or points to a different commit. CI will trigger deployment after tests pass.')
+                return 0
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+        if attempt < 2:
+            time.sleep(attempt + 1)
+    print('Skipping: Git transport could not verify the CI pass tag after 3 attempts. Check repository connectivity.')
     return 0
 
 
