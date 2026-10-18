@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+import re
 import secrets
 
 from django.contrib.auth.decorators import login_required
@@ -13,9 +14,39 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from app.models import MembershipPayment, Alumni
+from app.permissions import role_required
 from webapp.sheets_sync import sync_all, _normalize_header, parse_row_to_fields
 
 logger = logging.getLogger(__name__)
+
+
+def _normalized_name(value):
+    return re.sub(r'\s+', ' ', str(value or '')).strip().casefold()
+
+
+def _normalized_phone(value):
+    return re.sub(r'\D', '', str(value or ''))
+
+
+def resolve_membership_record(user, alumni=None):
+    """Return only an unambiguous payment record belonging to this alumni.
+
+    MembershipPayment is imported from a spreadsheet and has no user FK, so
+    matching must be conservative. A first-name substring is never sufficient.
+    """
+    full_name = _normalized_name(f'{user.first_name} {user.last_name}')
+    name_matches = [p for p in MembershipPayment.objects.all()
+                    if _normalized_name(p.member_name) == full_name] if full_name else []
+    if len(name_matches) == 1:
+        return name_matches[0]
+
+    phone = _normalized_phone(getattr(alumni, 'phone', ''))
+    if phone:
+        phone_matches = [p for p in MembershipPayment.objects.all()
+                         if _normalized_phone(p.phone) == phone]
+        if len(phone_matches) == 1:
+            return phone_matches[0]
+    return None
 
 
 @login_required(login_url='/login')
@@ -290,15 +321,8 @@ def alumni_own_payment_view(request):
         messages.error(request, 'Access denied.')
         return redirect('landing')
 
-    try:
-        alumni = request.user.alumni
-        full_name = f"{request.user.first_name} {request.user.last_name}".strip()
-        payment = MembershipPayment.objects.filter(
-            member_name__icontains=full_name.split()[0]
-        ).first() if full_name else None
-    except Exception:
-        payment = None
-        alumni = None
+    alumni = Alumni.objects.filter(admin=request.user).first()
+    payment = resolve_membership_record(request.user, alumni)
 
     return render(request, 'members/my_payment.html', {
         'payment': payment,
@@ -306,7 +330,7 @@ def alumni_own_payment_view(request):
     })
 
 
-@login_required(login_url='/login')
+@role_required('3')
 def alumni_directory_view(request):
     """Full alumni directory for logged-in alumni."""
     batch = request.GET.get('batch', '')
@@ -337,13 +361,13 @@ def alumni_directory_view(request):
     })
 
 
-@login_required(login_url='/login')
+@role_required('3')
 def job_board_view(request):
     """Placeholder: job board for alumni networking."""
     return render(request, 'members/job_board.html', {})
 
 
-@login_required(login_url='/login')
+@role_required('3')
 def mentorship_view(request):
     """Alumni can sign up as mentors."""
     if request.method == 'POST':

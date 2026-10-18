@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from app.permissions import role_required
-from django.contrib.auth.decorators import login_required
-from app.models import SessionYear, Alumni, CustomUser, Staff, StaffNotification, ApplyForMembership, AlumniFeedback, MembershipPayment
+from app.models import Alumni, ApplyForMembership, AlumniFeedback
+from webapp.Member_Views import resolve_membership_record
 from django.contrib import messages
 @role_required('3')
 def applyForMembership(request):
@@ -11,32 +11,22 @@ def applyForMembership(request):
 
 @role_required('3')
 def homeView(request):
-    alumni_count = Alumni.objects.all().count()
-    staff_count = Staff.objects.all().count()
-    user_count = CustomUser.objects.all().count()
-
-    alumni_gender_male = Alumni.objects.filter(gender='Male').count()
-    alumni_gender_female = Alumni.objects.filter(gender='Female').count()
-
-    # Check if this alumni has a matching record in the member payment list
-    membership_record = None
-    full_name = f"{request.user.first_name} {request.user.last_name}".strip()
-    if full_name:
-        # Try exact name match first, then first-word match
-        membership_record = (
-            MembershipPayment.objects.filter(member_name__iexact=full_name).first()
-            or MembershipPayment.objects.filter(
-                member_name__icontains=request.user.first_name
-            ).first() if request.user.first_name else None
-        )
+    alumni = get_object_or_404(Alumni, admin=request.user)
+    membership_record = resolve_membership_record(request.user, alumni)
+    applications = ApplyForMembership.objects.filter(alum_id=alumni)
+    feedback_count = AlumniFeedback.objects.filter(alum_id=alumni).count()
+    profile_fields = (request.user.first_name, request.user.last_name, alumni.phone,
+                      alumni.passing_year, alumni.profession, alumni.company, alumni.bio)
+    profile_completion = round(sum(bool(value) for value in profile_fields) / len(profile_fields) * 100)
 
     context = {
-        'alumni_count': alumni_count,
-        'staff_count': staff_count,
-        'user_count': user_count,
-        'alumni_gender_male': alumni_gender_male,
-        'alumni_gender_female': alumni_gender_female,
+        'alumni': alumni,
         'membership_record': membership_record,
+        'application_count': applications.count(),
+        'approved_application_count': applications.filter(status=1).count(),
+        'feedback_count': feedback_count,
+        'profile_completion': profile_completion,
+        'map_shared': bool(alumni.map_visible and alumni.map_country),
     }
     return render(request, 'Alumni/alumni_home.html', context)
 

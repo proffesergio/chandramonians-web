@@ -1,172 +1,38 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block title %}Alumni Dashboard{% endblock %}
+{% block page_title %}Alumni Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .alumni-hero { background:linear-gradient(135deg,#123a70,#2952a3 60%,#3c78d8); border-radius:18px; color:#fff; padding:1.7rem; position:relative; overflow:hidden; }
+  .alumni-hero::after { content:""; position:absolute; width:180px; height:180px; border:1px solid rgba(255,255,255,.2); border-radius:50%; right:-45px; top:-60px; box-shadow:0 0 0 24px rgba(255,255,255,.04),0 0 0 48px rgba(255,255,255,.03); }
+  .analytics-card { border:1px solid var(--border); border-radius:16px; background:#fff; height:100%; padding:1.25rem; box-shadow:var(--shadow); }
+  .metric-value { font-size:1.75rem; font-weight:800; color:var(--primary); }
+  .metric-label { color:var(--text-muted); font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  .progress-track { height:9px; background:#e9eef7; border-radius:999px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg,#3c78d8,#61c3a5); transform-origin:left; animation:progressReveal 1.1s ease both; }
+  .status-pulse { animation:statusPulse 2.2s ease-in-out infinite; }
+  @keyframes progressReveal { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  @keyframes statusPulse { 0%,100% { box-shadow:0 0 0 0 rgba(45,181,114,.2); } 50% { box-shadow:0 0 0 8px rgba(45,181,114,0); } }
+  @media (prefers-reduced-motion: reduce) { .progress-fill,.status-pulse { animation:none; } }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="alumni-hero mb-4"><div style="position:relative;z-index:1;max-width:680px;"><div style="font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;opacity:.75;font-weight:700;">Welcome back</div><h2 class="mb-2" style="font-weight:800;">{{ user.first_name|default:user.username }}, your alumni space</h2><p class="mb-3" style="opacity:.86;max-width:560px;">Keep your profile current, follow your membership record, and stay connected with the Chandramonians community.</p><div class="d-flex gap-2 flex-wrap"><a href="{% url 'profile' %}" class="btn btn-light btn-sm fw-bold"><i class="fas fa-user-edit me-1"></i>Update profile</a><a href="{% url 'alumni_directory' %}" class="btn btn-outline-light btn-sm fw-bold"><i class="fas fa-address-book me-1"></i>Explore alumni</a></div></div></div>
 
-<div class="page-header">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="container">
-                <h5 class="page-title">দুলালপুর চন্দ্রমণি উচ্চ বিদ্যালয়</h5>
-            </div>
-            <ul class="breadcrumb">
-                {# <li class="breadcrumb-item active">Staff Dashboard</li>#}
-            </ul>
-            <div class="container">
-                <div class="flex-lg-row">
-                    {% if membership_record %}
-                    <div class="alert d-flex align-items-center gap-3 mb-3"
-                         style="background:{% if membership_record.status == 'PAID' %}#f0fdf4;border:1px solid #86efac;{% elif membership_record.status == 'PARTIAL' %}#fffbeb;border:1px solid #fde68a;{% else %}#fef2f2;border:1px solid #fca5a5;{% endif %}border-radius:10px;padding:.9rem 1.1rem;">
-                      <i class="fas {% if membership_record.status == 'PAID' %}fa-id-card text-success{% elif membership_record.status == 'PARTIAL' %}fa-clock{% else %}fa-exclamation-circle text-danger{% endif %}" style="font-size:1.3rem;flex-shrink:0;"></i>
-                      <div>
-                        <div class="fw-700" style="font-size:.88rem;">
-                          Association Membership Found
-                        </div>
-                        <div style="font-size:.82rem;color:#475569;">
-                          You are listed as a <strong>{{ membership_record.get_member_type_display }}</strong>.
-                          Status: <strong>{{ membership_record.get_status_display }}</strong>
-                          {% if membership_record.batch_year %} · Batch {{ membership_record.batch_year }}{% endif %}
-                        </div>
-                      </div>
-                    </div>
-                    {% else %}
-                    <div class="alert d-flex align-items-center gap-3 mb-3"
-                         style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.9rem 1.1rem;">
-                      <i class="fas fa-info-circle" style="color:#3b82f6;font-size:1.3rem;flex-shrink:0;"></i>
-                      <div>
-                        <div class="fw-700" style="font-size:.88rem;">Not yet linked to a membership record</div>
-                        <div style="font-size:.82rem;color:#475569;">
-                          Your name was not found in the member list. If you are a member, please
-                          <a href="{% url 'contact' %}">contact us</a> to link your record, or
-                          <a href="{% url 'membership_apply' %}">apply for membership</a>.
-                        </div>
-                      </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-one w-100">
-            <div class="card-body">
-                <div class="db-widgets d-flex justify-content-between align-items-center">
-                    <div class="db-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="db-info">
-                        <h3>{{ alumni_count }}</h3>
-                        <h6>Alumni</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-two w-100">
-            <div class="card-body">
-                <div class="db-widgets d-flex justify-content-between align-items-center">
-                    <div class="db-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <div class="db-info">
-                        <h3>{{ staff_count }}</h3>
-                        <h6>Total Staffs</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-three w-100">
-            <div class="card-body">
-                <div class="db-widgets d-flex justify-content-between align-items-center">
-                    <div class="db-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="db-info">
-                        <h3>{{ user_count }}</h3>
-                        <h6>Total Users</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-four w-100">
-            <div class="card-body">
-                <div class="db-widgets d-flex justify-content-between align-items-center">
-                    <div class="db-icon">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </div>
-                    <div class="db-info">
-                        <h3>05</h3>
-                        <h6>Application Pending</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12 col-lg-6">
-        <div class="card card-chart">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col-6">
-                        <h5 class="card-title">Alumni Chart</h5>
-                    </div>
-                    <div class="col-6">
-                        <ul class="list-inline-group text-right mb-0 pl-0">
-                            <li class="list-inline-item">
-                                <div class="form-group mb-0 amount-spent-select">
-                                    <select class="form-control form-control-sm">
-                                        <option>Today</option>
-                                        <option>Last Week</option>
-                                        <option>Last Month</option>
-                                    </select>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div id="alumni_bar"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12 col-lg-6">
-        <div class="card card-chart">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col-6">
-                        <h5 class="card-title">Feedback Chart</h5>
-                    </div>
-                    <div class="col-6">
-                        <ul class="list-inline-group text-right mb-0 pl-0">
-                            <li class="list-inline-item">
-                                <div class="form-group mb-0 amount-spent-select">
-                                    <select class="form-control form-control-sm">
-                                        <option>Today</option>
-                                        <option>Last Week</option>
-                                        <option>Last Month</option>
-                                    </select>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div id="pie_chart"></div>
-            </div>
-        </div>
-    </div>
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3"><div class="analytics-card"><div class="metric-label">Payment status</div><div class="metric-value mt-2">{% if membership_record %}{{ membership_record.get_status_display }}{% else %}Unlinked{% endif %}</div><div class="small text-muted mt-1">Only your verified record</div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="analytics-card"><div class="metric-label">Applications</div><div class="metric-value mt-2">{{ application_count }}</div><div class="small text-muted mt-1">{{ approved_application_count }} approved</div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="analytics-card"><div class="metric-label">Feedback sent</div><div class="metric-value mt-2">{{ feedback_count }}</div><div class="small text-muted mt-1">View replies in Feedback</div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="analytics-card"><div class="metric-label">Profile completion</div><div class="metric-value mt-2">{{ profile_completion }}%</div><div class="progress-track mt-2"><div class="progress-fill" style="width:{{ profile_completion }}%"></div></div></div></div>
 </div>
 
-{% include 'partials/chart.html' %}
+<div class="row g-4"><div class="col-lg-7"><div class="analytics-card"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="mb-1 fw-800">Your activity</h5><div class="small text-muted">A private snapshot of your portal activity</div></div><i class="fas fa-chart-line" style="color:var(--primary-light);font-size:1.5rem;"></i></div><div class="row g-3"><div class="col-6"><div class="p-3 rounded-3" style="background:#f0f7ff;"><div class="small text-muted">Membership requests</div><div class="h3 mb-0 fw-800" style="color:#2952a3;">{{ application_count }}</div></div></div><div class="col-6"><div class="p-3 rounded-3" style="background:#f0fbf6;"><div class="small text-muted">Map visibility</div><div class="h3 mb-0 fw-800" style="color:#198754;">{% if map_shared %}On{% else %}Off{% endif %}</div></div></div></div><div class="mt-4"><div class="d-flex justify-content-between small fw-bold mb-2"><span>Profile readiness</span><span>{{ profile_completion }}%</span></div><div class="progress-track"><div class="progress-fill" style="width:{{ profile_completion }}%"></div></div></div></div></div>
+  <div class="col-lg-5"><div class="analytics-card"><h5 class="mb-3 fw-800">Membership check</h5>{% if membership_record %}<div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background:#f0fdf4;border:1px solid #bbf7d0;"><i class="fas fa-id-card text-success status-pulse" style="font-size:1.5rem;"></i><div><div class="fw-bold">{{ membership_record.get_member_type_display }}</div><div class="small text-muted">{{ membership_record.get_status_display }}{% if membership_record.batch_year %} · Batch {{ membership_record.batch_year }}{% endif %}</div></div></div><a href="{% url 'alumni_payments' %}" class="btn btn-outline-primary btn-sm mt-3">View payment details <i class="fas fa-arrow-right ms-1"></i></a>{% else %}<div class="p-3 rounded-3" style="background:#eff6ff;border:1px solid #bfdbfe;"><div class="fw-bold">No verified record linked</div><div class="small text-muted mt-1">We keep this blank when the official record cannot be matched unambiguously.</div></div><a href="{% url 'membership_apply' %}" class="btn btn-primary btn-sm mt-3">Apply for membership</a>{% endif %}</div></div>
+</div>
 
+<div class="row g-3 mt-1"><div class="col-md-4"><a class="analytics-card d-block text-decoration-none" href="{% url 'alumni_feedback' %}"><i class="fas fa-comment-dots text-primary mb-2"></i><div class="fw-bold text-dark">Feedback centre</div><div class="small text-muted">Send feedback and read replies.</div></a></div><div class="col-md-4"><a class="analytics-card d-block text-decoration-none" href="{% url 'alumni_map' %}"><i class="fas fa-globe text-primary mb-2"></i><div class="fw-bold text-dark">Alumni Map</div><div class="small text-muted">Discover the wider community.</div></a></div><div class="col-md-4"><a class="analytics-card d-block text-decoration-none" href="{% url 'mentorship' %}"><i class="fas fa-hands-helping text-primary mb-2"></i><div class="fw-bold text-dark">Mentorship</div><div class="small text-muted">Offer or request guidance.</div></a></div></div>
 {% endblock %}

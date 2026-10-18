@@ -12,11 +12,33 @@ from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from app.models import Alumni, CustomUser, MembershipPayment
+from app.models import Alumni, ApplyForMembership, AlumniFeedback, CustomUser, MembershipPayment
 from webapp.sheets_sync import _parse_value, sync_all, sync_sheet_tab
 
 
 class CommunityAccessTests(TestCase):
+    def test_alumni_payment_matching_never_falls_back_to_first_name(self):
+        user = CustomUser.objects.create_user(username='first-one', email='one@example.com', first_name='Rahim', last_name='Khan', user_type='3')
+        alumni = Alumni.objects.create(admin=user, gender='', phone='01700000001')
+        MembershipPayment.objects.create(member_name='Rahim Karim', member_type='LIFE', sheet_row_id=1, status='PAID', phone='01700000002')
+        self.client.force_login(user)
+        response = self.client.get(reverse('alumni_payments'))
+        self.assertContains(response, 'No Payment Record Found')
+        response = self.client.get(reverse('alumni_home'))
+        self.assertContains(response, 'No verified record linked')
+
+    def test_alumni_dashboard_matches_exact_record_and_scopes_analytics(self):
+        user = CustomUser.objects.create_user(username='exact-one', email='exact@example.com', first_name='Rahim', last_name='Khan', user_type='3')
+        alumni = Alumni.objects.create(admin=user, gender='', phone='01700000001', profession='Engineer')
+        MembershipPayment.objects.create(member_name='Rahim Khan', member_type='LIFE', sheet_row_id=2, status='PAID', phone='01700000001')
+        ApplyForMembership.objects.create(alum_id=alumni, date='2026-01-01', status=1)
+        AlumniFeedback.objects.create(alum_id=alumni, feedback='Hello')
+        self.client.force_login(user)
+        response = self.client.get(reverse('alumni_home'))
+        self.assertEqual(response.context['membership_record'].member_name, 'Rahim Khan')
+        self.assertEqual(response.context['application_count'], 1)
+        self.assertEqual(response.context['feedback_count'], 1)
+        self.assertContains(response, 'Paid')
     def test_directories_show_profiles_and_apply_search_with_batch(self):
         user = CustomUser.objects.create_user(username='example', email='example@example.com', first_name='Example', last_name='Alum', user_type='3')
         Alumni.objects.create(admin=user, gender='', passing_year='2000', profession='Engineer', phone='01700000000')
