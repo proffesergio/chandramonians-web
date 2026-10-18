@@ -12,6 +12,8 @@ This file is the handoff record for ongoing feature work and production fixes.
 - The Super Admin area is titled `Admin Dashboard`, with animated operational metrics and grouped People, Membership, Payments, Content, and Communication navigation.
 - Membership applications support General, Life, and Board of Trustee Membership, with validated payment method/date, duplicate-pending protection, applicant history, and animated admin review cards.
 - Public header displays the round logo emblem beside the Bangla brand, with the association's full Bangla tagline and responsive text wrapping.
+- Alumni Map country clusters now animate into a selected region and open public profile cards, with keyboard-accessible close/reset controls, reduced-motion support, and a working link fallback without JavaScript.
+- Registration rejects email duplicates regardless of capitalization, normalizes new email addresses, and handles concurrent username/email conflicts without creating orphaned profiles. Legacy ambiguous emails fail authentication safely.
 
 ## Open work
 
@@ -19,7 +21,7 @@ This file is the handoff record for ongoing feature work and production fixes.
 - Job Board is a reviewed-content placeholder; it needs moderation and expiry fields before launch.
 - Payment records still come from the official sheet and should gain a durable user link after the association defines a stable member identifier.
 - Membership pricing and payment confirmation are not yet automated; approval remains an admin-reviewed workflow.
-- Map enhancement proposal: animated country clusters, click-to-zoom, and public alumni summaries. Current location consent supports country-level grouping; more precise regional clustering requires optional city/region data and explicit sharing consent.
+- Optional direct support chats and group chats are displayed as coming soon on the map. Before activation they need participant opt-in, membership authorization, persistent messages, moderation, blocking/reporting, and delivery controls. Current location consent supports country-level grouping; finer regional clustering requires optional city/region data and explicit sharing consent.
 
 ## Delivery rule
 

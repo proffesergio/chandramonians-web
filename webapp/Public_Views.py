@@ -92,6 +92,13 @@ def alumni_map_view(request):
     markers = []
     for row in shared.values('map_country').annotate(count=Count('id')):
         markers.append(dict(countries()[row['map_country']], code=row['map_country'], count=row['count']))
+    map_profiles = {}
+    for profile in shared.order_by('admin__first_name', 'pk'):
+        map_profiles.setdefault(profile.map_country, []).append({
+            'name': profile.admin.get_full_name() or profile.admin.username,
+            'batch': profile.passing_year or '', 'profession': profile.profession,
+            'photo': profile.admin.profile_pic.url if profile.admin.profile_pic else '',
+        })
     if country:
         alumni = alumni.filter(map_visible=True, map_country=country) if country in countries() else alumni.none()
     return render(request, 'pages/alumni_map.html', {
@@ -100,6 +107,7 @@ def alumni_map_view(request):
         'markers': sorted(markers, key=lambda row: row['name']), 'countries': country_choices()[1:],
         'batch_years': all_alumni.exclude(passing_year__isnull=True).exclude(passing_year='').values_list('passing_year', flat=True).distinct().order_by('passing_year'),
         'filter_country': country, 'filter_batch': batch, 'search': query,
+        'map_profiles': map_profiles,
     })
 
 

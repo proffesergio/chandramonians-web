@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db import IntegrityError
 from app.forms import CommunitySignupForm, ProfileUpdateForm
 from django.core.exceptions import ValidationError
 import logging
@@ -31,12 +32,16 @@ def doRegister(request):
                 for error in errors:
                     messages.error(request, error)
             return redirect('register')
-        with transaction.atomic():
-            user = form.save()
-            if user.user_type == '3':
-                Alumni.objects.create(admin=user, gender='')
-            else:
-                Student.objects.create(user=user, gender='')
+        try:
+            with transaction.atomic():
+                user = form.save()
+                if user.user_type == '3':
+                    Alumni.objects.create(admin=user, gender='')
+                else:
+                    Student.objects.create(user=user, gender='')
+        except IntegrityError:
+            messages.error(request, 'This username or email is already registered. Please sign in or choose another.')
+            return redirect('register')
         login(request, user)
         return redirect("landing")
 

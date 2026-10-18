@@ -94,9 +94,14 @@ class ProfileAndMapTests(TestCase):
         self.assertContains(response, 'Registered Alumnus')
         self.assertEqual(response.context['markers'][0]['name'], 'Bangladesh')
         self.assertEqual(response.context['markers'][0]['count'], 1)
+        self.assertEqual(response.context['map_profiles']['BGD'][0]['name'], 'Registered Alumnus')
+        self.assertNotIn('phone', response.context['map_profiles']['BGD'][0])
+        self.assertContains(response, 'atlasProfiles')
+        self.assertContains(response, 'Create a group chat')
         self.assertEqual(self.client.get(reverse('alumni_map'), {'country': 'CAN'}).context['alumni_list'].count(), 0)
         self.assertRedirects(self.update(map_country='BGD'), reverse('profile'))
         self.assertEqual(self.client.get(reverse('alumni_map')).context['markers'], [])
+        self.assertEqual(self.client.get(reverse('alumni_map')).context['map_profiles'], {})
         self.assertEqual(self.client.get(reverse('alumni_map'), {'country': 'BGD'}).context['alumni_list'].count(), 0)
 
     def test_missing_or_invalid_country_does_not_publish_location(self):

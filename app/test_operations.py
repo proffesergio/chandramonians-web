@@ -17,6 +17,35 @@ from webapp.sheets_sync import _parse_value, sync_all, sync_sheet_tab
 
 
 class CommunityAccessTests(TestCase):
+    def test_registration_rejects_case_insensitive_duplicate_email(self):
+        CustomUser.objects.create_user(username='existing', email='Member@example.com')
+        response = self.client.post(reverse('doRegister'), {
+            'username': 'duplicate', 'email': 'MEMBER@EXAMPLE.COM', 'first_name': 'New', 'last_name': 'Alum',
+            'user_type': '3', 'password': 'Community!Strong2026', 'confirm_password': 'Community!Strong2026',
+        })
+        self.assertRedirects(response, reverse('register'))
+        self.assertEqual(CustomUser.objects.count(), 1)
+        self.assertFalse(Alumni.objects.exists())
+
+    def test_registration_creates_student_profile_and_normalizes_email(self):
+        response = self.client.post(reverse('doRegister'), {
+            'username': 'newstudent', 'email': 'STUDENT@EXAMPLE.COM', 'first_name': 'New', 'last_name': 'Student',
+            'user_type': '4', 'password': 'Community!Strong2026', 'confirm_password': 'Community!Strong2026',
+        })
+        self.assertRedirects(response, reverse('landing'))
+        user = CustomUser.objects.get(username='newstudent')
+        self.assertEqual(user.email, 'student@example.com')
+        self.assertEqual(user.student_profile.user_id, user.pk)
+        self.assertEqual(int(self.client.session['_auth_user_id']), user.pk)
+
+    def test_registration_password_mismatch_creates_no_account(self):
+        response = self.client.post(reverse('doRegister'), {
+            'username': 'mismatch', 'email': 'mismatch@example.com', 'user_type': '3',
+            'password': 'Community!Strong2026', 'confirm_password': 'Different!Strong2026',
+        })
+        self.assertRedirects(response, reverse('register'))
+        self.assertFalse(CustomUser.objects.exists())
+
     def test_membership_application_supports_three_types_and_blocks_duplicate_pending(self):
         user = CustomUser.objects.create_user(username='member-types', email='types@example.com', first_name='Type', last_name='Member', user_type='3')
         Alumni.objects.create(admin=user, gender='')
